@@ -1,9 +1,13 @@
-export default async function Home() {
+import { Hero } from "~/components/marketing/Hero";
+import { Services } from "~/components/marketing/Services";
+import { Footer } from "~/components/ui/footer";
+
+export default function Home() {
     return (
-        <div className="flex flex-col min-h-screen">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolore libero quaerat, saepe vitae dolorum
-            sapiente cumque molestiae non optio quam officia tempora quidem, fugit explicabo minima? Veritatis nobis
-            vitae exercitationem!
+        <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
+            <Hero />
+            <Services />
+            <Footer />
         </div>
     );
 }
