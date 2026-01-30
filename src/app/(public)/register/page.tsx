@@ -80,6 +80,7 @@ const Register: FC<PageProps> = ({}) => {
             }
         } catch {
             toast(`Registration failed. Please try again later.`);
+        } finally {
             setDisableButton(false);
         }
     };
