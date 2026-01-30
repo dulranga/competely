@@ -11,6 +11,7 @@ import { HeaderPublic } from "~/components/ui/header-public";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { cn } from "~/lib/utils";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
 
 interface DiscoverContentProps {
     isAuthenticated: boolean;
@@ -242,9 +243,20 @@ export function DiscoverContent({ isAuthenticated }: DiscoverContentProps) {
 
                             {/* Mobile Filter Toggle (Visible only on small screens) */}
                             <div className="lg:hidden mb-4">
-                                <Button variant="outline" className="w-full">
-                                    Filters
-                                </Button>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button variant="outline" className="w-full">
+                                            Filters
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-[300px] sm:w-[350px] overflow-y-auto">
+                                        <SheetTitle className="sr-only">Filters</SheetTitle> {/* Accessibility requirement for Dialog */}
+                                        <SheetDescription className="sr-only">Filter competitions</SheetDescription>
+                                        <div className="mt-6">
+                                            <FilterSidebar className="w-full border-0 shadow-none p-0" />
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
                             </div>
 
                             {/* Results Grid */}

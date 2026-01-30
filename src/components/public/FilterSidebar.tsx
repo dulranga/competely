@@ -10,7 +10,7 @@ import { Slider } from "~/components/ui/slider";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 
-export function FilterSidebar() {
+export function FilterSidebar({ className }: { className?: string }) {
     const [keywords, setKeywords] = useState(["C#", "Web Dev", "Rotract"]);
     const [newKeyword, setNewKeyword] = useState("");
 
@@ -59,7 +59,7 @@ export function FilterSidebar() {
     };
 
     return (
-        <div className="w-64 shrink-0 bg-white rounded-xl shadow-sm border border-border/40 p-5 space-y-7">
+        <div className={cn("w-64 shrink-0 bg-white rounded-xl shadow-sm border border-border/40 p-5 space-y-7", className)}>
             {/* Keywords Section */}
             <div className="space-y-3">
                 <h3 className="font-medium text-foreground text-sm tracking-wide text-gray-700">Keywords</h3>

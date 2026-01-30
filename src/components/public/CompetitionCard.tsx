@@ -8,7 +8,7 @@ import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import { useState } from "react";
 
-export type CompetitionStatus = "Ongoing" | "Upcoming" | "Ended" | "Open" | "Closed";
+export type CompetitionStatus = "Ongoing" | "Upcoming" | "Ended" | "Open" | "Closed" | "Registered" | "Finished";
 
 interface CompetitionCardProps {
     title?: string;
@@ -20,6 +20,9 @@ interface CompetitionCardProps {
     category?: string;
     organizerName?: string;
     status?: CompetitionStatus;
+    variant?: "grid" | "list";
+    isBookmarked?: boolean;
+    onClick?: () => void;
 }
 
 const statusStyles: Record<CompetitionStatus, string> = {
@@ -28,6 +31,8 @@ const statusStyles: Record<CompetitionStatus, string> = {
     Open: "bg-emerald-500/90 text-white hover:bg-emerald-600 shadow-[0_0_12px_rgba(16,185,129,0.4)] border-emerald-400/20",
     Ended: "bg-gray-500/90 text-white hover:bg-gray-600 border-gray-400/20",
     Closed: "bg-red-500/90 text-white hover:bg-red-600 shadow-[0_0_12px_rgba(239,68,68,0.4)] border-red-400/20",
+    Registered: "bg-green-500/90 text-white hover:bg-green-600 shadow-[0_0_12px_rgba(34,197,94,0.4)] border-green-400/20",
+    Finished: "bg-gray-600/90 text-white hover:bg-gray-700 border-gray-500/20",
 };
 
 export function CompetitionCard({
@@ -40,11 +45,84 @@ export function CompetitionCard({
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
+    variant = "grid",
+    isBookmarked: initialIsBookmarked = false,
+    onClick,
 }: CompetitionCardProps) {
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
+
+    if (variant === "list") {
+        return (
+            <Card
+                onClick={onClick}
+                className="w-full relative overflow-hidden rounded-xl border-border/40 hover:border-primary/20 shadow-sm hover:shadow-md hover:bg-gray-50/80 cursor-pointer active:scale-[0.995] transition-all duration-200 bg-white group flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 sm:gap-6"
+            >
+                {/* Status Badge */}
+                <div className="shrink-0">
+                    <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-[10px] font-bold tracking-wide uppercase", statusStyles[status] || statusStyles.Ongoing)}>
+                        {status}
+                    </Badge>
+                </div>
+
+                {/* Main Info */}
+                <div className="flex-1 min-w-0 space-y-1 pr-6 sm:pr-0">
+                    <h3 className="text-lg font-bold text-foreground leading-tight truncate">
+                        {title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 text-primary/70" />
+                            <span>{deadline}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 hidden sm:flex">
+                            <Users className="h-3.5 w-3.5 text-primary/70" />
+                            <span>{registeredCount} Reg</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <Shapes className="h-3.5 w-3.5 text-primary/70" />
+                            <span>{category}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Actions / Organizer */}
+                <div className="flex items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0 justify-between sm:justify-end">
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-xs font-medium text-muted-foreground hover:text-foreground hidden sm:flex"
+                        >
+                            {organizerName}
+                        </Button>
+                        <button
+                            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors absolute top-3 right-3 sm:static"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsBookmarked(!isBookmarked);
+                            }}
+                        >
+                            <Bookmark
+                                className={cn(
+                                    "h-4 w-4 transition-all",
+                                    isBookmarked
+                                        ? "fill-primary text-primary"
+                                        : "text-muted-foreground hover:text-foreground"
+                                )}
+                            />
+                        </button>
+                    </div>
+                    {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
+                </div>
+            </Card>
+        )
+    }
 
     return (
-        <Card className="w-full max-w-[350px] overflow-hidden rounded-[2.5rem] border-0 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group bg-card relative">
+        <Card
+            onClick={onClick}
+            className="w-full max-w-[350px] overflow-hidden rounded-[2.5rem] border-0 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer active:scale-[0.995] group bg-card relative"
+        >
             {/* Image Header Area */}
             <div className="relative h-56 w-full overflow-hidden">
                 <Image
