@@ -9,6 +9,7 @@ interface TopicCardProps {
     icon: LucideIcon;
     colorClass: string; // Tailwincss class for background gradient
     textColorClass?: string;
+    onClick?: () => void;
 }
 
 export function TopicCard({
@@ -17,9 +18,13 @@ export function TopicCard({
     icon: Icon,
     colorClass,
     textColorClass = "text-white",
+    onClick,
 }: TopicCardProps) {
     return (
-        <div className={cn("relative flex h-full w-full min-h-[140px] items-start justify-between overflow-hidden rounded-xl p-5 shadow-sm transition-all hover:shadow-md hover:scale-[1.01] cursor-pointer", colorClass)}>
+        <div
+            onClick={onClick}
+            className={cn("relative flex h-full w-full min-h-[140px] items-start justify-between overflow-hidden rounded-xl p-5 shadow-sm transition-all hover:shadow-md hover:scale-[1.01] cursor-pointer", colorClass)}
+        >
             <div className="flex flex-col gap-2 relative z-10 w-2/3">
                 <h3 className={cn("text-lg font-bold tracking-tight leading-snug", textColorClass)}>
                     {title}

@@ -56,6 +56,14 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                             >
                                 <Icon className="h-4 w-4" />
                                 {item.name}
+                                {item.name === "Bookmarks" && (
+                                    <span className={cn(
+                                        "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none",
+                                        isActive ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                                    )}>
+                                        10
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}
@@ -88,25 +96,25 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
             {/* Mobile Navigation */}
             <nav className="md:hidden border-t border-border/40">
                 <div className="container mx-auto px-4 py-2 flex justify-around">
-                {navItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = currentPath === item.href;
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex flex-col items-center gap-1 px-2 py-1 rounded-md transition-colors",
-                                isActive
-                                    ? "text-primary"
-                                    : "text-muted-foreground hover:text-foreground"
-                            )}
-                        >
-                            <Icon className="h-5 w-5" />
-                            <span className="text-xs">{item.name}</span>
-                        </Link>
-                    );
-                })}
+                    {navItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = currentPath === item.href;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    "flex flex-col items-center gap-1 px-2 py-1 rounded-md transition-colors",
+                                    isActive
+                                        ? "text-primary"
+                                        : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                <Icon className="h-5 w-5" />
+                                <span className="text-xs">{item.name}</span>
+                            </Link>
+                        );
+                    })}
                 </div>
             </nav>
         </header>
