@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
     return (
-        <html lang={locale} className="dark" style={{ colorScheme: "dark" }}>
+        <html className="dark" style={{ colorScheme: "dark" }}>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
                     {children}

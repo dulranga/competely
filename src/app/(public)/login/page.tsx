@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"; 
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FC, Suspense, useState } from "react";
@@ -15,7 +15,7 @@ import Form from "~/components/form/Form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input"; 
+import { Input } from "~/components/ui/input";
 import { authClient } from "~/lib/auth-client";
 import { passwordSchema } from "~/lib/schemas/auth.schema";
 
@@ -31,7 +31,7 @@ const Login: FC<PageProps> = ({}) => {
     const [showUnverifiedAlert, setShowUnverifiedAlert] = useState(false);
     const [disableSendVerification, setDisableSendVerification] = useState(false);
     const router = useRouter();
-    const searchParams = useSearchParams(); 
+    const searchParams = useSearchParams();
 
     const callbackURL = searchParams.get("callbackURL");
 
@@ -107,32 +107,22 @@ const Login: FC<PageProps> = ({}) => {
         <div className="relative grid place-items-center min-h-screen py-10">
             <Card className="max-w-xl w-full py-16 border-none ring-0">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">
-                        Welcome back
-                    </CardTitle>
-                    <CardDescription>
-                        Enter your information to log in to OBS Power
-                    </CardDescription>
+                    <CardTitle className="text-2xl">Welcome back</CardTitle>
+                    <CardDescription>Enter your information to log in to OBS Power</CardDescription>
                 </CardHeader>
                 <CardContent className="px-4 md:px-16">
                     <Dialog open={showUnverifiedAlert} onOpenChange={setShowUnverifiedAlert}>
                         <DialogContent className="sm:max-w-xl" allowOverlayDismiss={false} showCloseButton={false}>
                             <DialogHeader>
-                                <DialogTitle>
-                                    Your email is not verified
-                                </DialogTitle>
+                                <DialogTitle>Your email is not verified</DialogTitle>
                             </DialogHeader>
                             <p>
-                                
-                                    You need to verify your email address before logging in. Please check your inbox for
-                                    a verification email.
-                                
+                                You need to verify your email address before logging in. Please check your inbox for a
+                                verification email.
                             </p>
                             <p>
-                                
-                                    If you did not receive the email, you can resend the verification email by clicking
-                                    the button below.
-                                
+                                If you did not receive the email, you can resend the verification email by clicking the
+                                button below.
                             </p>
                             <DialogFooter>
                                 <DialogClose asChild>
@@ -160,7 +150,7 @@ const Login: FC<PageProps> = ({}) => {
                                 </Form.Item>
 
                                 <div>
-                                    <Form.Item name="password" label={`Password`)} className="mb`">
+                                    <Form.Item name="password" label={`Password`} className="mb`">
                                         <PasswordInput />
                                     </Form.Item>
                                     <Link href="/forgot-password" className="text-xs underline text-right block">
@@ -176,11 +166,9 @@ const Login: FC<PageProps> = ({}) => {
                                             field={field}
                                             label={
                                                 <div className="text-muted-foreground *:[a]:hover:text-primary text-xs *:[a]:underline *:[a]:underline-offset-4">
-                                                    
-                                                        By clicking Continue, you agree to our{" "}
-                                                        <Link href="/terms">Terms of Use</Link> and our{" "}
-                                                        <Link href="/privacy-policy">Privacy Policy</Link>.
-                                                    
+                                                    By clicking Continue, you agree to our{" "}
+                                                    <Link href="/terms">Terms of Use</Link> and our{" "}
+                                                    <Link href="/privacy-policy">Privacy Policy</Link>.
                                                 </div>
                                             }
                                         />
@@ -201,17 +189,15 @@ const Login: FC<PageProps> = ({}) => {
                                 <FacebookLoginButton callbackURL={callBackUrl} />
                             </div>
                             <div className="text-center text-sm">
-                                
-                                    Don&apos;t have an account?{" "}
-                                    <Link
-                                        href={`/register${
-                                            callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                        }`}
-                                        className="underline underline-offset-4"
-                                    >
-                                        Sign up
-                                    </Link>
-                                
+                                Don&apos;t have an account?{" "}
+                                <Link
+                                    href={`/register${
+                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                    }`}
+                                    className="underline underline-offset-4"
+                                >
+                                    Sign up
+                                </Link>
                             </div>
                         </div>
                     </Form>

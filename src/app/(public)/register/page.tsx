@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { msg } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FC, Suspense, useEffect, useState } from "react";
@@ -91,12 +89,8 @@ const Register: FC<PageProps> = ({}) => {
         <div className="relative grid place-items-center min-h-screen py-10">
             <Card className="max-w-xl w-full py-16 border-none ring-0">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">
-                        <Trans>Create an account</Trans>
-                    </CardTitle>
-                    <CardDescription>
-                        <Trans>Enter your information to create an OBS Power account</Trans>
-                    </CardDescription>
+                    <CardTitle className="text-2xl">Create an account</CardTitle>
+                    <CardDescription>Enter your information to create an OBS Power account</CardDescription>
                 </CardHeader>
                 <CardContent className="px-4 md:px-16">
                     <Form form={form} onFinish={(data) => register(data)}>
@@ -124,11 +118,9 @@ const Register: FC<PageProps> = ({}) => {
                                             field={field}
                                             label={
                                                 <div className="text-muted-foreground *:[a]:hover:text-primary text-xs *:[a]:underline *:[a]:underline-offset-4">
-                                                    <Trans>
-                                                        By clicking continue, you agree to our{" "}
-                                                        <Link href="/terms">Terms of Use</Link> and{" "}
-                                                        <Link href="/privacy-policy">Privacy Policy</Link>.
-                                                    </Trans>
+                                                    By clicking continue, you agree to our{" "}
+                                                    <Link href="/terms">Terms of Use</Link> and{" "}
+                                                    <Link href="/privacy-policy">Privacy Policy</Link>.
                                                 </div>
                                             }
                                         />
@@ -136,12 +128,12 @@ const Register: FC<PageProps> = ({}) => {
                                 />
 
                                 <Button size={"lg"} type="submit" className="w-full" disabled={disableButton}>
-                                    <Trans>Create an account</Trans>
+                                    Create an account
                                 </Button>
                             </div>
                             <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                                 <span className="bg-card text-muted-foreground relative z-10 px-2">
-                                    <Trans>Or continue with</Trans>
+                                    Or continue with
                                 </span>
                             </div>
                             <div className="grid gap-2">
@@ -149,17 +141,15 @@ const Register: FC<PageProps> = ({}) => {
                                 <FacebookLoginButton callbackURL={callBackUrl} />
                             </div>
                             <div className="text-center text-sm">
-                                <Trans>
-                                    Already have an account?{" "}
-                                    <Link
-                                        href={`/login${
-                                            callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                        }`}
-                                        className="underline underline-offset-4"
-                                    >
-                                        Log in here
-                                    </Link>
-                                </Trans>
+                                Already have an account?{" "}
+                                <Link
+                                    href={`/login${
+                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                    }`}
+                                    className="underline underline-offset-4"
+                                >
+                                    Log in here
+                                </Link>
                             </div>
                         </div>
                     </Form>

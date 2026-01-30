@@ -5,17 +5,14 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { CheckIcon } from "lucide-react";
 
 import { cn, mergeRefs } from "~/lib/utils";
-import { useSound } from "~/hooks/use-sound";
 
 const Checkbox = React.forwardRef<
     React.ComponentRef<typeof CheckboxPrimitive.Root>,
     React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
 >(function Checkbox({ className, ...props }, ref) {
-    const soundRef = useSound<HTMLButtonElement>(["onClick"]);
-
     return (
         <CheckboxPrimitive.Root
-            ref={mergeRefs(ref, soundRef)}
+            ref={mergeRefs(ref)}
             data-slot="checkbox"
             className={cn(
                 "peer border-input bg-card/40 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary transition-all outline-none size-4 shrink-0 rounded-none border disabled:cursor-not-allowed disabled:opacity-50",

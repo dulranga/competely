@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack --port 9090",
+        "dev": "next dev --turbopack --port 5070",
         "build": "next build",
-        "start": "PORT=9090 node .next/standalone/server.js",
+        "start": "PORT=5070 node .next/standalone/server.js",
         "lint": "biome check",
         "dbml": "tsx ./src/db/dbml/generate-dbml.ts",
         "format": "biome format --write"

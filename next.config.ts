@@ -12,22 +12,7 @@ const nextConfig: NextConfig = {
             },
         ],
     },
-    experimental: {
-        swcPlugins: [["@lingui/swc-plugin", {}]],
-    },
-    // PostHog rewrites
-    async rewrites() {
-        return [
-            {
-                source: "/web/static/:path*",
-                destination: "https://eu-assets.i.posthog.com/static/:path*",
-            },
-            {
-                source: "/web/:path*",
-                destination: "https://eu.i.posthog.com/:path*",
-            },
-        ];
-    },
+
     // Required to support PostHog trailing slash API requests
     skipTrailingSlashRedirect: true,
 };
