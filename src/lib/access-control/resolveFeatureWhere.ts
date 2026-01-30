@@ -1,10 +1,13 @@
-import { and, SQL } from "drizzle-orm";
+import { and, type SQL } from "drizzle-orm";
 
 /**
  * Returns the SQL condition if the feature flag is enabled, otherwise undefined.
  */
-export function getFeatureWhere(enabled: boolean | undefined, sqlCondition: SQL) {
-    return enabled ? sqlCondition : undefined;
+export function getFeatureWhere(
+  enabled: boolean | undefined,
+  sqlCondition: SQL,
+) {
+  return enabled ? sqlCondition : undefined;
 }
 
 /**
@@ -19,5 +22,5 @@ export function getFeatureWhere(enabled: boolean | undefined, sqlCondition: SQL)
  * ```
  */
 export function resolveFeatureWhere(...conditions: (SQL | undefined)[]) {
-    return and(...conditions);
+  return and(...conditions);
 }

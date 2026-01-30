@@ -1,9 +1,9 @@
 import "server-only";
 
 import { headers } from "next/headers";
-import { auth } from "~/lib/auth";
-import { cache } from "react";
 import { redirect } from "next/navigation";
+import { cache } from "react";
+import { auth } from "~/lib/auth";
 
 /**
  * Retrieves the current user's session using cached authentication.
@@ -13,13 +13,13 @@ import { redirect } from "next/navigation";
  * @throws Redirects to "/login" if the session is not available.
  */
 export const getUserSession = cache(async () => {
-    const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
 
-    if (!session) {
-        redirect("/login");
-    }
+  if (!session) {
+    redirect("/login");
+  }
 
-    return session;
+  return session;
 });
 
 /**
@@ -31,7 +31,7 @@ export const getUserSession = cache(async () => {
  * @returns {Promise<User>} A promise that resolves to the current user's data.
  */
 export const getUser = cache(async () => {
-    const session = await getUserSession();
+  const session = await getUserSession();
 
-    return session.user;
+  return session.user;
 });

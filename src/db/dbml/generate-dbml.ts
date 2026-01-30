@@ -1,5 +1,6 @@
 import { pgGenerate } from "drizzle-dbml-generator";
 import * as schema from "../schema";
+
 // import * as enums from "../enums";
 
 const out = "./src/db/dbml/schema.dbml";

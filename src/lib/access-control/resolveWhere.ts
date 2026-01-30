@@ -1,4 +1,4 @@
-import { SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
 import "server-only";
 
 type Where = SQL | undefined; // drizzle's where/condition type
@@ -15,13 +15,15 @@ type Where = SQL | undefined; // drizzle's where/condition type
  * @returns A promise that resolves to the first `Where` clause whose check passes.
  * @throws If none of the permission checks pass, an error is thrown indicating no permission.
  */
-export async function resolveWhere(checks: Array<[Promise<boolean> | boolean, Where]>): Promise<Where> {
-    const results = await Promise.all(checks.map(([check]) => check));
+export async function resolveWhere(
+  checks: Array<[Promise<boolean> | boolean, Where]>,
+): Promise<Where> {
+  const results = await Promise.all(checks.map(([check]) => check));
 
-    for (let i = 0; i < results.length; i++) {
-        if (results[i]) return checks[i][1];
-    }
+  for (let i = 0; i < results.length; i++) {
+    if (results[i]) return checks[i][1];
+  }
 
-    // if none of the asked permissions passed, throw an error
-    throw new Error("No Permission to perform this action");
+  // if none of the asked permissions passed, throw an error
+  throw new Error("No Permission to perform this action");
 }

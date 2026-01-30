@@ -4,19 +4,19 @@ import { auth } from "~/lib/auth";
 import getCurrentPath from "~/lib/getCurrentPathServer";
 
 export default async function AuthLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    const headersList = await headers();
-    const pathname = await getCurrentPath();
+  const headersList = await headers();
+  const pathname = await getCurrentPath();
 
-    const session = await auth.api.getSession({
-        headers: headersList,
-    });
-    if (!session) {
-        redirect(`/login?callbackURL=${encodeURIComponent(pathname)}`);
-    }
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
+  if (!session) {
+    redirect(`/login?callbackURL=${encodeURIComponent(pathname)}`);
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 }
