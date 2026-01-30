@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { useModal } from "./modals/modal-provider";
 import {
     DndContext,
     closestCenter,
@@ -36,15 +37,17 @@ interface FormBuilderProps {
         id?: string;
         name: string;
         description: string;
+        published?: boolean;
         fields: Field[];
     };
     onSave: (data: any) => Promise<void>;
+    onDelete?: (id: string) => Promise<void>;
 }
 
 const SortableField: FC<{
     field: Field;
     updateField: (id: string, updates: Partial<Field>) => void;
-    deleteField: (id: string) => void;
+    deleteField: (id: string, name: string) => void;
 }> = ({ field, updateField, deleteField }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
@@ -116,7 +119,7 @@ const SortableField: FC<{
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => deleteField(field.id)}
+                            onClick={() => deleteField(field.id, field.name)}
                             className="h-12 w-12 rounded-xl text-[#0c0803]/20 hover:text-red-500 hover:bg-red-50 transition-colors"
                         >
                             <Trash2 size={20} />
@@ -128,9 +131,11 @@ const SortableField: FC<{
     );
 };
 
-const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave }) => {
+const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave, onDelete }) => {
+    const { openModal } = useModal();
     const [name, setName] = useState(initialData?.name || "Untitled Form");
     const [description, setDescription] = useState(initialData?.description || "Form Description");
+    const [published, setPublished] = useState(initialData?.published ?? false);
     const [fields, setFields] = useState<Field[]>(
         initialData?.fields || [{ id: crypto.randomUUID(), name: "Question 1", type: "text", required: false }],
     );
@@ -158,8 +163,16 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave }) => {
         setFields(fields.map((f) => (f.id === id ? { ...f, ...updates } : f)));
     };
 
-    const deleteField = (id: string) => {
-        setFields(fields.filter((f) => f.id !== id));
+    const deleteField = (id: string, fieldName: string) => {
+        openModal("confirm", {
+            title: "Remove Question",
+            description: `Are you sure you want to remove "${fieldName}"?`,
+            variant: "destructive",
+            confirmLabel: "Remove",
+            onConfirm: () => {
+                setFields(fields.filter((f) => f.id !== id));
+            },
+        });
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -175,7 +188,7 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave }) => {
     };
 
     const handleSave = async () => {
-        await onSave({ id: initialData?.id, name, description, fields });
+        await onSave({ id: initialData?.id, name, description, published, fields });
     };
 
     return (
@@ -212,10 +225,7 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave }) => {
 
             {/* Actions */}
             <div className="flex items-center justify-center gap-4">
-                <Button
-                    onClick={addField}
-                    className="h-16 w-16 rounded-full bg-white border border-[#e8e2de] text-[#0c0803] hover:border-[#e5ab7d] hover:text-[#e5ab7d] shadow-sm transition-all"
-                >
+                <Button onClick={addField}>
                     <Plus size={32} />
                 </Button>
             </div>
@@ -223,6 +233,46 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave }) => {
             {/* Sticky Save Bar */}
             <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
                 <div className="bg-white/80 backdrop-blur-xl border border-[#e8e2de] px-10 py-6 rounded-full shadow-2xl flex items-center gap-8 border-b-4 border-b-[#e5ab7d]/20">
+                    {initialData?.id && onDelete && (
+                        <>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                    openModal("confirm", {
+                                        title: "Delete Form",
+                                        description:
+                                            "Are you sure you want to delete this form? This action cannot be undone.",
+                                        variant: "destructive",
+                                        confirmLabel: "Delete Form",
+                                        onConfirm: () => onDelete(initialData.id!),
+                                    });
+                                }}
+                                className="h-12 w-12 rounded-xl text-red-500 hover:bg-red-50 transition-colors"
+                            >
+                                <Trash2 size={24} />
+                            </Button>
+                            <div className="w-px h-6 bg-[#e8e2de]" />
+                        </>
+                    )}
+
+                    <div className="flex items-center gap-3">
+                        <Checkbox
+                            id="publish-toggle"
+                            checked={published}
+                            onCheckedChange={(val) => setPublished(!!val)}
+                            className="w-5 h-5 rounded-md border-[#e8e2de]"
+                        />
+                        <label
+                            htmlFor="publish-toggle"
+                            className="text-sm font-black uppercase tracking-widest text-[#0c0803]/60"
+                        >
+                            {published ? "Published" : "Draft"}
+                        </label>
+                    </div>
+
+                    <div className="w-px h-6 bg-[#e8e2de]" />
+
                     <div className="text-sm font-black uppercase tracking-widest text-[#0c0803]/40">
                         {fields.length} Questions
                     </div>

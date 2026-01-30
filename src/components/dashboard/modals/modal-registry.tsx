@@ -10,6 +10,7 @@ export type ModalComponentProps<Data> = {
 export const modalRegistry = {
     // viewChatDetails: dynamic(() => import("./modals/ViewChatDetails")),
     // inquiryDetails: dynamic(() => import("./modals/InquiryDetailsModal")),
+    confirm: dynamic(() => import("./modals/ConfirmModal")),
 
     placeholder: (() => <DialogContent></DialogContent>) as FC<ModalComponentProps<Record<string, unknown>>>,
 } as const;

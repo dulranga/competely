@@ -51,9 +51,20 @@ const FormsListPage: FC = async () => {
                                 <div className="w-16 h-16 rounded-[1.5rem] bg-[#fbf6f3] flex items-center justify-center group-hover:bg-[#e5ab7d]/10 group-hover:text-[#e5ab7d] transition-colors border border-[#e8e2de]/50">
                                     <FileText size={28} />
                                 </div>
-                                <button className="p-3 text-[#0c0803]/20 hover:text-[#0c0803] transition-colors">
-                                    <MoreHorizontal size={20} />
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                                            form.published
+                                                ? "bg-[#bcde8c]/20 text-[#0c0803]"
+                                                : "bg-[#fbf6f3] text-[#0c0803]/40 border border-[#e8e2de]"
+                                        }`}
+                                    >
+                                        {form.published ? "Live" : "Draft"}
+                                    </span>
+                                    <button className="p-3 text-[#0c0803]/20 hover:text-[#0c0803] transition-colors">
+                                        <MoreHorizontal size={20} />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-4">

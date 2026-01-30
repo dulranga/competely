@@ -1,7 +1,7 @@
 import { FC } from "react";
 import FormBuilder from "~/components/dashboard/FormBuilder";
 import { getFormById } from "~/data-access/forms";
-import { saveFormAction } from "../actions";
+import { saveFormAction, deleteFormAction } from "../actions";
 import { notFound } from "next/navigation";
 
 interface EditFormPageProps {
@@ -30,6 +30,7 @@ const EditFormPage: FC<EditFormPageProps> = async ({ params }) => {
                     id: form.id,
                     name: form.name,
                     description: form.description || "",
+                    published: form.published,
                     fields: form.fields.map((f) => ({
                         id: f.id,
                         name: f.name,
@@ -38,6 +39,7 @@ const EditFormPage: FC<EditFormPageProps> = async ({ params }) => {
                     })),
                 }}
                 onSave={saveFormAction}
+                onDelete={deleteFormAction}
             />
         </div>
     );

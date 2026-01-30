@@ -38,7 +38,7 @@ export async function createForm(userId: string, data: { name: string; descripti
     return form;
 }
 
-export async function updateForm(id: string, data: { name?: string; description?: string }) {
+export async function updateForm(id: string, data: { name?: string; description?: string; published?: boolean }) {
     const [updated] = await db
         .update(forms)
         .set({
