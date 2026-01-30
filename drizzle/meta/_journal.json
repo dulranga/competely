@@ -8,6 +8,20 @@
       "when": 1769775174180,
       "tag": "0000_rate_limit_and_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769786845596,
+      "tag": "0001_added_form_builder",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769787995387,
+      "tag": "0002_added_form_publish_state",
+      "breakpoints": true
     }
   ]
 }

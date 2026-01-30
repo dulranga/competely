@@ -40,6 +40,8 @@ The university competition ecosystem is fragmented. Delegates struggle to find r
     - Text: `#0c0803` (Dark charcoal)
 - Support both Light and Dark modes using `next-themes` and Tailwind's `dark:` variant.
 - Maintain a clean, professional "Management Ecosystem" feel for Organizers and a vibrant "Discovery Engine" for Delegates.
+- **Minimalist Design**: Avoid bulky or "loud" UI elements. Maintain generous whitespace, subtle borders, and a refined, thin-line aesthetic.
+- **Button Standards**: Never apply large inline utility classes for button styling. Always define and use `cva` variants in the base component. Keep buttons appropriately sized and consistent with the minimal theme.
 
 ## 6. Data Access Layer (DAL) — Strictly Enforced Separation
 
