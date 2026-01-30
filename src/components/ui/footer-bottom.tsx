@@ -8,8 +8,8 @@ const socialLinks = [
 
 export function FooterBottom() {
     return (
-        <div className="border-t border-border/40 bg-background/50 backdrop-blur-sm">
-            <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="w-full border-t border-border/40 bg-background/50 backdrop-blur-sm">
+            <div className="container mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-muted-foreground">
                         © 2026 Competely. All rights reserved.
