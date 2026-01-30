@@ -24,7 +24,7 @@ export function Hero() {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
                     <Link href="/register">
-                        <Button size="lg" variant="neon" className="group w-full sm:w-auto">
+                        <Button size="lg" variant="default" className="group w-full sm:w-auto">
                             Get Started
                             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
