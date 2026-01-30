@@ -3,6 +3,7 @@ import { Button } from "~/components/ui/button";
 import { Logo } from "~/components/ui/logo";
 import { ScrollIndicator } from "~/components/ui/scroll-indicator";
 import { AnimatedBackground } from "~/components/ui/animated-background";
+import { SearchBar } from "~/components/ui/search-bar";
 import { ArrowRight } from "lucide-react";
 
 export function Hero() {
@@ -10,7 +11,7 @@ export function Hero() {
         <section className="relative flex flex-col items-center justify-center min-h-[90vh] px-4 text-center overflow-hidden">
             <AnimatedBackground />
 
-            <div className="relative z-10 space-y-8 max-w-5xl">
+            <div className="relative z-10 space-y-8 max-w-5xl w-full">
                 {/* Logo/Brand Name */}
                 <div className="space-y-4">
                     <h1>
@@ -36,8 +37,16 @@ export function Hero() {
                     </Link>
                 </div>
 
+                {/* Search Bar */}
+                <div className="pt-4 max-w-2xl mx-auto w-full">
+                    <SearchBar 
+                        placeholder="Search for competitions, events, challenges..." 
+                        redirectToDiscover={true}
+                    />
+                </div>
+
                 {/* Scroll Indicator */}
-                <ScrollIndicator className="pt-16" />
+                <ScrollIndicator className="pt-12" />
             </div>
         </section>
     );

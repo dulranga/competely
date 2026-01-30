@@ -1,7 +1,6 @@
 {
-  "id": "40620636-8ef6-4e88-a98b-08c699595bd4",
-  "id": "2274ea0e-d81b-49a9-abe1-0367535232e5",
-  "prevId": "e278cc0e-4dc3-4c63-8488-16a2c93dcc49",
+  "id": "16103f96-ef69-462c-ba87-178eaa4dd2d8",
+  "prevId": "2274ea0e-d81b-49a9-abe1-0367535232e5",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -423,12 +422,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user_interests": {
-      "name": "user_interests",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
     "public.form_fields": {
       "name": "form_fields",
       "schema": "",
@@ -452,8 +445,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "interest": {
-          "name": "interest",
         "type": {
           "name": "type",
           "type": "form_field_type",
@@ -527,6 +518,13 @@
           "primaryKey": false,
           "notNull": false
         },
+        "published": {
+          "name": "published",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -550,9 +548,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_interests_user_id_users_id_fk": {
-          "name": "user_interests_user_id_users_id_fk",
-          "tableFrom": "user_interests",
         "forms_user_id_users_id_fk": {
           "name": "forms_user_id_users_id_fk",
           "tableFrom": "forms",
@@ -567,15 +562,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "user_interests_user_id_interest_pk": {
-          "name": "user_interests_user_id_interest_pk",
-          "columns": [
-            "user_id",
-            "interest"
-          ]
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -583,7 +569,6 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
   "enums": {
     "public.form_field_type": {
       "name": "form_field_type",

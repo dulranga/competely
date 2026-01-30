@@ -51,7 +51,7 @@ const Login: FC<PageProps> = ({}) => {
         }
         const res = await authClient.sendVerificationEmail({
             email,
-            callbackURL: callbackURL || "/dashboard", // The redirect URL after verification
+            callbackURL: callbackURL || "/home", // The redirect URL after verification
         });
 
         if (res.data?.status) {
@@ -95,7 +95,7 @@ const Login: FC<PageProps> = ({}) => {
             if (callbackURL) {
                 window.location.href = callbackURL;
             } else {
-                router.push(res.data.redirect ? res.data.url! : "/dashboard");
+                router.push(res.data.redirect ? res.data.url! : "/home");
             }
         } else {
             toast(res.error.message ?? `Some error occurred`);
