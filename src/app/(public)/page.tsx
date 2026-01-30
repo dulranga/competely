@@ -1,6 +1,7 @@
 import { Hero } from "~/components/marketing/Hero";
 import { Services } from "~/components/marketing/Services";
 import { Footer } from "~/components/ui/footer";
+import { FooterBottom } from "~/components/ui/footer-bottom";
 
 export default function Home() {
     return (
@@ -8,6 +9,7 @@ export default function Home() {
             <Hero />
             <Services />
             <Footer />
+            <FooterBottom />
         </div>
     );
 }

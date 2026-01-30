@@ -1,6 +1,5 @@
 import { Logo } from "~/components/ui/logo";
 import { FooterSection, type FooterLink } from "~/components/ui/footer-section";
-import { SocialLink, SocialIcons } from "~/components/ui/social-link";
 
 const footerLinks = {
     product: [
@@ -20,12 +19,6 @@ const footerLinks = {
     ] as FooterLink[]
 };
 
-const socialLinks = [
-    { label: "Twitter", href: "#", icon: SocialIcons.Twitter },
-    { label: "GitHub", href: "#", icon: SocialIcons.GitHub },
-    { label: "LinkedIn", href: "#", icon: SocialIcons.LinkedIn }
-];
-
 export function Footer() {
     return (
         <footer className="mt-auto border-t border-border/40 bg-background/50 backdrop-blur-sm">
@@ -42,25 +35,6 @@ export function Footer() {
                     <FooterSection title="Product" links={footerLinks.product} />
                     <FooterSection title="Company" links={footerLinks.company} />
                     <FooterSection title="Legal" links={footerLinks.legal} />
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="mt-8 pt-8 border-t border-border/40">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-sm text-muted-foreground">
-                            © 2026 Competely. All rights reserved.
-                        </p>
-                        <div className="flex gap-6">
-                            {socialLinks.map((social) => (
-                                <SocialLink
-                                    key={social.label}
-                                    href={social.href}
-                                    icon={social.icon}
-                                    label={social.label}
-                                />
-                            ))}
-                        </div>
-                    </div>
                 </div>
             </div>
         </footer>
