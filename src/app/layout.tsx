@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/providers/theme-provider";
 
 import "./globals.css";
 
-const geistSans = Geist({
+const fontSans = Inter({
     variable: "--font-geist-sans",
     subsets: ["latin"],
 });
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
     return (
-        <html className="dark" style={{ colorScheme: "dark" }}>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <html className="light" style={{ colorScheme: "light" }}>
+            <body className={`${fontSans.variable} ${geistMono.variable} antialiased`}>
+                <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
                     {children}
 
                     <Toaster />
