@@ -1,6 +1,6 @@
 "use client";
 
-import { Award, BarChart3, Clock, Eye, FileText, Upload, Users } from "lucide-react";
+import { Award, BarChart3, Clock, Eye, FileText, LayoutDashboard, Upload, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
@@ -8,6 +8,8 @@ import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { cn } from "~/lib/utils";
+import EditorSidebar from "./secondary-sidebars/EditorSidebar";
+import FormBuilderSidebar from "./secondary-sidebars/FormBuilder";
 
 interface SidebarItem {
     title: string;
@@ -118,3 +120,43 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
         </div>
     );
 };
+
+export const sidebarItems = [
+    {
+        title: "Home",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+    },
+    {
+        title: "Editor",
+        href: "/dashboard/editor",
+        icon: Award,
+        secondary: EditorSidebar,
+    },
+    {
+        title: "Timeline",
+        href: "/dashboard/timeline",
+        icon: Clock,
+    },
+    {
+        title: "Analytics",
+        href: "/dashboard/analytics",
+        icon: BarChart3,
+    },
+    {
+        title: "Form Builder",
+        href: "/dashboard/forms",
+        secondary: FormBuilderSidebar,
+        icon: FileText,
+    },
+    {
+        title: "Users",
+        href: "/dashboard/users",
+        icon: Users,
+    },
+    {
+        title: "Preview",
+        href: "/dashboard/preview",
+        icon: Eye,
+    },
+];
