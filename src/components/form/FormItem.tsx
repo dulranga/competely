@@ -53,7 +53,7 @@ const FormItem: FC<FormItemProps> = ({ disabled, children, label, hideLabel, nam
                         {!hideLabel && (
                             <Label
                                 className={cn(
-                                    "block font-mono text-xs uppercase tracking-wider text-primary/80 font-semibold",
+                                    "block font-sans text-xs uppercase tracking-wider text-primary/80 font-semibold",
                                 )}
                                 htmlFor={id}
                             >
@@ -63,7 +63,7 @@ const FormItem: FC<FormItemProps> = ({ disabled, children, label, hideLabel, nam
                         <div className="relative group/field">{child}</div>
                         <p
                             className={cn(
-                                "text-muted-foreground font-mono text-[10px] uppercase tracking-wide whitespace-pre-wrap mt-1",
+                                "text-muted-foreground font-sans text-[10px] uppercase tracking-wide whitespace-pre-wrap mt-1",
                                 fieldState.invalid && "text-destructive",
                             )}
                         >
