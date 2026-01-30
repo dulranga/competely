@@ -43,7 +43,6 @@ The university competition ecosystem is fragmented. Delegates struggle to find r
 - **Minimalist Design**: Avoid bulky or "loud" UI elements. Maintain generous whitespace, subtle borders, and a refined, thin-line aesthetic.
 - **Button Standards**: Never apply large inline utility classes for button styling. Always define and use `cva` variants in the base component. Keep buttons appropriately sized and consistent with the minimal theme.
 
-
 ## 6. Data Access Layer (DAL) — Strictly Enforced Separation
 
 - **All** database queries, API calls to external services, S3 operations, queue interactions, etc. **must** live under `src/data-access/`.

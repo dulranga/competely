@@ -37,19 +37,17 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
     return (
         <div className="flex h-screen bg-[#fbf6f3] overflow-hidden select-none">
             {/* Left Static Sidebar */}
-            <div className="w-24 flex flex-col items-center py-8 pb-10 bg-white/40 backdrop-blur-xl border-r border-[#e8e2de]/60 z-20">
+            <div className="w-20 flex flex-col items-center py-8 pb-10 bg-white/40 backdrop-blur-xl border-r border-[#e8e2de]/60 z-20">
                 <div className="mb-10 group">
                     <Link
                         href="/dashboard"
-                        className="text-4xl font-black tracking-tighter hover:scale-110 transition-all duration-300 block"
+                        className="text-2xl font-black tracking-tighter hover:scale-105 transition-all duration-300 block"
                     >
-                        <span className="bg-clip-text text-transparent bg-gradient-to-br from-[#0c0803] to-[#4b5563]">
-                            C.
-                        </span>
+                        <span className="text-[#0c0803]">C.</span>
                     </Link>
                 </div>
 
-                <div className="flex-1 flex flex-col items-center gap-5 w-full px-4">
+                <div className="flex-1 flex flex-col items-center gap-4 w-full px-3">
                     <TooltipProvider delayDuration={0}>
                         {items.map((item) => {
                             const isActive = pathname.startsWith(item.href);
@@ -59,27 +57,27 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                                         <Link
                                             href={item.href}
                                             className={cn(
-                                                "w-14 h-14 flex items-center justify-center rounded-[1.25rem] transition-all duration-500 relative group/item",
+                                                "w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 relative group/item",
                                                 isActive
-                                                    ? "bg-[#0c0803] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)] scale-105"
-                                                    : "bg-white/50 text-[#0c0803]/40 hover:bg-white hover:text-[#0c0803] hover:shadow-sm",
+                                                    ? "bg-[#0c0803] text-white shadow-md scale-105"
+                                                    : "text-[#0c0803]/40 hover:text-[#0c0803] hover:bg-white/50",
                                             )}
                                         >
                                             <item.icon
-                                                size={24}
-                                                strokeWidth={isActive ? 2.5 : 2}
+                                                size={20}
+                                                strokeWidth={isActive ? 2 : 1.5}
                                                 className={cn(
                                                     "transition-transform duration-300",
                                                     isActive ? "" : "group-hover/item:scale-110",
                                                 )}
                                             />
                                             {isActive && (
-                                                <div className="absolute -left-1 w-1.5 h-6 bg-[#0c0803] rounded-full" />
+                                                <div className="absolute -left-1 w-1 h-4 bg-[#0c0803] rounded-full" />
                                             )}
                                         </Link>
                                     </TooltipTrigger>
                                     <TooltipContent side="right" sideOffset={10}>
-                                        <p className="font-bold text-xs uppercase tracking-widest">{item.title}</p>
+                                        <p className="font-bold text-[10px] uppercase tracking-widest">{item.title}</p>
                                     </TooltipContent>
                                 </Tooltip>
                             );
@@ -87,12 +85,13 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                     </TooltipProvider>
                 </div>
 
-                <div className="px-4 w-full pt-6 border-t border-[#e8e2de]/40">
+                <div className="px-3 w-full pt-6 border-t border-[#e8e2de]/40">
                     <Button
-                        variant="default"
-                        className="w-full h-14 rounded-2xl bg-[#0c0803] hover:bg-black text-white flex flex-col gap-1 p-0 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all duration-200"
+                        variant="competely"
+                        size="icon-lg"
+                        className="w-full h-12 rounded-xl flex flex-col gap-0.5 p-0 text-[8px] font-black uppercase tracking-tighter"
                     >
-                        <Upload size={16} />
+                        <Upload size={14} />
                         Publish
                     </Button>
                 </div>
@@ -100,15 +99,12 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
 
             {/* Right Dynamic Sidebar */}
             {hasSecondary && (
-                <div className="w-80 flex flex-col h-full pl-3 relative z-10">
-                    <div className="flex-1 overflow-hidden py-6 pr-3">
-                        <div className="h-full bg-white/80 backdrop-blur-md rounded-[3.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] border border-[#e8e2de]/30 flex flex-col overflow-hidden relative">
-                            {/* Decorative element */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#bcde8c]/10 to-transparent rounded-full -mr-16 -mt-16 blur-3xl opacity-50" />
-
+                <div className="w-72 flex flex-col h-full pl-2 relative z-10 transition-all duration-300">
+                    <div className="flex-1 overflow-hidden py-4 pr-3">
+                        <div className="h-full bg-white/60 backdrop-blur-md rounded-[2.5rem] shadow-sm border border-[#e8e2de]/40 flex flex-col overflow-hidden relative">
                             <ScrollArea className="flex-1">
-                                <div className="px-7 py-12 relative z-10 h-full flex flex-col">
-                                    <div className="flex flex-col gap-4 flex-1">
+                                <div className="px-6 py-10 relative z-10 h-full flex flex-col">
+                                    <div className="flex flex-col gap-3 flex-1">
                                         {overriddenSecondary || (Secondary && <Secondary />)}
                                     </div>
                                 </div>

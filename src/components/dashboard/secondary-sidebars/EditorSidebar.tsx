@@ -5,26 +5,35 @@ import { Button } from "~/components/ui/button";
 const EditorSidebar: FC = () => {
     const rounds = ["Registration", "Round 1", "Round 2", "Semi Final", "Final"];
     return (
-        <>
-            <div className="space-y-3">
+        <div className="flex flex-col h-full">
+            <div className="px-2 mb-6">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c0803]/30">
+                    Competition Phases
+                </h3>
+            </div>
+
+            <div className="flex-1 space-y-2">
                 {rounds.map((round) => (
                     <Button
                         key={round}
                         variant="ghost"
-                        className="w-full justify-start h-14 rounded-2xl bg-[#4b5563] text-white hover:bg-[#374151] hover:text-white px-6 font-semibold text-lg"
+                        className="w-full justify-start h-11 rounded-xl bg-white border border-[#e8e2de] text-[#0c0803]/60 hover:text-[#0c0803] hover:bg-[#fbf6f3] px-4 font-bold text-xs"
                     >
                         {round}
                     </Button>
                 ))}
             </div>
 
-            <div className="mt-auto pt-10">
-                <Button className="w-full h-14 rounded-[2rem] bg-[#0c0803] hover:bg-black text-white font-bold text-lg flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all">
-                    <Plus size={24} />
+            <div className="mt-8">
+                <Button
+                    variant="competely"
+                    className="w-full h-11 rounded-xl text-xs uppercase tracking-widest font-black"
+                >
+                    <Plus size={16} />
                     Add Round
                 </Button>
             </div>
-        </>
+        </div>
     );
 };
 export default EditorSidebar;

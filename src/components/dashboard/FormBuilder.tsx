@@ -61,32 +61,32 @@ const SortableField: FC<{
         <div
             ref={setNodeRef}
             style={style}
-            className={`group bg-white rounded-[2.5rem] border border-[#e8e2de] hover:border-[#e5ab7d] p-8 shadow-sm transition-all relative overflow-hidden ${isDragging ? "opacity-50 ring-2 ring-[#e5ab7d]" : ""}`}
+            className={`group bg-white rounded-3xl border border-[#e8e2de] hover:border-[#e5ab7d] p-6 shadow-sm transition-all relative overflow-hidden ${isDragging ? "opacity-50 ring-1 ring-[#e5ab7d]" : ""}`}
         >
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-[#e5ab7d] transition-colors" />
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-[#e5ab7d]/50 transition-colors" />
 
-            <div className="flex gap-6 items-start">
+            <div className="flex gap-4 items-start">
                 <div
                     {...attributes}
                     {...listeners}
-                    className="pt-2 text-[#0c0803]/10 cursor-grab active:cursor-grabbing hover:text-[#0c0803]/40 transition-colors"
+                    className="pt-2.5 text-[#0c0803]/10 cursor-grab active:cursor-grabbing hover:text-[#0c0803]/40 transition-colors"
                 >
-                    <GripVertical size={20} />
+                    <GripVertical size={16} />
                 </div>
 
-                <div className="flex-1 space-y-6">
-                    <div className="flex gap-4">
+                <div className="flex-1 space-y-4">
+                    <div className="flex gap-3">
                         <Input
                             value={field.name}
                             onChange={(e) => updateField(field.id, { name: e.target.value })}
-                            className="flex-1 text-xl font-bold bg-[#fbf6f3] border-none rounded-2xl h-14 px-6 focus-visible:ring-1 focus-visible:ring-[#e5ab7d]"
+                            className="flex-1 text-base font-bold bg-[#fbf6f3] border-none rounded-xl h-11 px-4 focus-visible:ring-1 focus-visible:ring-[#e5ab7d]"
                             placeholder="Question"
                         />
                         <Select value={field.type} onValueChange={(val) => updateField(field.id, { type: val })}>
-                            <SelectTrigger className="w-56 h-14 bg-white border-[#e8e2de] rounded-2xl font-bold px-6">
+                            <SelectTrigger className="w-48 h-11 bg-white border-[#e8e2de] rounded-xl font-bold px-4 text-sm">
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="rounded-2xl border-[#e8e2de]">
+                            <SelectContent className="rounded-xl border-[#e8e2de]">
                                 <SelectItem value="text">Short Answer</SelectItem>
                                 <SelectItem value="textarea">Paragraph</SelectItem>
                                 <SelectItem value="number">Number</SelectItem>
@@ -98,18 +98,18 @@ const SortableField: FC<{
                         </Select>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-[#e8e2de]/50 pt-6">
-                        <div className="flex items-center gap-6">
-                            <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between border-t border-[#e8e2de]/50 pt-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
                                 <Checkbox
                                     id={`req-${field.id}`}
                                     checked={field.required}
                                     onCheckedChange={(val) => updateField(field.id, { required: !!val })}
-                                    className="w-5 h-5 rounded-md border-[#e8e2de]"
+                                    className="w-4 h-4 rounded-md border-[#e8e2de]"
                                 />
                                 <label
                                     htmlFor={`req-${field.id}`}
-                                    className="text-sm font-bold text-[#0c0803]/40 uppercase tracking-widest"
+                                    className="text-[10px] font-bold text-[#0c0803]/40 uppercase tracking-widest"
                                 >
                                     Required
                                 </label>
@@ -118,11 +118,11 @@ const SortableField: FC<{
 
                         <Button
                             variant="ghost"
-                            size="icon"
+                            size="icon-sm"
                             onClick={() => deleteField(field.id, field.name)}
-                            className="h-12 w-12 rounded-xl text-[#0c0803]/20 hover:text-red-500 hover:bg-red-50 transition-colors"
+                            className="text-[#0c0803]/20 hover:text-red-500 hover:bg-red-50"
                         >
-                            <Trash2 size={20} />
+                            <Trash2 size={16} />
                         </Button>
                     </div>
                 </div>
@@ -192,25 +192,25 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave, onDelete }) =>
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-32">
+        <div className="max-w-2xl mx-auto space-y-6 pb-32">
             {/* Header Card */}
-            <div className="bg-white rounded-[2.5rem] border-l-8 border-l-[#e5ab7d] border border-[#e8e2de] p-10 shadow-sm space-y-6">
+            <div className="bg-white rounded-3xl border-l-4 border-l-[#e5ab7d] border border-[#e8e2de] p-8 shadow-sm space-y-2">
                 <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-4xl font-black border-none px-0 focus-visible:ring-0 placeholder:text-[#0c0803]/10 h-auto py-0"
+                    className="text-2xl font-bold border-none px-0 focus-visible:ring-0 placeholder:text-[#0c0803]/10 h-auto py-0"
                 />
                 <Input
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="text-lg text-[#0c0803]/40 border-none px-0 focus-visible:ring-0 placeholder:text-[#0c0803]/10 h-auto py-0"
+                    className="text-sm text-[#0c0803]/50 border-none px-0 focus-visible:ring-0 placeholder:text-[#0c0803]/10 h-auto py-0"
                 />
             </div>
 
             {/* Fields List */}
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {fields.map((field) => (
                             <SortableField
                                 key={field.id}
@@ -224,20 +224,20 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave, onDelete }) =>
             </DndContext>
 
             {/* Actions */}
-            <div className="flex items-center justify-center gap-4">
-                <Button onClick={addField}>
-                    <Plus size={32} />
+            <div className="flex items-center justify-center pt-2">
+                <Button onClick={addField} variant="competely-outline" size="icon" className="rounded-full shadow-md">
+                    <Plus size={20} />
                 </Button>
             </div>
 
             {/* Sticky Save Bar */}
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-                <div className="bg-white/80 backdrop-blur-xl border border-[#e8e2de] px-10 py-6 rounded-full shadow-2xl flex items-center gap-8 border-b-4 border-b-[#e5ab7d]/20">
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+                <div className="bg-white/90 backdrop-blur-md border border-[#e8e2de] px-6 py-3 rounded-2xl shadow-xl flex items-center gap-6">
                     {initialData?.id && onDelete && (
                         <>
                             <Button
                                 variant="ghost"
-                                size="icon"
+                                size="icon-sm"
                                 onClick={() => {
                                     openModal("confirm", {
                                         title: "Delete Form",
@@ -248,40 +248,41 @@ const FormBuilder: FC<FormBuilderProps> = ({ initialData, onSave, onDelete }) =>
                                         onConfirm: () => onDelete(initialData.id!),
                                     });
                                 }}
-                                className="h-12 w-12 rounded-xl text-red-500 hover:bg-red-50 transition-colors"
+                                className="text-red-500 hover:bg-red-50"
                             >
-                                <Trash2 size={24} />
+                                <Trash2 size={18} />
                             </Button>
-                            <div className="w-px h-6 bg-[#e8e2de]" />
+                            <div className="w-px h-4 bg-[#e8e2de]" />
                         </>
                     )}
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         <Checkbox
                             id="publish-toggle"
                             checked={published}
                             onCheckedChange={(val) => setPublished(!!val)}
-                            className="w-5 h-5 rounded-md border-[#e8e2de]"
+                            className="w-4 h-4 rounded-md border-[#e8e2de]"
                         />
                         <label
                             htmlFor="publish-toggle"
-                            className="text-sm font-black uppercase tracking-widest text-[#0c0803]/60"
+                            className="text-[10px] font-black uppercase tracking-widest text-[#0c0803]/60"
                         >
                             {published ? "Published" : "Draft"}
                         </label>
                     </div>
 
-                    <div className="w-px h-6 bg-[#e8e2de]" />
+                    <div className="w-px h-4 bg-[#e8e2de]" />
 
-                    <div className="text-sm font-black uppercase tracking-widest text-[#0c0803]/40">
-                        {fields.length} Questions
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#0c0803]/40">
+                        {fields.length} Fields
                     </div>
-                    <div className="w-px h-6 bg-[#e8e2de]" />
+                    <div className="w-px h-4 bg-[#e8e2de]" />
                     <Button
                         onClick={handleSave}
-                        className="h-14 px-10 rounded-full bg-[#0c0803] text-white font-black hover:scale-[1.02] active:scale-95 transition-all text-lg"
+                        variant="competely"
+                        className="h-10 px-6 rounded-xl text-xs uppercase tracking-widest font-black"
                     >
-                        Save Changes
+                        Save
                     </Button>
                 </div>
             </div>

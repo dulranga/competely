@@ -31,32 +31,33 @@ const ConfirmModal: FC<ModalComponentProps<ConfirmModalData>> = ({ data, closeMo
     };
 
     return (
-        <DialogContent className="max-w-md rounded-[2.5rem] p-10">
+        <DialogContent className="max-w-sm rounded-3xl p-8 gap-6">
             <DialogHeader className="space-y-4 flex flex-col items-center text-center">
                 <div
-                    className={`w-20 h-20 rounded-[1.75rem] flex items-center justify-center ${variant === "destructive" ? "bg-red-50 text-red-500" : "bg-[#fbf6f3] text-[#e5ab7d]"}`}
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center ${variant === "destructive" ? "bg-red-50 text-red-500" : "bg-[#fbf6f3] text-[#e5ab7d]"}`}
                 >
-                    <AlertCircle size={40} />
+                    <AlertCircle size={24} />
                 </div>
-                <div className="space-y-2">
-                    <DialogTitle className="text-3xl font-black text-[#0c0803]">{title}</DialogTitle>
-                    <DialogDescription className="text-lg text-[#0c0803]/40 leading-relaxed font-medium">
+                <div className="space-y-1">
+                    <DialogTitle className="text-xl font-bold text-[#0c0803]">{title}</DialogTitle>
+                    <DialogDescription className="text-sm text-[#0c0803]/60 leading-relaxed font-medium">
                         {description}
                     </DialogDescription>
                 </div>
             </DialogHeader>
 
-            <DialogFooter className="flex-row gap-4 mt-8">
+            <DialogFooter className="grid grid-cols-2 gap-3 sm:justify-center">
                 <Button
-                    variant="ghost"
+                    variant="competely-outline"
                     onClick={closeModal}
-                    className="flex-1 h-14 rounded-2xl border border-[#e8e2de] font-bold text-[#0c0803]/60 hover:bg-[#fbf6f3]"
+                    className="w-full h-10 rounded-xl text-xs uppercase tracking-widest font-bold"
                 >
                     {cancelLabel}
                 </Button>
                 <Button
                     onClick={handleConfirm}
-                    className={`flex-1 h-14 rounded-2xl font-black text-lg transition-all active:scale-95 ${variant === "destructive" ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20" : "bg-[#0c0803] text-white hover:bg-black shadow-lg shadow-black/20"}`}
+                    variant={variant === "destructive" ? "destructive" : "competely"}
+                    className="w-full h-10 rounded-xl text-xs uppercase tracking-widest font-black"
                 >
                     {confirmLabel}
                 </Button>
