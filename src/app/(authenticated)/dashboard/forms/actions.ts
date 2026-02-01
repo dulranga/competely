@@ -1,12 +1,25 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createForm, deleteForm, getFormsByUser, setFormFields, updateForm } from "~/data-access/forms";
+import { createForm, deleteForm, getFormsByCompetition, setFormFields, updateForm } from "~/data-access/forms";
 import { getUserSession } from "~/data-access/getCurrentUser";
+import { eq } from "drizzle-orm";
+import db from "~/db/client";
+import { competitions } from "~/db/schema";
 
 export async function getFormsAction() {
     const session = await getUserSession();
-    return await getFormsByUser(session.user.id);
+    if (!session?.session.activeOrganizationId) {
+        return [];
+    }
+
+    const competition = await db.query.competitions.findFirst({
+        where: eq(competitions.organizationId, session.session.activeOrganizationId),
+    });
+
+    if (!competition) return [];
+
+    return await getFormsByCompetition(competition.id);
 }
 
 export async function deleteFormAction(id: string) {
@@ -39,7 +52,7 @@ export async function saveFormAction(data: {
     let formId = data.id;
 
     if (!formId) {
-        const form = await createForm(session.user.id, {
+        const form = await createForm({
             name: data.name,
             description: data.description,
         });

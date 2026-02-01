@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { formFieldTypeEnum } from "../enums";
-import { users } from "./auth-schema";
+import { competitions } from "./competitions-schema";
 
 export const forms = pgTable("forms", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -13,9 +13,9 @@ export const forms = pgTable("forms", {
         .defaultNow()
         .$onUpdate(() => new Date())
         .notNull(),
-    userId: text("user_id")
+    competitionId: uuid("competition_id")
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        .references(() => competitions.id, { onDelete: "cascade" }),
 });
 
 export const formFields = pgTable("form_fields", {
@@ -32,9 +32,9 @@ export const formFields = pgTable("form_fields", {
 
 export const formsRelations = relations(forms, ({ many, one }) => ({
     fields: many(formFields),
-    user: one(users, {
-        fields: [forms.userId],
-        references: [users.id],
+    competition: one(competitions, {
+        fields: [forms.competitionId],
+        references: [competitions.id],
     }),
 }));
 

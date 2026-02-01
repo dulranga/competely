@@ -5,10 +5,12 @@ import { Card } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import Image from "next/image";
 import { User } from "lucide-react";
+import Link from "next/link";
 
 export type CompetitionRole = "Owner" | "Admin" | "Judge" | "Committee";
 
 interface MyCompetitionCardProps {
+    id: string;
     name: string;
     imageUrl: string;
     role: CompetitionRole;
@@ -26,27 +28,29 @@ const roleStyles: Record<CompetitionRole, string> = {
 };
 
 export function MyCompetitionCard({
+    id,
     name,
     imageUrl,
     role,
     ownerName,
     variant = "grid",
     className,
-    onClick
+    onClick,
 }: MyCompetitionCardProps) {
-
     if (variant === "list") {
         return (
             <Card
                 onClick={onClick}
                 className={cn(
-                    "w-full flex flex-row items-center justify-between p-4 rounded-xl border border-border/40 shadow-sm hover:shadow-md transition-all cursor-pointer bg-white group",
-                    className
+                    "relative w-full flex flex-row items-center justify-between p-4 rounded-xl border border-border/40 shadow-sm hover:shadow-md transition-all cursor-pointer bg-white group",
+                    className,
                 )}
             >
                 <div className="flex flex-col gap-1">
                     <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors">
-                        {name}
+                        <Link href={`/dashboard/competition?id=${id}`} className="after:absolute after:inset-0">
+                            {name}
+                        </Link>
                     </h3>
                     {role !== "Owner" && ownerName && (
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -56,7 +60,12 @@ export function MyCompetitionCard({
                     )}
                 </div>
 
-                <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", roleStyles[role])}>
+                <Badge
+                    className={cn(
+                        "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                        roleStyles[role],
+                    )}
+                >
                     {role}
                 </Badge>
             </Card>
@@ -68,8 +77,8 @@ export function MyCompetitionCard({
         <Card
             onClick={onClick}
             className={cn(
-                "w-full overflow-hidden rounded-xl border-0 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white group",
-                className
+                "relative w-full overflow-hidden rounded-xl border-0 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white group",
+                className,
             )}
         >
             <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
@@ -82,9 +91,16 @@ export function MyCompetitionCard({
             </div>
             <div className="p-4 flex items-center justify-between gap-2">
                 <h3 className="font-semibold text-base text-gray-900 truncate" title={name}>
-                    {name}
+                    <Link href={`/dashboard/competition?id=${id}`} className="after:absolute after:inset-0">
+                        {name}
+                    </Link>
                 </h3>
-                <Badge className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", roleStyles[role])}>
+                <Badge
+                    className={cn(
+                        "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                        roleStyles[role],
+                    )}
+                >
                     {role}
                 </Badge>
             </div>

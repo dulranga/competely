@@ -29,6 +29,27 @@
       "when": 1769923133666,
       "tag": "0003_added_orgs",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769935871086,
+      "tag": "0004_added_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1769939359382,
+      "tag": "0005_added_competition_categories_dummy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769943961639,
+      "tag": "0006_moved_forms_to_competition",
+      "breakpoints": true
     }
   ]
 }

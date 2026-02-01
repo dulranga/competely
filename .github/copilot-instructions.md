@@ -27,6 +27,7 @@ The university competition ecosystem is fragmented. Delegates struggle to find r
 - Follow the **Hexagonal Architecture** or **Clean Architecture** as reflected in the project structure (split between logic, data access, and UI).
 - Use **Biome** for linting and formatting instead of ESLint/Prettier.
 - Adhere to the defined **Tailwind CSS v4** color scheme and custom oklch variables.
+- **NEVER use hard-coded hex colors, RGB, or named colors (e.g., `#ffffff`, `white`, `red-500`) in UI components or styles. Always use CSS variables or Tailwind utility classes that reference the theme (e.g., `bg-primary`, `bg-background`, `bg-input-background`).**
 - Maintain **Access Control** using the system in `src/lib/access-control`.
 - Use **Zod** for schema validation in both the database and forms.
 
