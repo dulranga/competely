@@ -32,7 +32,7 @@ const FormCustomController: FC<FormCustomControllerProps> = ({
         >
             {label && (
                 <Label
-                    className={cn("block font-sans text-xs uppercase tracking-wider text-primary/80 font-semibold")}
+                    className={cn("block font-sans text-xs uppercase tracking-wider text-foreground font-semibold")}
                     htmlFor={field.name}
                 >
                     {label}
@@ -41,7 +41,7 @@ const FormCustomController: FC<FormCustomControllerProps> = ({
             <div>{children}</div>
             <p
                 className={cn(
-                    "text-muted-foreground font-sans text-[10px] uppercase tracking-tight whitespace-pre-wrap mt-1",
+                    "text-muted-foreground font-sans text-xs tracking-tight whitespace-pre-wrap mt-1",
                     fieldState.invalid && "text-destructive",
                 )}
             >

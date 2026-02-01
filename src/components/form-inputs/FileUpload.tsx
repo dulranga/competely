@@ -7,37 +7,37 @@ import { formatFileSize } from "~/lib/format-file-size";
 import { cn } from "~/lib/utils";
 import { Card, CardContent } from "../ui/card";
 
-export interface UploadedFileRecord {
+export interface UploadedFileRecord<T> {
     file: File;
     id: string;
     status: "uploading" | "success" | "error";
     progress: number;
-    response?: unknown;
+    response?: T;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
-interface FileUploadProps {
+interface FileUploadProps<T> {
     endpoint: string;
-    onChange?: (files: UploadedFileRecord[]) => void;
+    onChange?: (files: UploadedFileRecord<T>[]) => void;
     maxFiles?: number;
     acceptedFileTypes?: string[];
     maxFileSize?: number;
     supportedTypesHelpText?: ReactNode;
     className?: string;
     renderFileActions?: (
-        file: UploadedFileRecord,
-        updateFile: (patch: Partial<UploadedFileRecord>) => void,
+        file: UploadedFileRecord<T>,
+        updateFile: (patch: Partial<UploadedFileRecord<T>>) => void,
     ) => React.ReactNode;
     initialFiles?: Array<{
         file: File;
         id: string;
-        response?: unknown;
+        response?: T;
     }>;
 }
 
-export function FileUpload({
+export function FileUpload<T>({
     endpoint,
     onChange,
     maxFiles = 100,
@@ -47,8 +47,8 @@ export function FileUpload({
     supportedTypesHelpText = "Only .jpg, .png and .pdf files are supported",
     initialFiles = [],
     className,
-}: FileUploadProps) {
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFileRecord[]>(() =>
+}: FileUploadProps<T>) {
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFileRecord<T>[]>(() =>
         initialFiles.map((f) => ({
             ...f,
             status: "success" as const,
@@ -69,11 +69,11 @@ export function FileUpload({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(initialFiles)]);
 
-    const triggerOnChange = (files: UploadedFileRecord[]) => {
+    const triggerOnChange = (files: UploadedFileRecord<T>[]) => {
         onChange?.(files.filter((f) => f.status === "success"));
     };
 
-    const updateFile = (id: string, patch: Partial<UploadedFileRecord>) => {
+    const updateFile = (id: string, patch: Partial<UploadedFileRecord<T>>) => {
         setUploadedFiles((prev) => {
             const updated = prev.map((f) => (f.id === id ? { ...f, ...patch } : f));
             triggerOnChange(updated);
@@ -108,7 +108,7 @@ export function FileUpload({
         (acceptedFiles: File[]) => {
             const availableSlots = maxFiles - uploadedFiles.length;
             const filesToAdd = acceptedFiles.slice(0, availableSlots);
-            const newFiles: UploadedFileRecord[] = filesToAdd.map((file) => ({
+            const newFiles: UploadedFileRecord<T>[] = filesToAdd.map((file) => ({
                 file,
                 id: Math.random().toString(36).substring(2, 15),
                 status: "uploading" as const,
@@ -135,13 +135,13 @@ export function FileUpload({
         });
     };
 
-    const retryFile = (fileObj: UploadedFileRecord) => {
+    const retryFile = (fileObj: UploadedFileRecord<T>) => {
         uploadFile(fileObj.file, fileObj.id);
     };
 
     return (
         <Card className={cn("w-full rounded-2xl border-border/50 shadow-none", className)}>
-            <CardContent className="pt-6">
+            <CardContent className="">
                 <div>
                     <div
                         {...getRootProps()}
@@ -161,11 +161,11 @@ export function FileUpload({
                             <div className="text-xs text-muted-foreground">Max 50MB files allowed</div>
                         </div>
                     </div>
-                    <div className="text-xs text-muted-foreground/60 mb-6 italic">{supportedTypesHelpText}</div>
+                    <div className="text-xs text-muted-foreground/60 italic">{supportedTypesHelpText}</div>
                 </div>
 
                 {uploadedFiles.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-2 pt-2">
                         {uploadedFiles.map((fileObj) => {
                             const isError = fileObj.status === "error";
                             const isUploading = fileObj.status === "uploading";

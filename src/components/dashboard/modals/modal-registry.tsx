@@ -11,6 +11,7 @@ export const modalRegistry = {
     // viewChatDetails: dynamic(() => import("./modals/ViewChatDetails")),
     // inquiryDetails: dynamic(() => import("./modals/InquiryDetailsModal")),
     confirm: dynamic(() => import("./modals/ConfirmModal")),
+    createCompetition: dynamic(() => import("./modals/CreateCompetitionModal")),
 
     placeholder: (() => <DialogContent></DialogContent>) as FC<ModalComponentProps<Record<string, unknown>>>,
 } as const;

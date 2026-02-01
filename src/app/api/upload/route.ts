@@ -26,6 +26,7 @@ export const POST = withRateLimit(
         }
 
         const rawType = req.nextUrl.searchParams.get("type");
+
         const type = fileCategorySchema.parse(rawType ?? "uploads");
 
         if (!file || !file.name) {

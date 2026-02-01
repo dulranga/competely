@@ -22,7 +22,7 @@ export function DatePicker({ disabledRange, id, onChange, onBlur, value }: DateP
                     <Input
                         id={id}
                         className="pointer-events-none select-none"
-                        value={value ? value.toLocaleDateString("fr", { dateStyle: "medium" }) : "Select date"}
+                        value={value ? value.toLocaleDateString(undefined, { dateStyle: "medium" }) : "Select date"}
                     />
 
                     <ChevronDownIcon

@@ -12,4 +12,16 @@ export const formFieldTypeEnum = pgEnum("form_field_type", [
     "date",
 ]);
 
+export const competitionStatusEnum = pgEnum("competition_status", ["draft", "published", "archived"]);
+
+export const competitionCategoryEnum = pgEnum("competition_category", [
+    "tech",
+    "business",
+    "design",
+    "science",
+    "sports",
+    "arts",
+    "other",
+]);
+
 export const fileCategoryEnum = pgEnum("file_category", FILE_CATEGORY);
