@@ -1,5 +1,6 @@
 import { FC } from "react";
 import EditThumbnailCard from "~/components/dashboard/editor/EditThumbnailCard";
+import MainInformationSection from "~/components/dashboard/editor/MainInformationSection";
 
 const EditorPage: FC = () => {
     return (
@@ -13,6 +14,7 @@ const EditorPage: FC = () => {
 
                 <div className="grid gap-8">
                     <EditThumbnailCard />
+                    <MainInformationSection />
                 </div>
             </div>
         </div>

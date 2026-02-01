@@ -24,7 +24,13 @@ const ExtendedSchema = createCompetitionSchema.extend({
 
 type ExtendedSchemaType = zInfer<typeof ExtendedSchema>;
 
+import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
+import { useState } from "react";
+import { toast } from "sonner";
+
 const EditThumbnailCard: FC = () => {
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
     const form = useForm<ExtendedSchemaType>({
         resolver: zodResolver(ExtendedSchema),
         defaultValues: {
@@ -38,19 +44,33 @@ const EditThumbnailCard: FC = () => {
 
     const category = form.watch("category");
 
+    const onSave = () => {
+        // In a real app, you would submit to backend here
+        toast.success("Changes saved successfully!");
+    };
+
     return (
         <div className="rounded-3xl p-0 gap-0 overflow-hidden bg-background border shadow-sm">
+            <ConfirmSaveDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen} onConfirm={onSave} />
             <div className="p-8 pb-4">
-                <div className="flex flex-row items-center gap-5 text-left space-y-0">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary/10 text-primary shrink-0">
-                        <Trophy size={28} />
+                <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-row items-center gap-5 text-left space-y-0">
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary/10 text-primary shrink-0">
+                            <Trophy size={28} />
+                        </div>
+                        <div className="space-y-1 text-foreground">
+                            <h2 className="text-2xl font-bold ">Edit Competition Thumbnail</h2>
+                            <p className="text-sm leading-relaxed font-medium text-muted-foreground">
+                                This is the public card delegates will see in the discovery feed. Think of it like your competition&apos;s Instagram post.
+                            </p>
+                        </div>
                     </div>
-                    <div className="space-y-1 text-foreground">
-                        <h2 className="text-2xl font-bold ">Edit Competition Thumbnail</h2>
-                        <p className="text-sm leading-relaxed font-medium text-muted-foreground">
-                            This is the public card delegates will see in the discovery feed. Think of it like your competition&apos;s Instagram post.
-                        </p>
-                    </div>
+                    <Button
+                        onClick={() => setIsConfirmOpen(true)}
+                        className="h-10 rounded-xl font-bold bg-primary text-primary-foreground"
+                    >
+                        Save Changes
+                    </Button>
                 </div>
             </div>
 
@@ -160,13 +180,7 @@ const EditThumbnailCard: FC = () => {
                 </Form>
             </div>
 
-            <div className="p-8 pt-4 bg-input-background border-t border-border/40 grid grid-cols-2 gap-3 sm:justify-end">
-                <Button
-                    className="h-11 rounded-xl text-sm uppercase tracking-widest font-black bg-primary text-primary-foreground hover:bg-primary/90 ml-auto"
-                >
-                    Save Changes
-                </Button>
-            </div>
+
         </div>
     );
 };
