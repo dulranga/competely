@@ -1,6 +1,7 @@
 import { FC } from "react";
 import EditThumbnailCard from "~/components/dashboard/editor/EditThumbnailCard";
 import MainInformationSection from "~/components/dashboard/editor/MainInformationSection";
+import { ContactInformationSection } from "~/components/dashboard/editor/contactsection/ContactInformationSection";
 
 const EditorPage: FC = () => {
     return (
@@ -15,6 +16,7 @@ const EditorPage: FC = () => {
                 <div className="grid gap-8">
                     <EditThumbnailCard />
                     <MainInformationSection />
+                    <ContactInformationSection />
                 </div>
             </div>
         </div>
