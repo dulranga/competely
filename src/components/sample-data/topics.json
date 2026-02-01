@@ -1,0 +1,132 @@
+[
+    {
+        "title": "AI & ML",
+        "description": [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Computer Vision"
+        ],
+        "icon": "Brain",
+        "colorClass": "bg-gradient-to-br from-[#e9a5a5] to-[#e08e8e]"
+    },
+    {
+        "title": "Software Development",
+        "description": [
+            "Web Development",
+            "Mobile App Development",
+            "SaaS"
+        ],
+        "icon": "Code2",
+        "colorClass": "bg-gradient-to-br from-[#a79de9] to-[#9286e0]"
+    },
+    {
+        "title": "Immersive & Interactive Media",
+        "description": [
+            "Game Development",
+            "3D Simulation & Design",
+            "VR & AR"
+        ],
+        "icon": "Gamepad2",
+        "colorClass": "bg-gradient-to-br from-[#7bbbd6] to-[#60a8c9]"
+    },
+    {
+        "title": "Data Science",
+        "description": [
+            "Data Analysis",
+            "Data Visualization",
+            "Big Data Systems"
+        ],
+        "icon": "LineChart",
+        "colorClass": "bg-gradient-to-br from-[#eb6ea5] to-[#e64d8e]"
+    },
+    {
+        "title": "Engineering",
+        "description": [
+            "Robotics",
+            "Mechatronics",
+            "Automation Systems"
+        ],
+        "icon": "Wrench",
+        "colorClass": "bg-gradient-to-br from-[#8ab4d5] to-[#6fa1ca]"
+    },
+    {
+        "title": "IOT",
+        "description": [
+            "Electronics",
+            "Internet of Things",
+            "Industry 4.0 Systems"
+        ],
+        "icon": "MonitorSmartphone",
+        "colorClass": "bg-gradient-to-br from-[#deb986] to-[#d4a86e]"
+    },
+    {
+        "title": "Entrepreneurship",
+        "description": [
+            "Hackathon & Ideathon",
+            "Business Model Design",
+            "Case Study"
+        ],
+        "icon": "LineChart",
+        "colorClass": "bg-gradient-to-br from-[#b3ca87] to-[#a2bd70]"
+    },
+    {
+        "title": "Design & Creative Media",
+        "description": [
+            "Art & Graphic Design",
+            "Photography",
+            "Videography"
+        ],
+        "icon": "ShapesIcon",
+        "colorClass": "bg-gradient-to-br from-[#c4c96b] to-[#b6bc57]"
+    },
+    {
+        "title": "Music & Performance Arts",
+        "description": [
+            "Vocal & Instrumental",
+            "Dance & Movement Arts",
+            "Theatre"
+        ],
+        "icon": "Music2",
+        "colorClass": "bg-gradient-to-br from-[#b87661] to-[#a86552]"
+    },
+    {
+        "title": "Cybersecurity",
+        "description": [
+            "Ethical Hacking",
+            "Cloud Computing",
+            "Dev Ops"
+        ],
+        "icon": "ShieldCheck",
+        "colorClass": "bg-gradient-to-br from-[#4d56e6] to-[#3a44d8]"
+    },
+    {
+        "title": "Communication",
+        "description": [
+            "Idea Pitching",
+            "Public Speaking",
+            "Debate"
+        ],
+        "icon": "Mic2",
+        "colorClass": "bg-gradient-to-br from-[#a6a0e6] to-[#9089df]"
+    },
+    {
+        "title": "Social Impact",
+        "description": [
+            "SDG Challenges",
+            "Climate Innovation",
+            "Community Dev"
+        ],
+        "icon": "Globe2",
+        "colorClass": "bg-gradient-to-br from-[#8ecc97] to-[#78c082]"
+    },
+    {
+        "title": "Media & Academia",
+        "description": [
+            "Research",
+            "Creative Writing",
+            "Journalism"
+        ],
+        "icon": "Feather",
+        "colorClass": "bg-gradient-to-br from-[#ff9b85] to-[#ff8469]"
+    }
+]

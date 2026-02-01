@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { auth } from "~/lib/auth";
-import { DiscoverContent } from "~/components/discover-content";
+import { DiscoverContent } from "~/components/discovery/DiscoverContent";
 
 export default async function DiscoverPage() {
     const headersList = await headers();

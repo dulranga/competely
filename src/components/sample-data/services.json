@@ -1,0 +1,38 @@
+[
+    {
+        "icon": "Search",
+        "title": "Find Competitions",
+        "description": "Discover your global stage.",
+        "features": [
+            "Curated Opportunities: (TBA)",
+            "Global Reach: (TBA)",
+            "Smart Filtering: (TBA)"
+        ],
+        "variant": "primary",
+        "delay": 0
+    },
+    {
+        "icon": "Rocket",
+        "title": "Organize Competitions",
+        "description": "Launch with impact.",
+        "features": [
+            "Intutive Setup: (TBA)",
+            "Customizable Controls: (TBA)",
+            "Seamless Promotion: (TBA)"
+        ],
+        "variant": "secondary",
+        "delay": 150
+    },
+    {
+        "icon": "BarChart",
+        "title": "Manage Competitions",
+        "description": "Complete control simplified.",
+        "features": [
+            "Centralized Dashboard: (TBA)",
+            "Automated Workflows: (TBA)",
+            "Efficient Judging: (TBA)"
+        ],
+        "variant": "primary",
+        "delay": 300
+    }
+]

@@ -1,7 +1,7 @@
 "use client";
 import { SVGProps } from "react";
 import { authClient } from "~/lib/auth-client";
-import { Button } from "./ui/button";
+import { Button } from "~/components/ui/button";
 
 type SocialSigninProps = {
     callbackURL?: string | null;
