@@ -7,11 +7,11 @@ import { FC, Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { FacebookLoginButton, GoogleLoginButton } from "~/components/AuthButtons";
+import { FacebookLoginButton, GoogleLoginButton } from "~/components/common/AuthButtons";
 import { CheckboxInput } from "~/components/form-inputs/Checkbox";
 import PasswordInput from "~/components/form-inputs/PasswordInput";
 import Form from "~/components/form/Form";
-import { FullPageLoader } from "~/components/full-page-loader";
+import { FullPageLoader } from "~/components/common/FullPageLoader";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -28,7 +28,7 @@ const registerSchema = z.object({
     is_agreed: z.boolean(),
 });
 
-const Register: FC<PageProps> = ({}) => {
+const Register: FC<PageProps> = ({ }) => {
     const [disableButton, setDisableButton] = useState(false);
     const searchParams = useSearchParams();
     const form = useForm({
@@ -144,9 +144,8 @@ const Register: FC<PageProps> = ({}) => {
                             <div className="text-center text-sm">
                                 Already have an account?{" "}
                                 <Link
-                                    href={`/login${
-                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                    }`}
+                                    href={`/login${callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                        }`}
                                     className="underline underline-offset-4"
                                 >
                                     Log in here

@@ -3,45 +3,15 @@
 import { useEffect, useState } from "react";
 import { Search, Rocket, BarChart } from "lucide-react";
 import { ServiceCard } from "./ServiceCard";
+import servicesData from "~/components/sample-data/services.json";
 
-const services = [
-    {
-        icon: Search,
-        title: "Find Competitions",
-        description: "Discover your global stage.",
-        features: [
-            "Curated Opportunities: (TBA)",
-            "Global Reach: (TBA)",
-            "Smart Filtering: (TBA)"
-        ],
-        variant: "primary" as const,
-        delay: 0
-    },
-    {
-        icon: Rocket,
-        title: "Organize Competitions",
-        description: "Launch with impact.",
-        features: [
-            "Intutive Setup: (TBA)",
-            "Customizable Controls: (TBA)",
-            "Seamless Promotion: (TBA)"
-        ],
-        variant: "secondary" as const,
-        delay: 150
-    },
-    {
-        icon: BarChart,
-        title: "Manage Competitions",
-        description: "Complete control simplified.",
-        features: [
-            "Centralized Dashboard: (TBA)",
-            "Automated Workflows: (TBA)",
-            "Efficient Judging: (TBA)"
-        ],
-        variant: "primary" as const,
-        delay: 300
-    }
-];
+const iconMap: Record<string, any> = { Search, Rocket, BarChart };
+
+const services = servicesData.map(service => ({
+    ...service,
+    icon: iconMap[service.icon],
+    variant: service.variant as "primary" | "secondary"
+}));
 
 export function Services() {
     const [isVisible, setIsVisible] = useState(false);

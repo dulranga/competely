@@ -1,6 +1,6 @@
 "use client";
 
-import { CompetitionCard } from "~/components/public/CompetitionCard";
+import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { Button } from "~/components/ui/button";

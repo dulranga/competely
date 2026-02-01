@@ -1,5 +1,5 @@
 import { useFormContext, useWatch } from "react-hook-form";
-import { JSONDebug } from "../JSONDebug";
+import { JSONDebug } from "~/components/common/JSONDebug";
 
 const FormDebug = () => {
     const form = useFormContext();

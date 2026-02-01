@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CompetitionCard, CompetitionStatus } from "~/components/public/CompetitionCard";
-import { FilterSidebar } from "~/components/public/FilterSidebar";
+import { CompetitionCard, CompetitionStatus } from "~/components/discovery/CompetitionCard";
+import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { Button } from "~/components/ui/button";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";

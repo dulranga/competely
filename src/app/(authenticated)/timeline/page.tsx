@@ -2,7 +2,7 @@
 
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { VerticalTimeline } from "~/components/home/VerticalTimeline";
+import { VerticalTimeline } from "~/components/timeline/VerticalTimeline";
 
 export default function TimelinePage() {
     return (

@@ -16,72 +16,13 @@ interface TimelineEvent {
     status: "completed" | "active" | "upcoming";
 }
 
-const events: TimelineEvent[] = [
-    {
-        id: "1",
-        title: "Competition 1",
-        description: "Registration - Participants must complete this step.",
-        date: "NOV 03, 2025",
-        type: "MAJOR",
-        status: "active",
-    },
-    {
-        id: "2",
-        title: "Competition 1",
-        description: "Workshop - Join us for an introductory workshop.",
-        date: "NOV 04, 2025",
-        type: "MILESTONE",
-        status: "active",
-    },
-    {
-        id: "3",
-        title: "Competition 2",
-        description: "Registration - Sign up for the second competition.",
-        date: "NOV 04, 2025",
-        type: "MAJOR",
-        status: "active",
-    },
-    {
-        id: "4",
-        title: "Competition 3",
-        description: "Semi-Finals - The heat is on!",
-        date: "NOV 20, 2025",
-        type: "CRITICAL",
-        status: "active",
-    },
-    {
-        id: "5",
-        title: "Competition 1",
-        description: "Round 1 - First round of challenges.",
-        date: "NOV 30, 2025",
-        type: "MILESTONE",
-        status: "upcoming",
-    },
-    {
-        id: "6",
-        title: "Competition 2",
-        description: "Workshop - Advanced topics workshop.",
-        date: "DEC 25, 2025",
-        type: "MILESTONE",
-        status: "upcoming",
-    },
-    {
-        id: "7",
-        title: "Competition 1",
-        description: "Finals - The grand conclusion.",
-        date: "JAN 03, 2026",
-        type: "MAJOR",
-        status: "upcoming",
-    },
-    {
-        id: "8",
-        title: "Competition 1",
-        description: "Finals - Awarding ceremony.",
-        date: "JAN 08, 2026",
-        type: "MAJOR",
-        status: "upcoming",
-    },
-];
+import timelineEvents from "~/components/sample-data/timeline.json";
+
+const events: TimelineEvent[] = timelineEvents.map(event => ({
+    ...event,
+    type: event.type as "MAJOR" | "MILESTONE" | "CRITICAL",
+    status: event.status as "completed" | "active" | "upcoming"
+}));
 
 const typeStyles: Record<string, string> = {
     MAJOR: "bg-gray-100 text-gray-600",

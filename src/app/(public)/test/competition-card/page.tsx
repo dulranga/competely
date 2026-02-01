@@ -1,4 +1,4 @@
-import { CompetitionCard } from "~/components/public/CompetitionCard";
+import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 
 export default function CompetitionCardTestPage() {
     return (

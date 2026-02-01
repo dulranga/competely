@@ -1,9 +1,9 @@
 "use client";
 
-import { CompetitionCard } from "~/components/public/CompetitionCard";
+import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { Timeline } from "~/components/home/Timeline";
+import { Timeline } from "~/components/timeline/Timeline";
 import { Button } from "~/components/ui/button";
 
 export default function HomePage() {
