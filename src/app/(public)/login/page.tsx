@@ -24,10 +24,9 @@ type PageProps = object;
 const loginSchema = z.object({
     email: z.email("Enter a valid email address"),
     password: passwordSchema,
-    is_agreed: z.boolean(),
 });
 
-const Login: FC<PageProps> = ({}) => {
+const Login: FC<PageProps> = ({ }) => {
     const [showUnverifiedAlert, setShowUnverifiedAlert] = useState(false);
     const [disableSendVerification, setDisableSendVerification] = useState(false);
     const router = useRouter();
@@ -171,9 +170,8 @@ const Login: FC<PageProps> = ({}) => {
                             <div className="text-center text-sm">
                                 Don&apos;t have an account?{" "}
                                 <Link
-                                    href={`/register${
-                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                    }`}
+                                    href={`/register${callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                        }`}
                                     className="underline underline-offset-4"
                                 >
                                     Sign up
