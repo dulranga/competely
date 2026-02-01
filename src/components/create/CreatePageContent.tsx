@@ -105,6 +105,7 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                             {filteredCompetitions.map((comp) => (
                                 <MyCompetitionCard
                                     key={comp.id}
+                                    id={comp.id}
                                     name={comp.name}
                                     role={comp.role as CompetitionRole}
                                     imageUrl={comp.bannerId ? getFileUrlById(comp.bannerId) : getRandomAvatar(comp.id)}
