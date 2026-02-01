@@ -97,11 +97,35 @@ export async function rateLimit(options: RateLimitOptions) {
 }
 
 /**
- * Higher order function to wrap server actions with rate limiting.
+ * A higher-order function (HOC) that wraps a server action with rate limiting logic.
  *
- * @param action The server action to wrap
- * @param options Rate limit options
- * @returns Wrapped server action
+ * This function is designed to be used with Next.js Server Actions. It checks the rate limit
+ * based on the user's ID (if authenticated) or IP address before executing the provided action.
+ *
+ * @param action - The asynchronous server action function to be protected.
+ * @param options - Configuration for the rate limit.
+ * @param options.requests - Maximum number of requests allowed within the time window.
+ * @param options.perSeconds - The duration of the time window in seconds.
+ * @param options.keyPrefix - A unique prefix for the rate limit key (e.g., "login", "register").
+ *
+ * @returns A new function that, when called, first checks the rate limit.
+ * If the limit is exceeded, it returns an error object: `{ success: false, message: string }`.
+ * Otherwise, it executes the original action and returns its result.
+ *
+ * @example
+ * ```ts
+ * export const signUpAction = withRateLimit(
+ *     async (data: SignUpSchema) => {
+ *         // Logic to create user...
+ *         return { success: true };
+ *     },
+ *     {
+ *         requests: 5,
+ *         perSeconds: 60,
+ *         keyPrefix: "sign-up"
+ *     }
+ * );
+ * ```
  */
 export function withRateLimit<T extends (...args: any[]) => Promise<any>>(action: T, options: RateLimitOptions) {
     return async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
