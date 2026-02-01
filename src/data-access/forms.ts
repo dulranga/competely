@@ -1,12 +1,14 @@
 import "server-only";
 
 import { eq, asc } from "drizzle-orm";
+import { headers } from "next/headers";
 import db from "~/db/client";
-import { forms, formFields } from "~/db/schema";
+import { forms, formFields, competitions } from "~/db/schema";
+import { auth } from "~/lib/auth";
 
-export async function getFormsByUser(userId: string) {
+export async function getFormsByCompetition(competitionId: string) {
     return await db.query.forms.findMany({
-        where: eq(forms.userId, userId),
+        where: eq(forms.competitionId, competitionId),
         with: {
             fields: {
                 orderBy: [asc(formFields.order)],
@@ -26,11 +28,25 @@ export async function getFormById(id: string) {
     });
 }
 
-export async function createForm(userId: string, data: { name: string; description?: string }) {
+export async function createForm(data: { name: string; description?: string }) {
+    const session = await auth.api.getSession({ headers: await headers() });
+
+    if (!session?.session.activeOrganizationId) {
+        throw new Error("No active organization selected. Please select a competition first.");
+    }
+
+    const competition = await db.query.competitions.findFirst({
+        where: eq(competitions.organizationId, session.session.activeOrganizationId),
+    });
+
+    if (!competition) {
+        throw new Error("Competition not found for the active organization.");
+    }
+
     const [form] = await db
         .insert(forms)
         .values({
-            userId,
+            competitionId: competition.id,
             name: data.name,
             description: data.description,
         })

@@ -2,11 +2,25 @@ import { FC } from "react";
 import { Plus, FileText, Calendar, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { getUserSession } from "~/data-access/getCurrentUser";
-import { getFormsByUser } from "~/data-access/forms";
+import { getFormsByCompetition } from "~/data-access/forms";
+import db from "~/db/client";
+import { competitions } from "~/db/schema";
+import { eq } from "drizzle-orm";
 
 const FormsListPage: FC = async () => {
     const session = await getUserSession();
-    const forms = await getFormsByUser(session.user.id);
+    
+    let forms: any[] = [];
+    
+    if (session.session.activeOrganizationId) {
+        const competition = await db.query.competitions.findFirst({
+            where: eq(competitions.organizationId, session.session.activeOrganizationId),
+        });
+        
+        if (competition) {
+            forms = await getFormsByCompetition(competition.id);
+        }
+    }
 
     return (
         <div className="space-y-12">
