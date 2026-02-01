@@ -89,83 +89,54 @@ const events: TimelineEvent[] = [
 
 export function Timeline() {
     return (
-        <div className="w-full space-y-8">
-            <h2 className="text-3xl font-bold text-center text-[#1a1b25]">Timeline</h2>
-
-            <div className="relative w-full overflow-x-auto pb-12 pt-4 hide-scrollbar">
-                {/* 
-                   The line connecting the dots needs to be positioned absolutely relative to the container.
-                   However, since the items scroll, the line needs to be inside the scroll container.
-                   We'll make a flex container that holds everything.
-                 */}
-                <div className="flex px-4 md:px-8 min-w-max pb-8 relative">
-                    {/* Horizontal Line behind dots */}
-                    <div className="absolute top-[210px] left-0 w-full h-1 bg-[#2d2d2d] z-0" />
-
-                    {/* 
-                            We need to override the active portion of the line.
-                            Since we have a mix, it's safer to just let the line be black 
-                            and maybe color segments if we want perfection. 
-                            For now, strict horizontal black/green line is tricky with flex spacing.
-                            Simple approach: Line is gray/black, and we color the 'active' line segments if needed.
-                            Actually, viewing the screenshot: The line is Green for active parts, Black for others.
-                            I'll simulate this with a gradient or just a base line.
-                            Let's strive for the screenshot: Green line until the last green dot.
-                         */}
-                    <div className="absolute top-[210px] left-0 w-[550px] h-1 bg-[#4ade80] z-0" />
-
+        <div className="w-full">
+            <div className="relative w-full overflow-x-auto pb-12 pt-8 hide-scrollbar">
+                <div className="flex px-4 md:px-8 min-w-max pb-8 relative pt-4">
+                    {/* Horizontal Line */}
+                    <div className="absolute top-[180px] left-0 w-full h-1 bg-gray-200 z-0" />
+                    {/* Active Line Segment (Approximate for demo) */}
+                    <div className="absolute top-[180px] left-0 w-[600px] h-1 bg-green-500 z-0" />
 
                     {events.map((event, index) => (
-                        <div key={event.id} className="relative flex flex-col items-center mr-8 last:mr-0 group">
-                            {/* 
-                                    Card Shape. 
-                                    Using clip-path or borders to make the point at bottom.
-                                    Easier implementation: A rectangular div with a rotated square at bottom, masked or z-indexed.
-                                */}
+                        <div key={event.id} className="relative flex flex-col items-center mr-12 last:mr-0 group w-48">
+
+                            {/* Content Card */}
                             <div className={cn(
-                                "relative w-40 h-44 border-[3px] flex flex-col items-center justify-center text-center p-2 z-10 bg-white transition-transform hover:-translate-y-1 duration-300",
-                                event.status === "active" ? "border-[#4ade80]" : "border-[#1a1b25]"
+                                "relative w-full bg-white rounded-2xl p-4 border border-border/40 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 mb-8 text-center group-hover:border-primary/20",
+                                event.status === "active" ? "ring-2 ring-green-500/20" : ""
                             )}>
-                                <div className="space-y-1">
-                                    <h3 className={cn(
-                                        "font-bold text-sm leading-tight",
-                                        event.status === "active" ? "text-[#4ade80]" : "text-[#1a1b25]"
-                                    )}>
-                                        {event.title}
-                                        <br />
-                                        {event.subtitle}
-                                    </h3>
+                                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-b border-r border-border/40" /> {/* Arrow */}
 
-                                    <div className={cn(
-                                        "flex flex-col items-center",
-                                        event.status === "active" ? "text-[#4ade80]" : "text-[#1a1b25]"
-                                    )}>
-                                        <span className="text-xs font-bold tracking-widest">{event.month}</span>
-                                        <span className="text-4xl font-black">{event.day}</span>
-                                    </div>
-
-                                    <div className={cn(
-                                        "text-sm font-bold pt-1",
-                                        event.status === "active" ? "text-[#4ade80]" : "text-[#1a1b25]"
-                                    )}>
-                                        {event.time}
-                                    </div>
-                                </div>
-
-                                {/* The Triangle Point at Bottom */}
                                 <div className={cn(
-                                    "absolute -bottom-[17px] left-1/2 -translate-x-1/2 w-8 h-8 bg-white border-b-[3px] border-r-[3px] rotate-45 z-10",
-                                    event.status === "active" ? "border-[#4ade80]" : "border-[#1a1b25]"
-                                )} />
-                                {/* Cover top border of triangle to merge with box */}
-                                {/* Actually easier to just have the box be white and sit on top? */}
+                                    "text-xs font-bold tracking-widest uppercase mb-1",
+                                    event.status === "active" ? "text-green-600" : "text-muted-foreground"
+                                )}>
+                                    {event.month} {event.day}
+                                </div>
+                                <h3 className="font-bold text-gray-900 leading-tight mb-1">
+                                    {event.title}
+                                </h3>
+                                <p className="text-xs text-muted-foreground font-medium">
+                                    {event.subtitle}
+                                </p>
+                                <div className="mt-3 px-2 py-1 bg-gray-50 rounded-lg text-xs font-bold text-gray-600 inline-block">
+                                    {event.time}
+                                </div>
                             </div>
 
-                            {/* Connection Dot */}
+                            {/* Dot on Line */}
                             <div className={cn(
-                                "mt-8 w-5 h-5 rounded-full z-10 border-[3px] bg-white",
-                                event.status === "active" ? "border-[#4ade80] bg-[#4ade80]" : "border-[#1a1b25] bg-[#1a1b25]"
+                                "z-10 w-6 h-6 rounded-full border-4 bg-white transition-all duration-300",
+                                event.status === "active" ? "border-green-500 scale-125" : "border-gray-300 group-hover:border-primary"
                             )} />
+
+                            {/* Status Label below line? */}
+                            <div className={cn(
+                                "mt-4 text-[10px] font-bold tracking-widest uppercase transition-colors",
+                                event.status === "active" ? "text-green-600" : "text-gray-400"
+                            )}>
+                                {event.status === "active" ? "Active" : "Upcoming"}
+                            </div>
                         </div>
                     ))}
                 </div>

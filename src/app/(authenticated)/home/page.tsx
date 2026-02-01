@@ -4,6 +4,7 @@ import { CompetitionCard } from "~/components/public/CompetitionCard";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { Timeline } from "~/components/home/Timeline";
+import { Button } from "~/components/ui/button";
 
 export default function HomePage() {
     return (
@@ -13,7 +14,17 @@ export default function HomePage() {
             <div className="flex-1 pb-20 space-y-16 pt-10">
 
                 {/* 1. Timeline Section */}
-                <section>
+                <section className="space-y-6">
+                    <div className="flex items-center justify-between max-w-[1500px] mx-auto px-4 md:px-8">
+                        <h2 className="text-3xl font-bold text-[#1a1b25]">Timeline</h2>
+                        <Button
+                            variant="outline"
+                            className="rounded-full border-2 border-[#1a1b25] text-[#1a1b25] hover:bg-[#1a1b25] hover:text-white font-bold transition-all"
+                            asChild
+                        >
+                            <a href="/timeline">View Full Timeline</a>
+                        </Button>
+                    </div>
                     <Timeline />
                 </section>
 
