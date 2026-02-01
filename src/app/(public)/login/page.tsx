@@ -4,14 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FC, Suspense, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { FacebookLoginButton, GoogleLoginButton } from "~/components/AuthButtons";
-import { FullPageLoader } from "~/components/full-page-loader";
-import { CheckboxInput } from "~/components/form-inputs/Checkbox";
 import PasswordInput from "~/components/form-inputs/PasswordInput";
 import Form from "~/components/form/Form";
+import { FullPageLoader } from "~/components/full-page-loader";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
@@ -24,7 +23,6 @@ type PageProps = object;
 const loginSchema = z.object({
     email: z.email("Enter a valid email address"),
     password: passwordSchema,
-    is_agreed: z.boolean(),
 });
 
 const Login: FC<PageProps> = ({}) => {

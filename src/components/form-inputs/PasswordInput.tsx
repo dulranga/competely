@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { Input, InputProps } from "../ui/input";
-import { Button } from "../ui/button";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useToggle } from "~/hooks/use-toggle";
+import { Button } from "../ui/button";
+import { Input, InputProps } from "../ui/input";
 
 const PasswordInput: FC<InputProps> = (props) => {
     const [showPassword, togglePassword] = useToggle();
