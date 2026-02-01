@@ -32,16 +32,15 @@ export function MyCompetitionCard({
     ownerName,
     variant = "grid",
     className,
-    onClick
+    onClick,
 }: MyCompetitionCardProps) {
-
     if (variant === "list") {
         return (
             <Card
                 onClick={onClick}
                 className={cn(
                     "w-full flex flex-row items-center justify-between p-4 rounded-xl border border-border/40 shadow-sm hover:shadow-md transition-all cursor-pointer bg-white group",
-                    className
+                    className,
                 )}
             >
                 <div className="flex flex-col gap-1">
@@ -56,7 +55,12 @@ export function MyCompetitionCard({
                     )}
                 </div>
 
-                <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", roleStyles[role])}>
+                <Badge
+                    className={cn(
+                        "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                        roleStyles[role],
+                    )}
+                >
                     {role}
                 </Badge>
             </Card>
@@ -69,7 +73,7 @@ export function MyCompetitionCard({
             onClick={onClick}
             className={cn(
                 "w-full overflow-hidden rounded-xl border-0 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white group",
-                className
+                className,
             )}
         >
             <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
@@ -84,7 +88,12 @@ export function MyCompetitionCard({
                 <h3 className="font-semibold text-base text-gray-900 truncate" title={name}>
                     {name}
                 </h3>
-                <Badge className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", roleStyles[role])}>
+                <Badge
+                    className={cn(
+                        "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                        roleStyles[role],
+                    )}
+                >
                     {role}
                 </Badge>
             </div>

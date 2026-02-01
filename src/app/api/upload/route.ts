@@ -10,7 +10,9 @@ import { toNodeFile } from "~/lib/toNodeFile";
 const specialAccessCategories: {
     category: FileCategory;
     canAccess: (fileId: string, userId: string) => boolean | Promise<boolean>;
-}[] = [{ category: "profile_pic", canAccess: () => true }];
+}[] = [];
+
+const publicAccessCategories: FileCategory[] = ["competition_banner", "profile_pic"];
 
 export const POST = withRateLimit(
     async function (req: NextRequest) {
@@ -62,6 +64,10 @@ export async function GET(req: NextRequest) {
 
         const { file, authorId, category } = await getFile(fileId);
 
+        if (publicAccessCategories.includes(category)) {
+            return new NextResponse(new Uint8Array(file));
+        }
+
         const user = await getUser();
 
         const inSpecialAccess = specialAccessCategories.find((c) => c.category === category);
@@ -88,7 +94,9 @@ export async function GET(req: NextRequest) {
         }
 
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    } catch {
+    } catch (e) {
+        console.log("here", e);
+
         return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 }

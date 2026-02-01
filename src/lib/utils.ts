@@ -16,15 +16,19 @@ export function slugify(text: string) {
         .replace(/--+/g, "-"); // Replace multiple - with single -
 }
 
+export function getFileUrlById(file_id: string) {
+    return `/api/upload?file_id=${file_id}`;
+}
+
 export function mergeRefs<T = any>(
-    ...refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>
+    ...refs: Array<React.RefObject<T> | React.Ref<T> | undefined | null>
 ): React.RefCallback<T> {
     return (value) => {
         refs.forEach((ref) => {
             if (typeof ref === "function") {
                 ref(value);
             } else if (ref != null) {
-                (ref as React.MutableRefObject<T | null>).current = value;
+                (ref as React.RefObject<T | null>).current = value;
             }
         });
     };
