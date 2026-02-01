@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ModalProvider } from "~/components/dashboard/modals/modal-provider";
 import { auth } from "~/lib/auth";
 import getCurrentPath from "~/lib/getCurrentPathServer";
 
@@ -18,5 +19,5 @@ export default async function AuthLayout({
         redirect(`/login?callbackURL=${encodeURIComponent(pathname)}`);
     }
 
-    return <>{children}</>;
+    return <ModalProvider>{children}</ModalProvider>;
 }
