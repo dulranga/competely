@@ -4,7 +4,7 @@ import "server-only";
 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin } from "better-auth/plugins";
+import { admin, organization } from "better-auth/plugins";
 import db from "~/db/client";
 import * as schema from "~/db/schema";
 // import * as dbViews from "~/db/views";
@@ -12,6 +12,8 @@ import * as schema from "~/db/schema";
 import { accessControl, roles } from "./access-control/ac-system";
 import logger from "./logger";
 import { sendEmail } from "./email";
+import { getAbsoluteUrl } from "./getAbsoluteUrl";
+import { orgAccessControl, orgRoles } from "./organization-access-control/org-ac-system";
 
 // better auth
 export const auth = betterAuth({
@@ -95,15 +97,31 @@ export const auth = betterAuth({
     },
 
     advanced: {
-        cookiePrefix: "ape-x-obs",
+        cookiePrefix: "completely",
     },
-
-    // trustedOrigins: ["https://*.obspower.fr", "https://obspower.fr", "http://localhost:3010"],
 
     plugins: [
         admin({
             ac: accessControl,
             roles: roles,
+        }),
+        organization({
+            ac: orgAccessControl,
+            roles: orgRoles,
+            async sendInvitationEmail(data) {
+                const inviteLink = getAbsoluteUrl(`/accept-invitation/${data.id}`);
+
+                sendEmail({
+                    emailAddress: data.email,
+                    subject: `You've been invited to join ${data.organization.name}`,
+                    // template: OrganizationInvitation,
+                    data: {
+                        inviterName: data.inviter.user.name,
+                        organizationName: data.organization.name,
+                        inviteLink,
+                    },
+                });
+            },
         }),
     ],
 });

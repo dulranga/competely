@@ -1,6 +1,7 @@
-import { adminClient } from "better-auth/client/plugins";
+import { adminClient, organizationClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { accessControl, roles } from "./access-control/ac-system";
+import { orgAccessControl, orgRoles } from "./organization-access-control/org-ac-system";
 
 export const authClient = createAuthClient({
     /** The base URL of the server (optional if you're using the same domain) */
@@ -9,6 +10,10 @@ export const authClient = createAuthClient({
         adminClient({
             ac: accessControl,
             roles: roles,
+        }),
+        organizationClient({
+            ac: orgAccessControl,
+            roles: orgRoles,
         }),
     ],
 });

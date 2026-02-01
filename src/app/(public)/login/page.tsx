@@ -40,7 +40,6 @@ const Login: FC<PageProps> = ({}) => {
         defaultValues: {
             email: searchParams.get("email") || "",
             password: "",
-            is_agreed: false,
         },
     });
 
@@ -70,8 +69,6 @@ const Login: FC<PageProps> = ({}) => {
         }
 
         const d = parsed.data;
-
-        if (!d.is_agreed) return toast(`Please accept our Terms of Use and Privacy Policy`);
 
         const res = await authClient.signIn.email(
             {
@@ -157,23 +154,6 @@ const Login: FC<PageProps> = ({}) => {
                                         Forgot password?
                                     </Link>
                                 </div>
-
-                                <Controller
-                                    name="is_agreed"
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <CheckboxInput
-                                            field={field}
-                                            label={
-                                                <div className="text-muted-foreground *:[a]:hover:text-primary text-xs *:[a]:underline *:[a]:underline-offset-4">
-                                                    By clicking Continue, you agree to our{" "}
-                                                    <Link href="/terms">Terms of Use</Link> and our{" "}
-                                                    <Link href="/privacy-policy">Privacy Policy</Link>.
-                                                </div>
-                                            }
-                                        />
-                                    )}
-                                />
 
                                 <Button size={"lg"} type="submit" className="w-full">
                                     Log in
