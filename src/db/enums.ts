@@ -9,12 +9,8 @@ export const formFieldTypeEnum = pgEnum("form_field_type", [
     "select",
     "radio",
     "file",
-    "date",
+    "datetime",
 ]);
-// --- Consider ---
-// Add time field type
-// Add datetime field type
-// @Dulranga
 
 
 export const competitionStatusEnum = pgEnum("competition_status", [
