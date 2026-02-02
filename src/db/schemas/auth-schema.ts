@@ -60,6 +60,7 @@ export const accounts = pgTable(
             .$onUpdate(() => /* @__PURE__ */ new Date())
             .notNull(),
     },
+    // Index use for faster lookup
     (table) => [index("accounts_userId_idx").on(table.userId)],
 );
 

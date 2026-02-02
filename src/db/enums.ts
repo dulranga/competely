@@ -11,8 +11,17 @@ export const formFieldTypeEnum = pgEnum("form_field_type", [
     "file",
     "date",
 ]);
+// --- Consider ---
+// Add time field type
+// Add datetime field type
+// @Dulranga
 
-export const competitionStatusEnum = pgEnum("competition_status", ["draft", "published", "archived"]);
+
+export const competitionStatusEnum = pgEnum("competition_status", [
+    "draft",
+    "published",
+    "archived",
+]);
 
 export const competitionCategoryEnum = pgEnum("competition_category", [
     "tech",
