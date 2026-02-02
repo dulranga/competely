@@ -1,6 +1,4 @@
-import type { LinguiConfig } from "@lingui/conf";
-
-const config: LinguiConfig = {
+const config = {
     locales: ["en", "fr"],
     sourceLocale: "en",
     catalogs: [

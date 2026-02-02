@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CompetitionCard, CompetitionStatus } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { Button } from "~/components/ui/button";
@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 export default function CompetitionsPage() {
     const [expandedSection, setExpandedSection] = useState<"registered" | "finished" | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     // Mock Data for demonstration
     // Defining interface for consistent usage
@@ -46,6 +47,25 @@ export default function CompetitionsPage() {
         deadline: "Jan 17, 2026 (deadline)",
         organizerName: "Hack dev Club"
     }));
+
+    // Filter competitions based on search query
+    const filteredRegisteredCompetitions = useMemo(() => {
+        if (!searchQuery.trim()) return registeredCompetitions;
+        const query = searchQuery.toLowerCase();
+        return registeredCompetitions.filter(comp => 
+            comp.title.toLowerCase().includes(query) || 
+            comp.organizerName.toLowerCase().includes(query)
+        );
+    }, [searchQuery]);
+
+    const filteredFinishedCompetitions = useMemo(() => {
+        if (!searchQuery.trim()) return finishedCompetitions;
+        const query = searchQuery.toLowerCase();
+        return finishedCompetitions.filter(comp => 
+            comp.title.toLowerCase().includes(query) || 
+            comp.organizerName.toLowerCase().includes(query)
+        );
+    }, [searchQuery]);
 
     const toggleSection = (section: "registered" | "finished") => {
         if (expandedSection === section) {
@@ -136,6 +156,8 @@ export default function CompetitionsPage() {
                             <input
                                 type="text"
                                 placeholder="Search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full h-12 pl-12 pr-4 rounded-full border-0 bg-gray-200/50 hover:bg-gray-200/80 focus:outline-none focus:ring-1 focus:ring-primary shadow-inner text-base text-gray-700 placeholder:text-muted-foreground transition-all"
                             />
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
@@ -145,7 +167,10 @@ export default function CompetitionsPage() {
                     {/* Section 1: Registered Competitions */}
                     <section className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Registered Competitions</h2>
+                            <h2 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">
+                                Registered Competitions
+                                {searchQuery && ` (${filteredRegisteredCompetitions.length})`}
+                            </h2>
                             <Button
                                 variant="secondary"
                                 className="bg-[#5a6270] text-white hover:bg-[#484f5b] h-9 px-4 text-sm font-medium rounded-md shadow-sm"
@@ -154,13 +179,22 @@ export default function CompetitionsPage() {
                                 {expandedSection === "registered" ? "See Less" : "See More"}
                             </Button>
                         </div>
-                        {renderSectionContent("registered", registeredCompetitions)}
+                        {filteredRegisteredCompetitions.length > 0 ? (
+                            renderSectionContent("registered", filteredRegisteredCompetitions)
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                                No registered competitions found matching "{searchQuery}"
+                            </div>
+                        )}
                     </section>
 
                     {/* Section 2: Finished Competitions */}
                     <section className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Finished Competitions</h2>
+                            <h2 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">
+                                Finished Competitions
+                                {searchQuery && ` (${filteredFinishedCompetitions.length})`}
+                            </h2>
                             <Button
                                 variant="secondary"
                                 className="bg-[#5a6270] text-white hover:bg-[#484f5b] h-9 px-4 text-sm font-medium rounded-md shadow-sm"
@@ -169,7 +203,13 @@ export default function CompetitionsPage() {
                                 {expandedSection === "finished" ? "See Less" : "See More"}
                             </Button>
                         </div>
-                        {renderSectionContent("finished", finishedCompetitions)}
+                        {filteredFinishedCompetitions.length > 0 ? (
+                            renderSectionContent("finished", filteredFinishedCompetitions)
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                                No finished competitions found matching "{searchQuery}"
+                            </div>
+                        )}
                     </section>
 
                 </div>
