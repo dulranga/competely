@@ -23,7 +23,7 @@ export const mainInfoSchema = z.object({
     // logistics
     location: z.string().optional(),
 
-    guidelinesType: z.enum(["file", "link"]).default("file"),
+    guidelinesType: z.enum(["file", "link"]),
     guidelinesFile: z.string().optional().nullable(),
     guidelinesUrl: z.string().optional(),
 

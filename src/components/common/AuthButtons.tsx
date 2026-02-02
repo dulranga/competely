@@ -15,7 +15,7 @@ export function GoogleLoginButton({ callbackURL }: SocialSigninProps) {
     };
 
     return (
-        <Button onClick={handleGoogleLogin} size={"lg"} type="button" variant={"neon"} className="w-full">
+        <Button onClick={handleGoogleLogin} size={"lg"} type="button" variant={"competely"} className="w-full">
             <LogosGoogleIcon />
             Continuer avec Google
         </Button>
@@ -31,7 +31,7 @@ export function FacebookLoginButton({ callbackURL }: SocialSigninProps) {
     };
 
     return (
-        <Button onClick={handleFacebookLogin} size={"lg"} type="button" variant={"neon"} className="w-full">
+        <Button onClick={handleFacebookLogin} size={"lg"} type="button" variant={"competely"} className="w-full">
             <LogosFacebookIcon />
             Continuer avec Facebook
         </Button>

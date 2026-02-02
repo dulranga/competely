@@ -167,9 +167,6 @@ export function CompetitionCard({
                     <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-[0.9] mb-3 font-sans drop-shadow-2xl transform transition-transform duration-300 group-hover:scale-105">
                         {title}
                     </h2>
-                    <p className="text-[11px] text-white/80 font-mono tracking-wider lowercase opacity-80 group-hover:opacity-100 transition-opacity">
-                        where ideas turn into products
-                    </p>
                 </div>
             </div>
 

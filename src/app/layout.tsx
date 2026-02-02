@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
     return (
-        <html className="light" style={{ colorScheme: "light" }}>
-            <body className={`${fontSans.variable} ${geistMono.variable} antialiased`}>
+        <html className="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
+            <body className={`${fontSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
                 <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
                     {children}
 
