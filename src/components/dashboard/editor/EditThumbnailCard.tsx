@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Trophy } from "lucide-react";
 import { type FC } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { DatePicker } from "~/components/form-inputs/DatePicker";
+import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import Form from "~/components/form/Form";
 import { Button } from "~/components/ui/button";
@@ -126,7 +126,7 @@ const EditThumbnailCard: FC = () => {
                                     name="registrationDeadline"
                                     helperText="Last day for delegates to sign up."
                                 >
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
                             </div>
 
@@ -146,11 +146,11 @@ const EditThumbnailCard: FC = () => {
                                     name="startDate"
                                     helperText="When the competition actually begins."
                                 >
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
 
                                 <Form.Item label="End Date" name="endDate" helperText="When the competition concludes.">
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
                             </div>
                         </div>

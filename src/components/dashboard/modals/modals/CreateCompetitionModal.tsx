@@ -6,7 +6,8 @@ import { type FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createCompetitionAction } from "~/app/(authenticated)/create/actions";
-import { DatePicker } from "~/components/form-inputs/DatePicker";
+
+import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import Form from "~/components/form/Form";
 import FormDebug from "~/components/form/FormDebug";
@@ -123,7 +124,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                     name="registrationDeadline"
                                     helperText="Last day for delegates to sign up."
                                 >
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
                             </div>
 
@@ -133,11 +134,11 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                     name="startDate"
                                     helperText="When the competition actually begins."
                                 >
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
 
                                 <Form.Item label="End Date" name="endDate" helperText="When the competition concludes.">
-                                    <DatePicker />
+                                    <DateTimePicker />
                                 </Form.Item>
                             </div>
                         </div>
