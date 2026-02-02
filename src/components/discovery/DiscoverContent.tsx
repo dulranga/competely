@@ -2,6 +2,7 @@
 
 import { Brain, Code2, Gamepad2, LineChart, Mic2, MonitorSmartphone, Music2, Search, ShieldCheck, User, Wrench, Globe2, Feather } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { TopicCard } from "~/components/discovery/TopicCard";
@@ -10,7 +11,7 @@ import { Input } from "~/components/ui/input";
 import { HeaderPublic } from "~/components/ui/header-public";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { cn } from "~/lib/utils";
+import { cn, getFileUrlById } from "~/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
 
 import topicsData from "~/components/sample-data/topics.json";
@@ -24,19 +25,24 @@ const iconMap: Record<string, any> = {
 
 interface DiscoverContentProps {
     isAuthenticated: boolean;
+    initialCompetitions?: any[];
+    initialSearchQuery?: string;
 }
 
-export function DiscoverContent({ isAuthenticated }: DiscoverContentProps) {
+export function DiscoverContent({ isAuthenticated, initialCompetitions = [], initialSearchQuery = "" }: DiscoverContentProps) {
+    const router = useRouter();
     // State to toggle between "Explore Topics" and "Search Results" view
     // In a real app, this would likely be driven by URL search params (?q=...)
-    const [isSearching, setIsSearching] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
+    const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
     const handleSearch = () => {
         if (searchQuery.trim()) {
             setIsSearching(true);
+            router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
         } else {
             setIsSearching(false);
+            router.push('/discover');
         }
     };
 
@@ -169,24 +175,55 @@ export function DiscoverContent({ isAuthenticated }: DiscoverContentProps) {
 
                             {/* Results Grid */}
                             <div className="flex-1">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                                    {Array.from({ length: 9 }).map((_, i) => (
-                                        <CompetitionCard key={i} title="HackExtreme" />
-                                    ))}
-                                </div>
+                                {initialCompetitions.length > 0 ? (
+                                    <>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                                            {initialCompetitions.map((comp) => {
+                                                const imageUrl = comp.imageUrl && typeof comp.imageUrl === 'string' ? getFileUrlById(comp.imageUrl) : undefined;
+                                                return (
+                                                    <CompetitionCard 
+                                                        key={comp.id}
+                                                        title={comp.title || "Untitled"}
+                                                        status={comp.status as any}
+                                                        {...(imageUrl && { imageUrl })}
+                                                        organizerName={comp.organizerName}
+                                                        category={comp.category}
+                                                        registeredCount={0}
+                                                        deadline={comp.deadline ? new Date(comp.deadline).toLocaleDateString() : "TBA"}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
 
-                                {/* Pagination (Mock) */}
-                                <div className="flex justify-center items-center gap-4 mt-12 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">← Previous</span>
-                                    <div className="flex gap-2">
-                                        <span className="w-8 h-8 flex items-center justify-center bg-black text-white rounded-md">1</span>
-                                        <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">2</span>
-                                        <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">3</span>
-                                        <span className="w-8 h-8 flex items-center justify-center">...</span>
-                                        <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">68</span>
+                                        {/* Pagination (Mock) */}
+                                        <div className="flex justify-center items-center gap-4 mt-12 text-sm text-muted-foreground">
+                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">← Previous</span>
+                                            <div className="flex gap-2">
+                                                <span className="w-8 h-8 flex items-center justify-center bg-black text-white rounded-md">1</span>
+                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">2</span>
+                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">3</span>
+                                                <span className="w-8 h-8 flex items-center justify-center">...</span>
+                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">68</span>
+                                            </div>
+                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">Next →</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <p className="text-xl text-muted-foreground">No competitions found matching "{searchQuery}"</p>
+                                        <Button 
+                                            variant="link" 
+                                            onClick={() => {
+                                                setSearchQuery("");
+                                                setIsSearching(false);
+                                                router.push('/discover');
+                                            }}
+                                            className="mt-4"
+                                        >
+                                            Clear search
+                                        </Button>
                                     </div>
-                                    <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">Next →</span>
-                                </div>
+                                )}
                             </div>
                         </div>
                     )}
