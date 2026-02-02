@@ -50,6 +50,13 @@
       "when": 1769943961639,
       "tag": "0006_moved_forms_to_competition",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1770043591452,
+      "tag": "0007_competiton-home-schema",
+      "breakpoints": true
     }
   ]
 }

@@ -34,3 +34,15 @@ export const competitionCategoryEnum = pgEnum("competition_category", [
 ]);
 
 export const fileCategoryEnum = pgEnum("file_category", FILE_CATEGORY);
+
+export const socialPlatformEnum = pgEnum("social_platform", [
+    "website",
+    "twitter",
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube",
+    "linkedin",
+    "discord",
+    "github",
+]);
