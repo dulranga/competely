@@ -13,6 +13,8 @@ import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { cn, getFileUrlById } from "~/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
+import { filterCompetitions, DEFAULT_FILTERS } from "./filterUtils";
+import type { FilterState } from './types';
 
 import topicsData from "~/components/sample-data/topics.json";
 import competitionsData from "~/components/sample-data/competitions.json";
@@ -31,10 +33,11 @@ interface DiscoverContentProps {
 
 export function DiscoverContent({ isAuthenticated, initialCompetitions = [], initialSearchQuery = "" }: DiscoverContentProps) {
     const router = useRouter();
-    // State to toggle between "Explore Topics" and "Search Results" view
-    // In a real app, this would likely be driven by URL search params (?q=...)
     const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+    
+    // Filter states - using the default filters as initial values
+    const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
     const handleSearch = () => {
         if (searchQuery.trim()) {
@@ -55,6 +58,9 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
             handleSearch();
         }
     };
+
+    // Filter competitions using the utility function
+    const filteredCompetitions = filterCompetitions(initialCompetitions, filters);
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
@@ -151,7 +157,18 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                             <aside className="lg:w-64 shrink-0 hidden lg:block">
                                 <div className="sticky top-8">
                                     <h3 className="font-bold mb-4 text-xl">Filters</h3>
-                                    <FilterSidebar />
+                                    <FilterSidebar 
+                                        registeredRange={filters.registeredRange}
+                                        onRegisteredRangeChange={(range) => setFilters({ ...filters, registeredRange: range })}
+                                        keywords={filters.keywords}
+                                        onKeywordsChange={(keywords) => setFilters({ ...filters, keywords })}
+                                        statusFilters={filters.statusFilters}
+                                        onStatusFiltersChange={(statusFilters) => setFilters({ ...filters, statusFilters })}
+                                        categories={filters.categories}
+                                        onCategoriesChange={(categories) => setFilters({ ...filters, categories })}
+                                        modes={filters.modes}
+                                        onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                    />
                                 </div>
                             </aside>
 
@@ -164,10 +181,22 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                         </Button>
                                     </SheetTrigger>
                                     <SheetContent side="left" className="w-[300px] sm:w-[350px] overflow-y-auto">
-                                        <SheetTitle className="sr-only">Filters</SheetTitle> {/* Accessibility requirement for Dialog */}
+                                        <SheetTitle className="sr-only">Filters</SheetTitle>
                                         <SheetDescription className="sr-only">Filter competitions</SheetDescription>
                                         <div className="mt-6">
-                                            <FilterSidebar className="w-full border-0 shadow-none p-0" />
+                                            <FilterSidebar 
+                                                className="w-full border-0 shadow-none p-0"
+                                                registeredRange={filters.registeredRange}
+                                                onRegisteredRangeChange={(range) => setFilters({ ...filters, registeredRange: range })}
+                                                keywords={filters.keywords}
+                                                onKeywordsChange={(keywords) => setFilters({ ...filters, keywords })}
+                                                statusFilters={filters.statusFilters}
+                                                onStatusFiltersChange={(statusFilters) => setFilters({ ...filters, statusFilters })}
+                                                categories={filters.categories}
+                                                onCategoriesChange={(categories) => setFilters({ ...filters, categories })}
+                                                modes={filters.modes}
+                                                onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                            />
                                         </div>
                                     </SheetContent>
                                 </Sheet>
@@ -175,10 +204,10 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
 
                             {/* Results Grid */}
                             <div className="flex-1">
-                                {initialCompetitions.length > 0 ? (
+                                {filteredCompetitions.length > 0 ? (
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                                            {initialCompetitions.map((comp) => {
+                                            {filteredCompetitions.map((comp) => {
                                                 const imageUrl = comp.imageUrl && typeof comp.imageUrl === 'string' ? getFileUrlById(comp.imageUrl) : undefined;
                                                 return (
                                                     <CompetitionCard 
@@ -188,7 +217,7 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                                         {...(imageUrl && { imageUrl })}
                                                         organizerName={comp.organizerName}
                                                         category={comp.category}
-                                                        registeredCount={0}
+                                                        registeredCount={(comp as any).registeredCount || 0}
                                                         deadline={comp.deadline ? new Date(comp.deadline).toLocaleDateString() : "TBA"}
                                                     />
                                                 );
