@@ -1,6 +1,5 @@
 import { boolean, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth-schema";
-import { relations } from "drizzle-orm";
 import { competitions } from "./competitions-schema";
 
 export const userInterests = pgTable(
@@ -16,13 +15,6 @@ export const userInterests = pgTable(
         primaryKey({ columns: [table.userId, table.interest] }),
     ]
 );
-
-export const userInterestsRelations = relations(userInterests, ({ one }) => ({
-    user: one(users, {
-        fields: [userInterests.userId],
-        references: [users.id],
-    }),
-}));
 
 export const bookmarks = pgTable(
     "bookmarks",
@@ -40,14 +32,3 @@ export const bookmarks = pgTable(
         primaryKey({ columns: [table.userId, table.competitionId] }),
     ]
 );
-
-export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
-    user: one(users, {
-        fields: [bookmarks.userId],
-        references: [users.id],
-    }),
-    competition: one(competitions, {
-        fields: [bookmarks.competitionId],
-        references: [competitions.id],
-    }),
-}));

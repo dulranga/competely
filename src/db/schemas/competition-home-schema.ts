@@ -1,7 +1,6 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, index, pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { socialPlatformEnum } from "../enums";
-import { organizations } from "./auth-schema";
 import { competitions } from "./competitions-schema";
 import { files } from "./files-schema";
 
@@ -24,13 +23,6 @@ export const competitionPrizes = pgTable(
     },
     (table) => [index("competition_prizes_competition_id_idx").on(table.competitionId)],
 );
-
-export const competitionPrizesRelations = relations(competitionPrizes, ({ one }) => ({
-    competition: one(competitions, {
-        fields: [competitionPrizes.competitionId],
-        references: [competitions.id],
-    }),
-}));
 
 // 2. Competition Resources
 export const competitionResources = pgTable(
@@ -59,17 +51,6 @@ export const competitionResources = pgTable(
     ],
 );
 
-export const competitionResourcesRelations = relations(competitionResources, ({ one }) => ({
-    competition: one(competitions, {
-        fields: [competitionResources.competitionId],
-        references: [competitions.id],
-    }),
-    file: one(files, {
-        fields: [competitionResources.fileId],
-        references: [files.id],
-    }),
-}));
-
 // 3. Competition Social Links
 export const competitionSocialLinks = pgTable(
     "competition_social_links",
@@ -88,13 +69,6 @@ export const competitionSocialLinks = pgTable(
     },
     (table) => [index("competition_social_links_competition_id_idx").on(table.competitionId)],
 );
-
-export const competitionSocialLinksRelations = relations(competitionSocialLinks, ({ one }) => ({
-    competition: one(competitions, {
-        fields: [competitionSocialLinks.competitionId],
-        references: [competitions.id],
-    }),
-}));
 
 // 4. Competition Contacts
 export const competitionContacts = pgTable(
@@ -117,10 +91,3 @@ export const competitionContacts = pgTable(
     },
     (table) => [index("competition_contacts_competition_id_idx").on(table.competitionId)],
 );
-
-export const competitionContactsRelations = relations(competitionContacts, ({ one }) => ({
-    competition: one(competitions, {
-        fields: [competitionContacts.competitionId],
-        references: [competitions.id],
-    }),
-}));
