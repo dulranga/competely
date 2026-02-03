@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, index, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { files } from "./files-schema";
+import { bookmarks, userInterests } from "./interests-schema";
 
 export const users = pgTable("users", {
     id: text("id").primaryKey(),
@@ -139,6 +141,9 @@ export const usersRelations = relations(users, ({ many }) => ({
     accounts: many(accounts),
     members: many(members),
     invitations: many(invitations),
+    files: many(files),
+    interests: many(userInterests),
+    bookmarks: many(bookmarks),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

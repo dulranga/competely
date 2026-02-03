@@ -4,6 +4,9 @@ import { competitionCategoryEnum, competitionStatusEnum } from "../enums";
 import { organizations } from "./auth-schema";
 import { files } from "./files-schema";
 import { competitionContacts, competitionPrizes, competitionResources, competitionSocialLinks } from "./competition-home-schema";
+import { competitionRounds } from "./competition-timeline-schema";
+import { forms } from "./forms-schema";
+import { bookmarks } from "./interests-schema";
 
 export const competitions = pgTable(
     "competitions",
@@ -14,6 +17,7 @@ export const competitions = pgTable(
             .references(() => organizations.id, { onDelete: "cascade" }),
         tagline: text("tagline"),
         category: competitionCategoryEnum("category"),
+        hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
@@ -41,6 +45,9 @@ export const competitionsRelations = relations(competitions, ({ one, many }) => 
     resources: many(competitionResources),
     socialLinks: many(competitionSocialLinks),
     contacts: many(competitionContacts),
+    rounds: many(competitionRounds),
+    forms: many(forms),
+    bookmarks: many(bookmarks),
 }));
 
 export const organizationsRelationsExtended = relations(organizations, ({ one }) => ({
