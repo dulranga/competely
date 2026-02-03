@@ -25,7 +25,8 @@ export const bookmarks = pgTable(
         competitionId: uuid("competition_id")
             .notNull()
             .references(() => competitions.id, { onDelete: "cascade" }),
-        isBookmarked: boolean("is_bookmarked").default(true).notNull(),
+        isBookmarked: boolean("is_bookmarked").default(false).notNull(),
+        isRegistered: boolean("is_registered").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
     (table) => [

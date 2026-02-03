@@ -64,6 +64,13 @@
       "when": 1770101198008,
       "tag": "0008_add_competition_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770131392959,
+      "tag": "0009_Added a isRegistered field to bookmarks table",
+      "breakpoints": true
     }
   ]
 }
