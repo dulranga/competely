@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { formFieldTypeEnum } from "../enums";
 import { competitions } from "./competitions-schema";
@@ -29,18 +28,3 @@ export const formFields = pgTable("form_fields", {
     order: integer("order").notNull(),
     config: jsonb("config"), // For options in select/radio, e.g. { options: ["Option 1", "Option 2"] }
 });
-
-export const formsRelations = relations(forms, ({ many, one }) => ({
-    fields: many(formFields),
-    competition: one(competitions, {
-        fields: [forms.competitionId],
-        references: [competitions.id],
-    }),
-}));
-
-export const formFieldsRelations = relations(formFields, ({ one }) => ({
-    form: one(forms, {
-        fields: [formFields.formId],
-        references: [forms.id],
-    }),
-}));

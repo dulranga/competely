@@ -1,9 +1,7 @@
-import { relations } from "drizzle-orm";
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { competitionCategoryEnum, competitionStatusEnum } from "../enums";
 import { organizations } from "./auth-schema";
 import { files } from "./files-schema";
-import { competitionContacts, competitionPrizes, competitionResources, competitionSocialLinks } from "./competition-home-schema";
 
 export const competitions = pgTable(
     "competitions",
@@ -14,6 +12,7 @@ export const competitions = pgTable(
             .references(() => organizations.id, { onDelete: "cascade" }),
         tagline: text("tagline"),
         category: competitionCategoryEnum("category"),
+        hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
@@ -27,25 +26,3 @@ export const competitions = pgTable(
     },
     (table) => [index("competitions_organization_id_idx").on(table.organizationId)],
 );
-
-export const competitionsRelations = relations(competitions, ({ one, many }) => ({
-    organization: one(organizations, {
-        fields: [competitions.organizationId],
-        references: [organizations.id],
-    }),
-    banner: one(files, {
-        fields: [competitions.bannerId],
-        references: [files.id],
-    }),
-    prizes: many(competitionPrizes),
-    resources: many(competitionResources),
-    socialLinks: many(competitionSocialLinks),
-    contacts: many(competitionContacts),
-}));
-
-export const organizationsRelationsExtended = relations(organizations, ({ one }) => ({
-    competition: one(competitions, {
-        fields: [organizations.id],
-        references: [competitions.organizationId],
-    }),
-}));
