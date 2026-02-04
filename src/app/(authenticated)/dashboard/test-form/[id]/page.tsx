@@ -19,12 +19,13 @@ const TestFormPage: FC<TestFormPageProps> = async ({ params }) => {
         "use server";
         console.log("Form submission:", data);
     };
-    console.log(form.fields);
 
     return (
         <div className="max-w-3xl mx-auto space-y-8 py-8">
             <div className="space-y-4">
-                <h1 className="text-4xl font-bold tracking-tight">{form.name}</h1>
+                <h1 className="text-4xl md:text-5xl font-bold focus-visible:ring-0 placeholder:text-muted-foreground/20 h-auto tracking-tighter w-full">
+                    {form.name}
+                </h1>
                 {form.description && (
                     <p className="text-muted-foreground text-lg leading-relaxed">{form.description}</p>
                 )}
