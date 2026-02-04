@@ -57,12 +57,25 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
         { id: "form-456", name: "Feedback Survey" },
     ];
 
-    const onSubmit = async (data: unknown) => {
-        const values = data as CreateEventSchema;
+    const onSubmit = async (formData: unknown) => {
+        const values = formData as CreateEventSchema;
         setIsSubmitting(true);
 
+        // Determine Final Event Type
+        const eventType = values.eventTypeSelect === "other"
+            ? values.eventTypeCustom
+            : values.eventTypeSelect;
+
+        // Prepare Payload
+        const payload = {
+            ...values,
+            eventType,
+            roundId: data?.roundId,
+        };
+
+        console.log("Submitting Event Payload:", payload);
+
         // Mock API Call
-        console.log("Submitting Event:", { ...values, roundId: data?.roundId });
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         setIsSubmitting(false);
@@ -290,6 +303,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
 
                         </div>
                     </div>
+                    <FormDebug />
                 </Form>
             </ScrollArea>
 

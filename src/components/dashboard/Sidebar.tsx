@@ -50,7 +50,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                 <div className="flex-1 flex flex-col items-center gap-4 w-full px-3">
                     <TooltipProvider delayDuration={0}>
                         {items.map((item) => {
-                            const isActive = pathname.startsWith(item.href);
+                            const isActive = activeItem?.href === item.href;
                             return (
                                 <Tooltip key={item.href}>
                                     <TooltipTrigger asChild>
