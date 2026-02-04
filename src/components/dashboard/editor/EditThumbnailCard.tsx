@@ -27,7 +27,7 @@ type ExtendedSchemaType = zInfer<typeof ExtendedSchema>;
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 import { useState } from "react";
 import { toast } from "sonner";
-import { updateCompetitionAction } from "~/app/(authenticated)/dashboard/editor/actions";
+import { updateCompetitionAction } from "~/app/(authenticated)/[competitionId]/dashboard/editor/actions";
 
 interface EditThumbnailCardProps {
     initialData?: {
