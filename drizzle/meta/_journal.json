@@ -71,6 +71,13 @@
       "when": 1770131392959,
       "tag": "0009_Added a isRegistered field to bookmarks table",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770214355786,
+      "tag": "0010_added_form_upload",
+      "breakpoints": true
     }
   ]
 }
