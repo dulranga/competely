@@ -12,5 +12,5 @@ export default async function Page({ searchParams }: PageProps) {
 
     await setActiveCompetition(competitionId);
 
-    redirect(`/${competitionId}/dashboard`);
+    redirect(`/dashboard`);
 }
