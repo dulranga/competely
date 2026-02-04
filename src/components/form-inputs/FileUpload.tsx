@@ -56,6 +56,8 @@ export function FileUpload<T>({
         })),
     );
 
+    const [shouldNotify, setShouldNotify] = useState(false);
+
     // If initialFiles changes after mount, merge them in (idempotent)
     React.useEffect(() => {
         setUploadedFiles((prev) => {
@@ -69,16 +71,23 @@ export function FileUpload<T>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(initialFiles)]);
 
-    const triggerOnChange = (files: UploadedFileRecord<T>[]) => {
+    const triggerOnChange = useCallback((files: UploadedFileRecord<T>[]) => {
         onChange?.(files.filter((f) => f.status === "success"));
-    };
+    }, [onChange]);
+
+    React.useEffect(() => {
+        if (shouldNotify) {
+            triggerOnChange(uploadedFiles);
+            setShouldNotify(false);
+        }
+    }, [uploadedFiles, shouldNotify, triggerOnChange]);
 
     const updateFile = (id: string, patch: Partial<UploadedFileRecord<T>>) => {
         setUploadedFiles((prev) => {
             const updated = prev.map((f) => (f.id === id ? { ...f, ...patch } : f));
-            triggerOnChange(updated);
             return updated;
         });
+        setShouldNotify(true);
     };
 
     const uploadFile = async (file: File, id: string) => {
@@ -90,6 +99,7 @@ export function FileUpload<T>({
                 setUploadedFiles((prev) =>
                     prev.map((f) => (f.id === id && f.progress < 90 ? { ...f, progress: f.progress + 10 } : f)),
                 );
+                // No need to notify on progress
             }, 100);
             const response = await fetch(endpoint, {
                 method: "POST",
@@ -115,9 +125,10 @@ export function FileUpload<T>({
                 progress: 0,
             }));
             setUploadedFiles((prev) => [...prev, ...newFiles]);
+            // Notifications happen when upload completes/fails via updateFile
             newFiles.forEach((fileObj) => uploadFile(fileObj.file, fileObj.id));
         },
-        [endpoint, uploadedFiles.length, maxFiles, uploadFile],
+        [endpoint, uploadedFiles.length, maxFiles, uploadFile], // endpoint, etc are used? uploadFile uses them? uploadFile is defined above.
     );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -130,9 +141,9 @@ export function FileUpload<T>({
     const removeFile = (id: string) => {
         setUploadedFiles((prev) => {
             const updated = prev.filter((f) => f.id !== id);
-            triggerOnChange(updated);
             return updated;
         });
+        setShouldNotify(true);
     };
 
     const retryFile = (fileObj: UploadedFileRecord<T>) => {

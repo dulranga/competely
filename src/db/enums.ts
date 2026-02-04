@@ -42,3 +42,5 @@ export const socialPlatformEnum = pgEnum("social_platform", [
     "discord",
     "github",
 ]);
+
+export type SocialPlatform = (typeof socialPlatformEnum.enumValues)[number];
