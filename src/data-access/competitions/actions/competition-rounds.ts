@@ -7,7 +7,7 @@ import {
     deleteCompetitionRound,
     getCompetitionRounds,
     updateCompetitionRound,
-} from "~/data-access/timeline/rounds";
+} from "~/data-access/competitions/timeline/rounds";
 
 /**
  * Fetches all rounds for the active competition.
