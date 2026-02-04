@@ -4,17 +4,21 @@ import { FileText, Plus } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
-import { getFormsAction } from "~/app/(authenticated)/dashboard/forms/actions";
-import { usePathname } from "next/navigation";
+import { getFormsAction } from "~/app/(authenticated)/[competitionId]/dashboard/forms/actions";
+import { useParams, usePathname } from "next/navigation";
 import { cn } from "~/lib/utils";
 
 const FormBuilderSidebar: FC = () => {
     const [forms, setForms] = useState<any[]>([]);
     const pathname = usePathname();
+    const params = useParams();
+    const competitionId = params.competitionId as string;
 
     useEffect(() => {
         getFormsAction().then(setForms);
     }, []);
+
+    const baseUrl = `/${competitionId}/dashboard/forms`;
 
     return (
         <div className="flex flex-col h-full">
@@ -34,9 +38,9 @@ const FormBuilderSidebar: FC = () => {
                     </div>
                 ) : (
                     forms.map((form) => {
-                        const isActive = pathname === `/dashboard/forms/${form.id}`;
+                        const isActive = pathname === `${baseUrl}/${form.id}`;
                         return (
-                            <Link key={form.id} href={`/dashboard/forms/${form.id}`}>
+                            <Link key={form.id} href={`${baseUrl}/${form.id}`}>
                                 <Button
                                     variant="ghost"
                                     className={cn(
@@ -65,7 +69,7 @@ const FormBuilderSidebar: FC = () => {
             </div>
 
             <div className="mt-8">
-                <Link href="/dashboard/forms/new" className="block w-full">
+                <Link href={`${baseUrl}/new`} className="block w-full">
                     <Button
                         variant="competely"
                         className="w-full h-11 rounded-xl text-xs uppercase tracking-widest font-black"
