@@ -21,18 +21,15 @@ interface SidebarItem {
 interface DashboardSidebarProps {
     items: SidebarItem[];
     overriddenSecondary?: ReactNode;
-    competitionId: string;
 }
 
-export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenSecondary, competitionId }) => {
+export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenSecondary }) => {
     const pathname = usePathname();
-
-    const getHref = (path: string) => `/${competitionId}${path}`;
 
     // Find the current active item based on the longest matching path
     const activeItem = [...items]
         .sort((a, b) => b.href.length - a.href.length)
-        .find((item) => pathname.startsWith(getHref(item.href)));
+        .find((item) => pathname.startsWith(item.href));
 
     const Secondary = activeItem?.secondary;
     const hasSecondary = !!(overriddenSecondary || Secondary);
@@ -43,7 +40,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
             <div className="w-20 flex flex-col items-center py-8 pb-10 bg-white/40 backdrop-blur-xl border-r border-[#e8e2de]/60 z-20">
                 <div className="mb-10 group">
                     <Link
-                        href={getHref("/dashboard")}
+                        href="/dashboard"
                         className="text-2xl font-black tracking-tighter hover:scale-105 transition-all duration-300 block"
                     >
                         <span className="text-[#0c0803]">C.</span>
@@ -53,13 +50,12 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                 <div className="flex-1 flex flex-col items-center gap-4 w-full px-3">
                     <TooltipProvider delayDuration={0}>
                         {items.map((item) => {
-                            const href = getHref(item.href);
-                            const isActive = pathname.startsWith(href);
+                            const isActive = pathname.startsWith(item.href);
                             return (
                                 <Tooltip key={item.href}>
                                     <TooltipTrigger asChild>
                                         <Link
-                                            href={href}
+                                            href={item.href}
                                             className={cn(
                                                 "w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 relative group/item",
                                                 isActive

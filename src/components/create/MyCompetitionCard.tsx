@@ -48,7 +48,7 @@ export function MyCompetitionCard({
             >
                 <div className="flex flex-col gap-1">
                     <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors">
-                        <Link href={`/${id}/dashboard`} className="after:absolute after:inset-0">
+                        <Link href={`/dashboard/competition?id=${id}`} className="after:absolute after:inset-0">
                             {name}
                         </Link>
                     </h3>
@@ -91,7 +91,7 @@ export function MyCompetitionCard({
             </div>
             <div className="p-4 flex items-center justify-between gap-2">
                 <h3 className="font-semibold text-base text-gray-900 truncate" title={name}>
-                    <Link href={`/${id}/dashboard`} className="after:absolute after:inset-0">
+                    <Link href={`/dashboard/competition?id=${id}`} className="after:absolute after:inset-0">
                         {name}
                     </Link>
                 </h3>

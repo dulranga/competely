@@ -6,15 +6,14 @@ import { SidebarProvider, useSidebar } from "./SidebarProvider";
 
 interface DashboardLayoutWrapperProps {
     children: ReactNode;
-    competitionId: string;
 }
 
-const DashboardLayoutInner: FC<DashboardLayoutWrapperProps> = ({ children, competitionId }) => {
+const DashboardLayoutInner: FC<DashboardLayoutWrapperProps> = ({ children }) => {
     const { rightSide } = useSidebar();
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-[#fbf6f3]">
-            <DashboardSidebar competitionId={competitionId} items={sidebarItems} overriddenSecondary={rightSide} />
+            <DashboardSidebar items={sidebarItems} overriddenSecondary={rightSide} />
             <main className="flex-1 relative overflow-y-auto">
                 <div className="p-10 pt-16">{children}</div>
             </main>
@@ -22,10 +21,10 @@ const DashboardLayoutInner: FC<DashboardLayoutWrapperProps> = ({ children, compe
     );
 };
 
-export const DashboardLayoutWrapper: FC<PropsWithChildren<{ competitionId: string }>> = ({ children, competitionId }) => {
+export const DashboardLayoutWrapper: FC<PropsWithChildren> = ({ children }) => {
     return (
         <SidebarProvider>
-            <DashboardLayoutInner competitionId={competitionId}>{children}</DashboardLayoutInner>
+            <DashboardLayoutInner>{children}</DashboardLayoutInner>
         </SidebarProvider>
     );
 };
