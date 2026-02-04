@@ -91,12 +91,12 @@ This feature allows users to view a timeline of events for a competition.
 The database schema exists and is well-structured, but the frontend is completely isolated from it, relying entirely on mock data.
 
 **Specific Gaps:**
-1.  **No Data Fetching**: There is no file in `src/data-access` (e.g., `src/data-access/timeline/get-timeline.ts`) to fetch events from the `competition_events` table.
+1.  **No Data Fetching**: There is no file in `src/data-access` (e.g., `src/data-access/competitions/timeline/get-timeline.ts`) to fetch events from the `competition_events` table.
 2.  **No Type Safety Bridge**: The frontend `TimelineEvent` interface (in `VerticalTimeline.tsx`) does not match the Drizzle schema inference.
 3.  **No Management UI**: There appears to be no interface to **add** or **edit** timeline events. Users cannot populate the `competition_events` table via the app.
 4.  **Static Logic**: The `VerticalTimeline.tsx` component parses dates from strings in the JSON (`"NOV 03, 2025"`) instead of handling actual JavaScript `Date` objects returned by the database.
 
 **Required Steps for Upgrade:**
-1.  Create `src/data-access/timeline/get-competition-timeline.ts` to query `competition_events`.
+1.  Create `src/data-access/competitions/timeline/get-competition-timeline.ts` to query `competition_events`.
 2.  Update `VerticalTimeline.tsx` to accept events as props instead of importing JSON.
 3.  Fetch the data in `src/app/(authenticated)/timeline/page.tsx` and pass it to the component.

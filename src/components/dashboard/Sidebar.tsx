@@ -43,7 +43,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                         href="/dashboard"
                         className="text-2xl font-black tracking-tighter hover:scale-105 transition-all duration-300 block"
                     >
-                        <span className="text-[#0c0803]">C.</span>
+                        <span className="text-[#0c0803]">C</span>
                     </Link>
                 </div>
 

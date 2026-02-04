@@ -9,7 +9,7 @@ import {
     getEventsByRound,
     updateCompetitionEvent,
     UpdateEventInput,
-} from "~/data-access/timeline/events";
+} from "~/data-access/competitions/timeline/events";
 
 /**
  * Fetches events for a given round.
