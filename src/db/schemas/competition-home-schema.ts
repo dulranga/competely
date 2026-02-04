@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { check, index, pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, index, pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { socialPlatformEnum } from "../enums";
 import { competitions } from "./competitions-schema";
 import { files } from "./files-schema";
@@ -90,4 +90,25 @@ export const competitionContacts = pgTable(
             .notNull(),
     },
     (table) => [index("competition_contacts_competition_id_idx").on(table.competitionId)],
+);
+
+// 5. Competition Publish Options
+export const competitionPublishOptions = pgTable(
+    "competition_publish_options",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        competitionId: uuid("competition_id")
+            .notNull()
+            .references(() => competitions.id, { onDelete: "cascade" }),
+        showParticipantCount: boolean("show_participant_count").default(true).notNull(),
+        showTimeline: boolean("show_timeline").default(true).notNull(),
+        showCountdown: boolean("show_countdown").default(true).notNull(),
+        showPrizes: boolean("show_prizes").default(true).notNull(),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+        updatedAt: timestamp("updated_at")
+            .defaultNow()
+            .$onUpdate(() => new Date())
+            .notNull(),
+    },
+    (table) => [index("competition_publish_options_competition_id_idx").on(table.competitionId)],
 );

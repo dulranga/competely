@@ -11,7 +11,7 @@ import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 import { AboutContentSection } from "./maininformationsection/AboutContentSection";
 import { type MainInfoSchema, mainInfoSchema } from "./maininformationsection/constants";
 import { HeroBrandingSection } from "./maininformationsection/HeroBrandingSection";
-import { KeyLogisticsSection } from "./maininformationsection/KeyLogisticsSection";
+import { ResourcesSection } from "./maininformationsection/ResourcesSection";
 import { PrizesSection } from "./maininformationsection/PrizesSection";
 import { PublishOptionsSection } from "./maininformationsection/PublishOptionsSection";
 import { SocialsSection } from "./maininformationsection/SocialsSection";
@@ -71,7 +71,7 @@ const MainInformationSection: FC = () => {
                 <Form form={form} className="space-y-8">
                     <HeroBrandingSection form={form} />
                     <AboutContentSection form={form} />
-                    <KeyLogisticsSection form={form} />
+                    <ResourcesSection form={form} />
                     <PrizesSection form={form} />
                     <SocialsSection form={form} />
                     <PublishOptionsSection form={form} />

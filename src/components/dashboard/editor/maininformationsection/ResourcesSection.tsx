@@ -11,11 +11,11 @@ import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import type { MainInfoSchema } from "./constants";
 
-interface KeyLogisticsSectionProps {
+interface ResourcesSectionProps {
     form: UseFormReturn<MainInfoSchema>;
 }
 
-export const KeyLogisticsSection: FC<KeyLogisticsSectionProps> = ({ form }) => {
+export const ResourcesSection: FC<ResourcesSectionProps> = ({ form }) => {
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "resources",
@@ -24,13 +24,11 @@ export const KeyLogisticsSection: FC<KeyLogisticsSectionProps> = ({ form }) => {
     return (
         <Card className="shadow-none border-border/60">
             <CardHeader>
-                <CardTitle className="text-lg font-bold">Key Logistics</CardTitle>
+                <CardTitle className="text-lg font-bold">Resources</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="space-y-6">
-                    <Form.Item label="Location" name="location">
-                        <Input placeholder="e.g. BMICH, Colombo or Online" />
-                    </Form.Item>
+
 
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
