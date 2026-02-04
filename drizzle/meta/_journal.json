@@ -71,6 +71,13 @@
       "when": 1770131392959,
       "tag": "0009_Added a isRegistered field to bookmarks table",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770213469411,
+      "tag": "0010_Added location field to competitionEvents",
+      "breakpoints": true
     }
   ]
 }

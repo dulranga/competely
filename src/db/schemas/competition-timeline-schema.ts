@@ -32,6 +32,7 @@ export const competitionEvents = pgTable(
         name: text("name").notNull(),
         type: text("type").notNull(),
         description: text("description"), // nullable
+        location: text("location"), // nullable
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
         notificationEnabled: boolean("notification_enabled").default(false).notNull(),
