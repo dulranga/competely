@@ -21,7 +21,7 @@ The implementation follows a 3-layer architecture:
 *   It queries the `competitions` table to find the competition associated with that Organization ID.
 *   **Why implementation matters**: This prevents us from having to pass `competitionId` effectively "blindly" from the client, ensuring operations are always scoped to the user's currently active context.
 
-### 2. `src/data-access/timeline/rounds.ts`
+### 2. `src/data-access/competitions/timeline/rounds.ts`
 
 **Purpose**: The raw database operations for the `competition_rounds` table.
 
@@ -31,7 +31,7 @@ The implementation follows a 3-layer architecture:
 *   `updateCompetitionRound(roundId, name)`: Updates the name of a specific round.
 *   `deleteCompetitionRound(roundId)`: Removes a round from the database.
 
-### 3. `src/lib/actions/competition-rounds.ts`
+### 3. `src/data-access/competitions/actions/competition-rounds.ts`
 
 **Purpose**: The bridge between the Client (UI) and the Server (Database). These are **Server Actions** (`"use server"`).
 
@@ -41,7 +41,7 @@ The implementation follows a 3-layer architecture:
     *   `fetchRoundsAction()`: It has a special logic check. If it fetches rounds and finds *none*, it automatically creates a default "Registration" round. This ensures the UI is never empty for a fresh competition.
 *   **Revalidation**: After mutating data (Create/Update/Delete), it calls `revalidatePath("/dashboard/timeline")`. This tells Next.js to purge the cache for the timeline page so the user sees the new data immediately without refreshing.
 
-### 4. `src/data-access/timeline/events.ts`
+### 4. `src/data-access/competitions/timeline/events.ts`
 
 **Purpose**: Transactional operations for `competition_events`.
 
@@ -51,7 +51,7 @@ The implementation follows a 3-layer architecture:
 *   `updateCompetitionEvent(eventId, data)`: **Transactional**. Updates basic info. For resources, it performs a **Delete-All-And-Reinsert** strategy to ensure the database exactly matches the submitted form state.
 *   `deleteCompetitionEvent(eventId)`: Deletes the event.
 
-### 5. `src/lib/actions/competition-events.ts`
+### 5. `src/data-access/competitions/actions/competition-events.ts`
 
 **Purpose**: Server Actions for Events.
 
