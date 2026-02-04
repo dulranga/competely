@@ -12,9 +12,9 @@ import { toast } from "sonner";
 const navItems = [
     { name: "Home", href: "/home", icon: Home },
     { name: "Discover", href: "/discover", icon: Compass },
-    { name: "Competitions", href: "/competitions", icon: Trophy },
+    { name: "Competitions", href: "/my-competitions", icon: Trophy },
     { name: "Create", href: "/create", icon: Plus },
-    { name: "Bookmarks", href: "/bookmarks", icon: Bookmark }
+    { name: "Bookmarks", href: "/bookmarks", icon: Bookmark },
 ];
 
 interface HeaderProps {
@@ -51,16 +51,18 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                                     "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
                                     isActive
                                         ? "bg-primary/10 text-primary"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-accent",
                                 )}
                             >
                                 <Icon className="h-4 w-4" />
                                 {item.name}
                                 {item.name === "Bookmarks" && (
-                                    <span className={cn(
-                                        "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none",
-                                        isActive ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-                                    )}>
+                                    <span
+                                        className={cn(
+                                            "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none",
+                                            isActive ? "bg-primary text-white" : "bg-muted text-muted-foreground",
+                                        )}
+                                    >
                                         10
                                     </span>
                                 )}
@@ -109,9 +111,7 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                                 href={item.href}
                                 className={cn(
                                     "flex flex-col items-center gap-1 px-2 py-1 rounded-md transition-colors",
-                                    isActive
-                                        ? "text-primary"
-                                        : "text-muted-foreground hover:text-foreground"
+                                    isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                                 )}
                             >
                                 <Icon className="h-5 w-5" />
