@@ -34,13 +34,13 @@ const ConfirmModal: FC<ModalComponentProps<ConfirmModalData>> = ({ data, closeMo
         <DialogContent className="max-w-sm rounded-3xl p-8 gap-6">
             <DialogHeader className="space-y-4 flex flex-col items-center text-center">
                 <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center ${variant === "destructive" ? "bg-red-50 text-red-500" : "bg-[#fbf6f3] text-[#e5ab7d]"}`}
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center ${variant === "destructive" ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}
                 >
                     <AlertCircle size={24} />
                 </div>
                 <div className="space-y-1">
-                    <DialogTitle className="text-xl font-bold text-[#0c0803]">{title}</DialogTitle>
-                    <DialogDescription className="text-sm text-[#0c0803]/60 leading-relaxed font-medium">
+                    <DialogTitle className="text-xl font-bold text-foreground">{title}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground leading-relaxed font-medium">
                         {description}
                     </DialogDescription>
                 </div>

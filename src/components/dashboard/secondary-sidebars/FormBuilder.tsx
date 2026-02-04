@@ -1,20 +1,21 @@
 "use client";
 
 import { FileText, Plus } from "lucide-react";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { getFormsAction } from "~/app/(authenticated)/dashboard/forms/actions";
 import { usePathname } from "next/navigation";
 import { cn } from "~/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 const FormBuilderSidebar: FC = () => {
-    const [forms, setForms] = useState<any[]>([]);
     const pathname = usePathname();
 
-    useEffect(() => {
-        getFormsAction().then(setForms);
-    }, []);
+    const { data: forms = [] } = useQuery({
+        queryKey: ["forms"],
+        queryFn: () => getFormsAction(),
+    });
 
     return (
         <div className="flex flex-col h-full">
@@ -47,7 +48,7 @@ const FormBuilderSidebar: FC = () => {
                                     )}
                                 >
                                     <div className="flex flex-col items-start gap-0 overflow-hidden">
-                                        <span className="font-bold text-xs truncate w-full">{form.name}</span>
+                                        <span className="font-bold text-xs truncate w-full max-w-40">{form.name}</span>
                                         <span
                                             className={cn(
                                                 "text-[9px] uppercase tracking-tighter font-bold opacity-40",

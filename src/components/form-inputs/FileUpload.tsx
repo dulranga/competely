@@ -158,7 +158,7 @@ export function FileUpload<T>({
                         {...getRootProps()}
                         className={cn(
                             "border border-dashed rounded-xl p-6 md:p-10 text-center cursor-pointer transition-all mb-4",
-                            "border-primary/40 hover:border-primary hover:bg-primary/[0.02]",
+                            "border-primary/40 hover:border-primary hover:bg-primary/2",
                             isDragActive && "bg-primary/10 border-primary",
                         )}
                     >
@@ -185,7 +185,7 @@ export function FileUpload<T>({
                                     key={fileObj.id}
                                     className={cn(
                                         "flex items-center gap-3 px-3 py-3 rounded-xl border transition-all bg-card/50",
-                                        isError ? "border-destructive/30 bg-destructive/[0.02]" : "border-border/50",
+                                        isError ? "border-destructive/30 bg-destructive/2" : "border-border/50",
                                     )}
                                 >
                                     <div className="relative">

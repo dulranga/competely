@@ -1,23 +1,10 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 import { FILE_CATEGORY } from "~/consts/files";
+import { FORM_FIELD_TYPES } from "~/consts/forms";
 
-export const formFieldTypeEnum = pgEnum("form_field_type", [
-    "text",
-    "textarea",
-    "number",
-    "checkbox",
-    "select",
-    "radio",
-    "file",
-    "datetime",
-]);
+export const formFieldTypeEnum = pgEnum("form_field_type", FORM_FIELD_TYPES);
 
-
-export const competitionStatusEnum = pgEnum("competition_status", [
-    "draft",
-    "published",
-    "archived",
-]);
+export const competitionStatusEnum = pgEnum("competition_status", ["draft", "published", "archived"]);
 
 export const competitionCategoryEnum = pgEnum("competition_category", [
     "tech",

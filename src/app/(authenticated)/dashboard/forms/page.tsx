@@ -1,25 +1,33 @@
-import { FC } from "react";
-import { Plus, FileText, Calendar, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
-import { getUserSession } from "~/data-access/getCurrentUser";
-import { getFormsByCompetition } from "~/data-access/forms";
-import db from "~/db/client";
-import { competitions } from "~/db/schema";
-import { eq } from "drizzle-orm";
+"use client";
 
-const FormsListPage: FC = async () => {
-    const session = await getUserSession();
-    
-    let forms: any[] = [];
-    
-    if (session.session.activeOrganizationId) {
-        const competition = await db.query.competitions.findFirst({
-            where: eq(competitions.organizationId, session.session.activeOrganizationId),
-        });
-        
-        if (competition) {
-            forms = await getFormsByCompetition(competition.id);
-        }
+import { FC } from "react";
+import { Plus, FileText, Calendar, MoreHorizontal, Users, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { getFormsAction } from "./actions";
+
+const FormsListPage: FC = () => {
+    const { data: forms = [], isLoading } = useQuery({
+        queryKey: ["forms"],
+        queryFn: () => getFormsAction(),
+    });
+
+    if (isLoading) {
+        return (
+            <div className="space-y-12">
+                <div className="flex items-end justify-between">
+                    <div className="grid gap-6">
+                        <h1 className="text-5xl font-black tracking-tight text-[#0c0803]">My Forms</h1>
+                        <p className="text-[#0c0803]/60 text-xl max-w-2xl leading-relaxed">
+                            Manage your competition registration forms and delegate surveys.
+                        </p>
+                    </div>
+                </div>
+                <div className="rounded-[4rem] bg-white border-4 border-dashed border-[#e8e2de] flex items-center justify-center p-32">
+                    <p className="text-[#0c0803]/40 text-lg">Loading forms...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -56,9 +64,8 @@ const FormsListPage: FC = async () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                     {forms.map((form) => (
-                        <Link
+                        <div
                             key={form.id}
-                            href={`/dashboard/forms/${form.id}`}
                             className="group p-10 rounded-[3rem] bg-white border border-[#e8e2de] hover:border-[#e5ab7d] hover:shadow-xl transition-all flex flex-col justify-between aspect-square"
                         >
                             <div className="flex items-start justify-between">
@@ -81,19 +88,36 @@ const FormsListPage: FC = async () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <h3 className="text-3xl font-black text-[#0c0803] leading-tight line-clamp-2">
-                                    {form.name}
-                                </h3>
-                                <div className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-[#0c0803]/40">
-                                    <span className="flex items-center gap-1.5">
-                                        <Calendar size={14} /> {new Date(form.createdAt).toLocaleDateString()}
-                                    </span>
-                                    <span>•</span>
-                                    <span>{form.fields.length} Fields</span>
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <h3 className="text-3xl font-black text-[#0c0803] leading-tight line-clamp-2">
+                                        {form.name}
+                                    </h3>
+                                    <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-[#0c0803]/30">
+                                        <span className="flex items-center gap-1.5">
+                                            <Calendar size={12} /> {new Date(form.createdAt).toLocaleDateString()}
+                                        </span>
+                                        <span>•</span>
+                                        <span>{form.fields.length} Fields</span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Link
+                                        href={`/dashboard/forms/${form.id}`}
+                                        className="h-12 rounded-2xl bg-[#0c0803] text-white font-black text-xs flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform active:scale-95"
+                                    >
+                                        Edit Form
+                                    </Link>
+                                    <Link
+                                        href={`/dashboard/forms/${form.id}/responses`}
+                                        className="h-12 rounded-2xl bg-[#fbf6f3] text-[#0c0803] font-black text-xs flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform active:scale-95 border border-[#e8e2de]/60 hover:border-[#e5ab7d]/40"
+                                    >
+                                        <Users size={14} /> Responses
+                                    </Link>
                                 </div>
                             </div>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             )}
