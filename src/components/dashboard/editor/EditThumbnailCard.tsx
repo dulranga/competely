@@ -2,8 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trophy } from "lucide-react";
-import { type FC } from "react";
+import { type FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { string, type infer as zInfer } from "zod";
+import { updateCompetitionAction } from "~/app/(authenticated)/dashboard/editor/actions";
 import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import Form from "~/components/form/Form";
@@ -11,23 +14,14 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import {
-    type CreateCompetitionSchema,
-    competitionCategoryEnum,
-    createCompetitionSchema,
-} from "~/lib/schemas/competition.schema";
-import { string, type infer as zInfer } from "zod";
+import { competitionCategoryEnum, createCompetitionSchema } from "~/lib/schemas/competition.schema";
+import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 
 const ExtendedSchema = createCompetitionSchema.extend({
     customCategory: string().optional(),
 });
 
 type ExtendedSchemaType = zInfer<typeof ExtendedSchema>;
-
-import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
-import { useState } from "react";
-import { toast } from "sonner";
-import { updateCompetitionAction } from "~/app/(authenticated)/[competitionId]/dashboard/editor/actions";
 
 interface EditThumbnailCardProps {
     initialData?: {
@@ -88,7 +82,8 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                         <div className="space-y-1 text-foreground">
                             <h2 className="text-2xl font-bold ">Edit Competition Thumbnail</h2>
                             <p className="text-sm leading-relaxed font-medium text-muted-foreground">
-                                This is the public card delegates will see in the discovery feed. Think of it like your competition&apos;s Instagram post.
+                                This is the public card delegates will see in the discovery feed. Think of it like your
+                                competition&apos;s Instagram post.
                             </p>
                         </div>
                     </div>
@@ -206,8 +201,6 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                     </div>
                 </Form>
             </div>
-
-
         </div>
     );
 };
