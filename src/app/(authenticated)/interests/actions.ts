@@ -28,6 +28,6 @@ export async function saveInterestsAction(interests: string[]) {
 
     // 4. Revalidate/Redirect
     // Assuming the next step is the Dashboard or home
-    revalidatePath("/dashboard");
-    redirect("/dashboard");
+    revalidatePath("/create");
+    redirect("/create");
 }
