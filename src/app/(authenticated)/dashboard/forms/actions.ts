@@ -27,6 +27,13 @@ export async function getFormsAction() {
     return await getFormsByCompetition(competition.id);
 }
 
+export async function getFormByIdAction(id: string) {
+    "use server";
+    await getUserSession();
+    const { getFormById } = await import("~/data-access/forms/getFormById");
+    return await getFormById(id);
+}
+
 export async function deleteFormAction(id: string) {
     "use server";
     await getUserSession(); // Auth check

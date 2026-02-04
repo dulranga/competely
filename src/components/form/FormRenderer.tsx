@@ -9,6 +9,8 @@ import Form from "./Form";
 import { createDynamicFormSchema } from "~/lib/schemas/forms.schema";
 import type { FormFieldType } from "~/consts/forms";
 import { FIELD_COMPONENTS } from "./form-renderer/field-mapping";
+import FormDebug from "./FormDebug";
+import { Card, CardContent } from "../ui/card";
 
 type FormField = {
     id: string;
@@ -32,7 +34,10 @@ export function FormRenderer({ fields, onFinish, submitLabel = "Submit", classNa
         resolver: zodResolver(schema),
         defaultValues: fields.reduce(
             (acc, field) => {
-                if (field.type === "checkbox") acc[field.id] = false;
+                if (field.type === "checkbox") {
+                    // Always use empty array for checkboxes
+                    acc[field.id] = [];
+                }
                 if (field.type === "file") acc[field.id] = [];
                 return acc;
             },
@@ -51,15 +56,23 @@ export function FormRenderer({ fields, onFinish, submitLabel = "Submit", classNa
             ...(field.config || {}),
         };
 
-        return <FieldComponent key={field.id} {...props} />;
+        return (
+            <Card key={field.id} className="shadow-none">
+                <CardContent>
+                    <FieldComponent {...props} />
+                </CardContent>
+            </Card>
+        );
     };
 
     return (
         <Form form={form} onFinish={onFinish} className={cn("space-y-6", className)}>
             <div className="space-y-4">{fields.map(renderField)}</div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" size={"lg"} className="w-full">
                 {submitLabel}
             </Button>
+
+            <FormDebug />
         </Form>
     );
 }

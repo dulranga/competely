@@ -17,16 +17,16 @@ export const DateTimeField = ({ name, label }: { name: string; label: string }) 
                 <Form.CustomController label={label} field={field} {...props}>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
+                            <button
+                                type="button"
                                 className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground",
+                                    "border-input flex w-full items-center justify-between rounded-md border bg-input-background px-4 py-4 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 text-left mt-4",
+                                    !field.value && "text-muted-foreground/60",
                                 )}
                             >
                                 {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
+                                <CalendarIcon className="h-4 w-4 opacity-50" />
+                            </button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <Calendar

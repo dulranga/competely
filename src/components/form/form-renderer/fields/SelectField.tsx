@@ -11,7 +11,7 @@ export const SelectField = ({ name, label, options }: { name: string; label: str
             render={({ field, ...props }) => (
                 <Form.CustomController label={label} field={field} {...props}>
                     <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
+                        <SelectTrigger className="mt-4">
                             <SelectValue placeholder={`Select ${label}`} />
                         </SelectTrigger>
                         <SelectContent>

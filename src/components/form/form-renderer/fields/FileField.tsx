@@ -11,6 +11,7 @@ export const FileField = ({ name, label }: { name: string; label: string }) => {
             render={({ field, ...props }) => (
                 <Form.CustomController label={label} field={field} {...props}>
                     <FileUpload
+                        className="mt-4"
                         endpoint="/api/upload?type=form_upload"
                         onChange={(files) => {
                             const ids = files.map((f) => (f.response as any)?.id).filter(Boolean);

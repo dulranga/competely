@@ -11,7 +11,7 @@ export const RadioField = ({ name, label, options }: { name: string; label: stri
             control={control}
             render={({ field, ...props }) => (
                 <Form.CustomController label={label} field={field} {...props}>
-                    <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-2">
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-2 mt-4">
                         {options.map((opt) => (
                             <div key={opt} className="flex items-center space-x-2">
                                 <RadioGroupItem value={opt} id={`${name}-${opt}`} />

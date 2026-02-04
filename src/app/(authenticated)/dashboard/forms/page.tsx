@@ -1,25 +1,33 @@
+"use client";
+
 import { FC } from "react";
 import { Plus, FileText, Calendar, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { getUserSession } from "~/data-access/getCurrentUser";
-import { getFormsByCompetition } from "~/data-access/forms";
-import db from "~/db/client";
-import { competitions } from "~/db/schema";
-import { eq } from "drizzle-orm";
+import { useQuery } from "@tanstack/react-query";
+import { getFormsAction } from "./actions";
 
-const FormsListPage: FC = async () => {
-    const session = await getUserSession();
-    
-    let forms: any[] = [];
-    
-    if (session.session.activeOrganizationId) {
-        const competition = await db.query.competitions.findFirst({
-            where: eq(competitions.organizationId, session.session.activeOrganizationId),
-        });
-        
-        if (competition) {
-            forms = await getFormsByCompetition(competition.id);
-        }
+const FormsListPage: FC = () => {
+    const { data: forms = [], isLoading } = useQuery({
+        queryKey: ["forms"],
+        queryFn: () => getFormsAction(),
+    });
+
+    if (isLoading) {
+        return (
+            <div className="space-y-12">
+                <div className="flex items-end justify-between">
+                    <div className="grid gap-6">
+                        <h1 className="text-5xl font-black tracking-tight text-[#0c0803]">My Forms</h1>
+                        <p className="text-[#0c0803]/60 text-xl max-w-2xl leading-relaxed">
+                            Manage your competition registration forms and delegate surveys.
+                        </p>
+                    </div>
+                </div>
+                <div className="rounded-[4rem] bg-white border-4 border-dashed border-[#e8e2de] flex items-center justify-center p-32">
+                    <p className="text-[#0c0803]/40 text-lg">Loading forms...</p>
+                </div>
+            </div>
+        );
     }
 
     return (

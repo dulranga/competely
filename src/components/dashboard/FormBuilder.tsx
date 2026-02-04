@@ -256,7 +256,7 @@ const FIELD_CONFIGS: Record<string, { label: string; icon: any; schema: z.ZodTyp
         schema: z.string().min(1, "Select an option"),
         defaultProps: { options: ["Option 1"] },
     },
-    date: {
+    datetime: {
         label: "Date",
         icon: Calendar,
         schema: z.date(),

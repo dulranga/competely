@@ -27,9 +27,10 @@ export const getFieldSchema = (type: FormFieldType, required: boolean) => {
             return schema;
         }
         case "checkbox": {
-            let schema = z.boolean().default(false);
+            // Checkbox always returns an array of strings
+            let schema = z.array(z.string());
             if (required) {
-                schema = schema.refine((val) => val === true, "This field is required");
+                schema = schema.min(1, "Please select at least one option");
             }
             return schema;
         }
