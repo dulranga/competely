@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { FC } from "react";
 import { Button } from "~/components/ui/button";
 
-const EditorSidebar: FC = () => {
+const RoundSidebar: FC = () => {
     const rounds = ["Registration", "Round 1", "Round 2", "Semi Final", "Final"];
     return (
         <div className="flex flex-col h-full">
@@ -36,4 +36,4 @@ const EditorSidebar: FC = () => {
         </div>
     );
 };
-export default EditorSidebar;
+export default RoundSidebar;

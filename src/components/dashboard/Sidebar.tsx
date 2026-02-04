@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { cn } from "~/lib/utils";
-import EditorSidebar from "./secondary-sidebars/EditorSidebar";
+import RoundSidebar from "./secondary-sidebars/RoundSidebar";
 import FormBuilderSidebar from "./secondary-sidebars/FormBuilder";
 
 interface SidebarItem {
@@ -127,12 +127,12 @@ export const sidebarItems = [
         title: "Editor",
         href: "/dashboard/editor",
         icon: Award,
-        secondary: EditorSidebar,
     },
     {
         title: "Timeline",
         href: "/dashboard/timeline",
         icon: Clock,
+        secondary: RoundSidebar,
     },
     {
         title: "Analytics",
