@@ -72,17 +72,21 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                 {/* Actions */}
                 <div className="flex items-center gap-2">
                     {/* Notification Icon */}
-                    <Button variant="ghost" size="icon" className="relative">
-                        <Bell className="h-5 w-5" />
-                        <span className="sr-only">Notifications</span>
-                        {/* Notification badge */}
-                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <Button variant="ghost" size="icon" className="relative" asChild>
+                        <Link href="/notifications">
+                            <Bell className="h-5 w-5" />
+                            <span className="sr-only">Notifications</span>
+                            {/* Notification badge */}
+                            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
+                        </Link>
                     </Button>
 
                     {/* Profile Icon */}
-                    <Button variant="ghost" size="icon">
-                        <User className="h-5 w-5" />
-                        <span className="sr-only">Profile</span>
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link href="/profile">
+                            <User className="h-5 w-5" />
+                            <span className="sr-only">Profile</span>
+                        </Link>
                     </Button>
 
                     {/* Sign Out Button */}
