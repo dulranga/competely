@@ -14,7 +14,7 @@ interface PrizesSectionProps {
 export const PrizesSection: FC<PrizesSectionProps> = ({ form }) => {
     const { fields, append, remove } = useFieldArray({
         control: form.control,
-        name: "customPrizes",
+        name: "prizes",
     });
 
     return (
@@ -33,48 +33,34 @@ export const PrizesSection: FC<PrizesSectionProps> = ({ form }) => {
                 </Button>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Form.Item label="Champion" name="championPrize">
-                        <Input placeholder="$5000" />
-                    </Form.Item>
-                    <Form.Item label="1st Runners Up" name="runnersUp1Prize">
-                        <Input placeholder="$3000" />
-                    </Form.Item>
-                    <Form.Item label="2nd Runners Up" name="runnersUp2Prize">
-                        <Input placeholder="$2000" />
-                    </Form.Item>
-                </div>
+                <div className="space-y-4">
+                    {fields.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-xl border-2 border-dashed">
+                            No prizes added yet.
+                        </div>
+                    )}
 
-                {fields.length > 0 && (
-                    <div className="space-y-4 pt-4 border-t border-border/40">
-                        {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-start gap-4">
-                                <div className="grid grid-cols-2 gap-4 flex-1">
-                                    <Form.Item name={`customPrizes.${index}.name`} label="Prize Name" hideLabel={index > 0}>
-                                        <Input placeholder="e.g. Best Design" />
-                                    </Form.Item>
-                                    <Form.Item name={`customPrizes.${index}.amount`} label="Reward" hideLabel={index > 0}>
-                                        <Input placeholder="e.g. $500" />
-                                    </Form.Item>
-                                </div>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => remove(index)}
-                                    className="mt-0 h-10 w-10 text-muted-foreground hover:text-destructive"
-                                >
-                                    <Trash2 size={18} />
-                                </Button>
+                    {fields.map((field, index) => (
+                        <div key={field.id} className="flex items-start gap-4">
+                            <div className="grid grid-cols-2 gap-4 flex-1">
+                                <Form.Item name={`prizes.${index}.name`} label="Prize Name" hideLabel={index > 0}>
+                                    <Input placeholder="e.g. Champion" className="bg-white" />
+                                </Form.Item>
+                                <Form.Item name={`prizes.${index}.amount`} label="Reward (Cash/Item)" hideLabel={index > 0}>
+                                    <Input placeholder="e.g. $5000" className="bg-white" />
+                                </Form.Item>
                             </div>
-                        ))}
-                    </div>
-                )}
-
-                <div className="pt-4 border-t border-border/50">
-                    <Form.Item label="Total Prize Pool" name="prizePool">
-                        <Input placeholder="$10,000" />
-                    </Form.Item>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => remove(index)}
+                                className={`h-10 w-10 text-muted-foreground hover:text-destructive shrink-0 ${index === 0 ? "mt-6" : "mt-0"}`}
+                            >
+                                <Trash2 size={18} />
+                            </Button>
+                        </div>
+                    ))}
                 </div>
             </CardContent>
         </Card>

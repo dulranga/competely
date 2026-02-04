@@ -2,8 +2,11 @@ import { FC } from "react";
 import EditThumbnailCard from "~/components/dashboard/editor/EditThumbnailCard";
 import MainInformationSection from "~/components/dashboard/editor/MainInformationSection";
 import { ContactInformationSection } from "~/components/dashboard/editor/contactsection/ContactInformationSection";
+import { getActiveCompetition } from "~/data-access/competitions/getActiveCompetition";
 
-const EditorPage: FC = () => {
+const EditorPage: FC = async () => {
+    const competition = await getActiveCompetition();
+
     return (
         <div className="space-y-12">
             <div className="grid gap-6">
@@ -14,7 +17,7 @@ const EditorPage: FC = () => {
                 </p>
 
                 <div className="grid gap-8">
-                    <EditThumbnailCard />
+                    <EditThumbnailCard initialData={competition} />
                     <MainInformationSection />
                     <ContactInformationSection />
                 </div>

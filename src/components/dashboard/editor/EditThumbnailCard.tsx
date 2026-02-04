@@ -27,26 +27,53 @@ type ExtendedSchemaType = zInfer<typeof ExtendedSchema>;
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateCompetitionAction } from "~/app/(authenticated)/dashboard/editor/actions";
 
-const EditThumbnailCard: FC = () => {
+interface EditThumbnailCardProps {
+    initialData?: {
+        id: string;
+        name: string | null;
+        tagline: string | null;
+        category: "tech" | "business" | "design" | "science" | "sports" | "arts" | "other" | null;
+        bannerId: string | null;
+        startDate: Date | null;
+        endDate: Date | null;
+        registrationDeadline: Date | null;
+    } | null;
+}
+
+const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<ExtendedSchemaType>({
         resolver: zodResolver(ExtendedSchema),
         defaultValues: {
-            name: "",
-            tagline: "",
-            category: "tech",
-            bannerId: null,
+            name: initialData?.name || "",
+            tagline: initialData?.tagline || "",
+            category: initialData?.category || "tech",
+            bannerId: initialData?.bannerId || null,
             customCategory: "",
+            startDate: initialData?.startDate || new Date(),
+            endDate: initialData?.endDate || new Date(),
+            registrationDeadline: initialData?.registrationDeadline || new Date(),
         },
     });
 
     const category = form.watch("category");
 
-    const onSave = () => {
-        // In a real app, you would submit to backend here
-        toast.success("Changes saved successfully!");
+    const onSave = async () => {
+        setIsSubmitting(true);
+        const values = form.getValues();
+        const result = await updateCompetitionAction(values);
+        setIsSubmitting(false);
+
+        if (result.error) {
+            toast.error(result.error);
+        } else {
+            toast.success("Changes saved successfully!");
+            setIsConfirmOpen(false);
+        }
     };
 
     return (

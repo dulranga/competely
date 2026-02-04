@@ -23,9 +23,18 @@ export const mainInfoSchema = z.object({
     // logistics
     location: z.string().optional(),
 
-    guidelinesType: z.enum(["file", "link"]),
-    guidelinesFile: z.string().optional().nullable(),
-    guidelinesUrl: z.string().optional(),
+    // resources
+    resources: z
+        .array(
+            z.object({
+                id: z.string().optional(), // temporary id for UI list management if needed, though index can work, z.string() is safer for keys
+                type: z.enum(["document", "url"]),
+                label: z.string().min(1, "Label is required"),
+                fileId: z.string().nullable().optional(),
+                url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+            })
+        )
+        .max(3, "Maximum 3 resources allowed"),
 
     // socials & extras
     socials: z.array(
@@ -39,17 +48,13 @@ export const mainInfoSchema = z.object({
     showCountdown: z.boolean(),
     showPrizes: z.boolean(),
 
-    championPrize: z.string().optional(),
-    runnersUp1Prize: z.string().optional(),
-    runnersUp2Prize: z.string().optional(),
-
-    customPrizes: z.array(
+    prizes: z.array(
         z.object({
+            id: z.string().optional(), // for key management
             name: z.string().min(1, "Name is required"),
-            amount: z.string().min(1, "Prize amount is required"),
+            amount: z.string().min(1, "Amount is required"),
         })
     ),
-    prizePool: z.string().optional(),
 });
 
 export type MainInfoSchema = z.infer<typeof mainInfoSchema>;

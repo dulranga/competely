@@ -23,9 +23,13 @@ const MainInformationSection: FC = () => {
         resolver: zodResolver(mainInfoSchema),
         defaultValues: {
             description: "",
-            guidelinesType: "file",
+            resources: [], // Default empty resources
             socials: [{ platform: "website", url: "" }],
-            customPrizes: [],
+            prizes: [
+                { name: "Champion", amount: "" },
+                { name: "1st Runners Up", amount: "" },
+                { name: "2nd Runners Up", amount: "" },
+            ],
             showParticipantCount: true,
             showTimeline: true,
             showCountdown: true,
