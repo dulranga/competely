@@ -1,8 +1,14 @@
-import { FC } from "react";
+"use client";
+
+import { FC, useState } from "react";
 import { Plus, Calendar } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import CreateEventModal from "~/components/dashboard/modals/modals/CreateEventModal";
+import { Dialog } from "~/components/ui/dialog";
 
 const TimelinePage: FC = () => {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
     const events = [
         { title: "Registration Opens", date: "Oct 15, 2025", type: "Major" },
         { title: "Case Launch", date: "Nov 02, 2025", type: "Milestone" },
@@ -19,8 +25,11 @@ const TimelinePage: FC = () => {
                         Map out the milestones of your competition. Clearly communicate deadlines to all participants.
                     </p>
                 </div>
-                <Button className="h-16 px-8 rounded-3xl bg-[#0c0803] hover:bg-black text-white font-black text-lg gap-3">
-                    <Plus size={24} /> Add Milestone
+                <Button
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="h-16 px-8 rounded-3xl bg-[#0c0803] hover:bg-black text-white font-black text-lg gap-3"
+                >
+                    <Plus size={24} /> Add Event
                 </Button>
             </div>
 
@@ -53,6 +62,15 @@ const TimelinePage: FC = () => {
                     ))}
                 </div>
             </div>
+
+            <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+                {isCreateModalOpen && (
+                    <CreateEventModal
+                        closeModal={() => setIsCreateModalOpen(false)}
+                        data={{ roundId: "mock-round-id" }}
+                    />
+                )}
+            </Dialog>
         </div>
     );
 };
