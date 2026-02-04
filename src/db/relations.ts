@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { accounts, invitations, members, organizations, sessions, users, verifications } from "./schemas/auth-schema";
-import { competitionContacts, competitionPrizes, competitionResources, competitionSocialLinks } from "./schemas/competition-home-schema";
+import { competitionContacts, competitionPrizes, competitionPublishOptions, competitionResources, competitionSocialLinks } from "./schemas/competition-home-schema";
 import { competitionEventResources, competitionEvents, competitionRounds } from "./schemas/competition-timeline-schema";
 import { competitions } from "./schemas/competitions-schema";
 import { files } from "./schemas/files-schema";
@@ -100,6 +100,7 @@ export const competitionsRelations = relations(competitions, ({ one, many }) => 
     rounds: many(competitionRounds),
     forms: many(forms),
     bookmarks: many(bookmarks),
+    publishOptions: one(competitionPublishOptions),
 }));
 
 // Competition Home Relations
@@ -131,6 +132,13 @@ export const competitionSocialLinksRelations = relations(competitionSocialLinks,
 export const competitionContactsRelations = relations(competitionContacts, ({ one }) => ({
     competition: one(competitions, {
         fields: [competitionContacts.competitionId],
+        references: [competitions.id],
+    }),
+}));
+
+export const competitionPublishOptionsRelations = relations(competitionPublishOptions, ({ one }) => ({
+    competition: one(competitions, {
+        fields: [competitionPublishOptions.competitionId],
         references: [competitions.id],
     }),
 }));
