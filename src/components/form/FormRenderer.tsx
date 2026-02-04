@@ -25,9 +25,16 @@ interface FormRendererProps {
     onFinish: (data: unknown) => void;
     submitLabel?: string;
     className?: string;
+    disabled?: boolean;
 }
 
-export function FormRenderer({ fields, onFinish, submitLabel = "Submit", className }: FormRendererProps) {
+export function FormRenderer({
+    fields,
+    onFinish,
+    submitLabel = "Submit",
+    className,
+    disabled = false,
+}: FormRendererProps) {
     const schema = useMemo(() => createDynamicFormSchema(fields), [fields]);
 
     const form = useForm({
@@ -68,7 +75,7 @@ export function FormRenderer({ fields, onFinish, submitLabel = "Submit", classNa
     return (
         <Form form={form} onFinish={onFinish} className={cn("space-y-6", className)}>
             <div className="space-y-4">{fields.map(renderField)}</div>
-            <Button type="submit" size={"lg"} className="w-full">
+            <Button type="submit" size={"lg"} className="w-full" disabled={disabled}>
                 {submitLabel}
             </Button>
 

@@ -3,8 +3,11 @@
 import { redirect } from "next/navigation";
 
 import { eq } from "drizzle-orm";
+import { getFormResponsesByFormId } from "~/data-access/form-responses/getFormResponsesByFormId";
 import { createForm } from "~/data-access/forms/createForm";
 import { deleteForm } from "~/data-access/forms/deleteForm";
+import { getFormById } from "~/data-access/forms/getFormById";
+import { getFormFieldsByFormId } from "~/data-access/forms/getFormFieldsByFormId";
 import { getFormsByCompetition } from "~/data-access/forms/getFormsByCompetition";
 import { setFormFields } from "~/data-access/forms/setFormFields";
 import { updateForm } from "~/data-access/forms/updateForm";
@@ -30,7 +33,6 @@ export async function getFormsAction() {
 export async function getFormByIdAction(id: string) {
     "use server";
     await getUserSession();
-    const { getFormById } = await import("~/data-access/forms/getFormById");
     return await getFormById(id);
 }
 
@@ -80,4 +82,16 @@ export async function saveFormAction(data: {
     await setFormFields(formId, data.fields);
 
     redirect("/dashboard/forms");
+}
+
+export async function getPaginatedFormResponsesAction(formId: string, page = 1, limit = 20) {
+    "use server";
+    await getUserSession();
+    return await getFormResponsesByFormId(formId, page, limit);
+}
+
+export async function getFormFieldsAction(formId: string) {
+    "use server";
+    await getUserSession();
+    return await getFormFieldsByFormId(formId);
 }

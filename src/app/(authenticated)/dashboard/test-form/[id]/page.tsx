@@ -1,33 +1,64 @@
-import { FC } from "react";
+"use client";
+
+import { FC, use } from "react";
 import { notFound } from "next/navigation";
-import { getFormById } from "~/data-access/forms/getFormById";
 import { FormRenderer } from "~/components/form/FormRenderer";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getFormByIdAction, submitFormAction } from "./actions";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface TestFormPageProps {
     params: Promise<{ id: string }>;
 }
 
-const TestFormPage: FC<TestFormPageProps> = async ({ params }) => {
-    const { id } = await params;
-    const form = await getFormById(id);
+const TestFormPage: FC<TestFormPageProps> = ({ params }) => {
+    const { id } = use(params);
+
+    const { data: form, isLoading } = useQuery({
+        queryKey: ["form", id],
+        queryFn: () => getFormByIdAction(id),
+    });
+
+    const { mutate: submitForm, isPending } = useMutation({
+        mutationFn: submitFormAction,
+        onSuccess: () => {
+            toast.success("Form submitted successfully!");
+        },
+        onError: (error) => {
+            toast.error(error instanceof Error ? error.message : "Failed to submit form");
+        },
+    });
+
+    if (isLoading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!form) {
         notFound();
     }
 
     const handleSubmit = async (data: unknown) => {
-        "use server";
-        console.log("Form submission:", data);
+        submitForm({
+            formId: form.id,
+            answers: data as Record<string, unknown>,
+        });
     };
 
+    // TODO: remove form Item component and use direct comp. Also increase font size
+
     return (
-        <div className="max-w-3xl mx-auto space-y-8 py-8">
+        <div className="max-w-3xl mx-auto space-y-8 py-8 px-4">
             <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl font-bold focus-visible:ring-0 placeholder:text-muted-foreground/20 h-auto tracking-tighter w-full">
-                    {form.name}
-                </h1>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter w-full text-foreground">{form.name}</h1>
                 {form.description && (
-                    <p className="text-muted-foreground text-lg leading-relaxed">{form.description}</p>
+                    <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap">
+                        {form.description}
+                    </p>
                 )}
             </div>
 
@@ -40,7 +71,8 @@ const TestFormPage: FC<TestFormPageProps> = async ({ params }) => {
                     config: field.config || {},
                 }))}
                 onFinish={handleSubmit}
-                submitLabel="Submit Form"
+                submitLabel={isPending ? "Submitting..." : "Submit Form"}
+                disabled={isPending}
             />
         </div>
     );
