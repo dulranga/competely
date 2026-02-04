@@ -25,3 +25,24 @@ export async function createCompetitionAction(values: unknown) {
         };
     }
 }
+
+export async function joinCompetitionAction(formData: FormData) {
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const competitionCode = formData.get("competitionCode") as string;
+
+    if (!name || !email || !password || !competitionCode) {
+        return { error: "All fields are required" };
+    }
+
+    // Mock delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Mock implementation - failing if code is "INVALID"
+    if (competitionCode === "INVALID") {
+        return { error: "Invalid competition code" };
+    }
+
+    return { success: "Request sent successfully! waiting for approval." };
+}

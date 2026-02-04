@@ -8,8 +8,19 @@ import { Button } from "~/components/ui/button";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { getRandomAvatar } from "~/lib/getRandomAvatar";
 import { cn, getFileUrlById, slugify } from "~/lib/utils";
+import { toast } from "sonner";
+import { joinCompetitionAction } from "~/app/(authenticated)/create/actions";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "~/components/ui/dialog";
 
 interface Competition {
     id: string;
@@ -26,6 +37,21 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [searchQuery, setSearchQuery] = useState("");
     const { openModal } = useModal();
+    const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
+
+    const handleJoin = async (formData: FormData) => {
+        setIsJoining(true);
+        const result = await joinCompetitionAction(formData);
+        setIsJoining(false);
+
+        if (result.error) {
+            toast.error(result.error);
+        } else {
+            toast.success(result.success);
+            setIsJoinDialogOpen(false);
+        }
+    };
 
     const filteredCompetitions = useMemo(() => {
         return initialCompetitions.filter((comp) => comp.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -57,7 +83,12 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                         >
                             New Competition
                         </Button>
-                        <Button className="flex-1 md:flex-none bg-[#1a1b25] hover:bg-[#2c2e3f] text-white">Join</Button>
+                        <Button
+                            className="flex-1 md:flex-none bg-[#1a1b25] hover:bg-[#2c2e3f] text-white"
+                            onClick={() => setIsJoinDialogOpen(true)}
+                        >
+                            Join
+                        </Button>
                     </div>
                 </div>
 
@@ -149,6 +180,83 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                 </div>
             </main>
             <FooterBottom />
+
+            <Dialog open={isJoinDialogOpen} onOpenChange={setIsJoinDialogOpen}>
+                <DialogContent className="sm:max-w-[425px] rounded-3xl p-8">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black text-[#1a1b25]">Join OC Panel</DialogTitle>
+                        <DialogDescription>
+                            Enter your details to join the Organizing Committee.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-4">
+                        <form action={handleJoin} id="join-form">
+                            <div className="grid gap-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name" className="text-left font-bold text-[#1a1b25]">
+                                        Name
+                                    </Label>
+                                    <Input
+                                        id="name"
+                                        name="name"
+                                        placeholder="John Doe"
+                                        className="col-span-3 rounded-xl border-gray-200"
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="email" className="text-left font-bold text-[#1a1b25]">
+                                        Email
+                                    </Label>
+                                    <Input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        placeholder="john@example.com"
+                                        className="col-span-3 rounded-xl border-gray-200"
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="competitionCode" className="text-left font-bold text-[#1a1b25]">
+                                        Competition Code
+                                    </Label>
+                                    <Input
+                                        id="competitionCode"
+                                        name="competitionCode"
+                                        placeholder="COMP-123456"
+                                        className="col-span-3 rounded-xl border-gray-200"
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password" className="text-left font-bold text-[#1a1b25]">
+                                        Password
+                                    </Label>
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        className="col-span-3 rounded-xl border-gray-200"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            type="submit"
+                            form="join-form"
+                            className="w-full rounded-xl bg-[#1a1b25] text-white font-bold hover:bg-[#2c2e3f]"
+                            disabled={isJoining}
+                        >
+                            {isJoining ? "Connecting..." : "Connect"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
