@@ -6,6 +6,7 @@
             "Machine Learning",
             "Computer Vision"
         ],
+        "keywords": ["AI", "ML", "Machine Learning", "Artificial Intelligence", "Neural Networks", "Deep Learning", "Computer Vision", "NLP"],
         "icon": "Brain",
         "colorClass": "bg-gradient-to-br from-[#e9a5a5] to-[#e08e8e]"
     },
@@ -16,6 +17,7 @@
             "Mobile App Development",
             "SaaS"
         ],
+        "keywords": ["Software", "Web Development", "Mobile App", "SaaS", "Frontend", "Backend", "Full Stack", "Programming", "Coding"],
         "icon": "Code2",
         "colorClass": "bg-gradient-to-br from-[#a79de9] to-[#9286e0]"
     },
@@ -26,6 +28,7 @@
             "3D Simulation & Design",
             "VR & AR"
         ],
+        "keywords": ["Game Development", "Gaming", "VR", "AR", "Virtual Reality", "Augmented Reality", "3D", "Simulation", "Interactive"],
         "icon": "Gamepad2",
         "colorClass": "bg-gradient-to-br from-[#7bbbd6] to-[#60a8c9]"
     },
@@ -36,6 +39,7 @@
             "Data Visualization",
             "Big Data Systems"
         ],
+        "keywords": ["Data Science", "Data Analysis", "Analytics", "Big Data", "Data Visualization", "Statistics", "Python", "R"],
         "icon": "LineChart",
         "colorClass": "bg-gradient-to-br from-[#eb6ea5] to-[#e64d8e]"
     },
@@ -46,6 +50,7 @@
             "Mechatronics",
             "Automation Systems"
         ],
+        "keywords": ["Engineering", "Robotics", "Mechatronics", "Automation", "Mechanical", "Electrical", "Civil", "Hardware"],
         "icon": "Wrench",
         "colorClass": "bg-gradient-to-br from-[#8ab4d5] to-[#6fa1ca]"
     },
@@ -56,6 +61,7 @@
             "Internet of Things",
             "Industry 4.0 Systems"
         ],
+        "keywords": ["IoT", "Internet of Things", "Electronics", "Embedded Systems", "Smart Devices", "Industry 4.0", "Sensors"],
         "icon": "MonitorSmartphone",
         "colorClass": "bg-gradient-to-br from-[#deb986] to-[#d4a86e]"
     },
@@ -66,6 +72,7 @@
             "Business Model Design",
             "Case Study"
         ],
+        "keywords": ["Entrepreneurship", "Startup", "Business", "Hackathon", "Ideathon", "Case Study", "Innovation", "Pitching"],
         "icon": "LineChart",
         "colorClass": "bg-gradient-to-br from-[#b3ca87] to-[#a2bd70]"
     },
@@ -76,6 +83,7 @@
             "Photography",
             "Videography"
         ],
+        "keywords": ["Design", "Graphic Design", "UI/UX", "Photography", "Videography", "Visual Arts", "Creative", "Art"],
         "icon": "ShapesIcon",
         "colorClass": "bg-gradient-to-br from-[#c4c96b] to-[#b6bc57]"
     },
@@ -86,6 +94,7 @@
             "Dance & Movement Arts",
             "Theatre"
         ],
+        "keywords": ["Music", "Performance", "Dance", "Theatre", "Arts", "Vocal", "Instrumental", "Performing Arts"],
         "icon": "Music2",
         "colorClass": "bg-gradient-to-br from-[#b87661] to-[#a86552]"
     },
@@ -96,6 +105,7 @@
             "Cloud Computing",
             "Dev Ops"
         ],
+        "keywords": ["Cybersecurity", "Security", "Ethical Hacking", "Cloud", "DevOps", "Network Security", "Penetration Testing"],
         "icon": "ShieldCheck",
         "colorClass": "bg-gradient-to-br from-[#4d56e6] to-[#3a44d8]"
     },
@@ -106,6 +116,7 @@
             "Public Speaking",
             "Debate"
         ],
+        "keywords": ["Communication", "Public Speaking", "Debate", "Pitching", "Presentation", "Oratory", "Speech"],
         "icon": "Mic2",
         "colorClass": "bg-gradient-to-br from-[#a6a0e6] to-[#9089df]"
     },
@@ -116,6 +127,7 @@
             "Climate Innovation",
             "Community Dev"
         ],
+        "keywords": ["Social Impact", "SDG", "Sustainability", "Climate", "Community", "Environment", "Social Good"],
         "icon": "Globe2",
         "colorClass": "bg-gradient-to-br from-[#8ecc97] to-[#78c082]"
     },
@@ -126,6 +138,7 @@
             "Creative Writing",
             "Journalism"
         ],
+        "keywords": ["Media", "Academia", "Research", "Writing", "Journalism", "Content Creation", "Academic"],
         "icon": "Feather",
         "colorClass": "bg-gradient-to-br from-[#ff9b85] to-[#ff8469]"
     }

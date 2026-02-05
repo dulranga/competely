@@ -35,6 +35,7 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
     const router = useRouter();
     const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+    const [selectedTopic, setSelectedTopic] = useState<string>("");
     
     // Filter states - using the default filters as initial values
     const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -49,8 +50,13 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
         }
     };
 
-    const handleTopicClick = () => {
+    const handleTopicClick = (keywords: string[], topicTitle: string) => {
+        // Keep search bar clear, only apply keywords to filters
+        setSearchQuery("");
+        setSelectedTopic(topicTitle);
         setIsSearching(true);
+        // Update filter keywords
+        setFilters({ ...filters, keywords });
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -115,9 +121,10 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                                 key={index}
                                                 title={topic.title}
                                                 description={topic.description}
+                                                keywords={topic.keywords}
                                                 icon={IconComponent}
                                                 colorClass={topic.colorClass}
-                                                onClick={handleTopicClick}
+                                                onClick={() => handleTopicClick(topic.keywords || [], topic.title)}
                                             />
                                         );
                                     })}
@@ -239,11 +246,14 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                     </>
                                 ) : (
                                     <div className="text-center py-12">
-                                        <p className="text-xl text-muted-foreground">No competitions found matching "{searchQuery}"</p>
+                                        <p className="text-xl text-muted-foreground">
+                                            No competitions found {selectedTopic ? `for "${selectedTopic}"` : searchQuery ? `matching "${searchQuery}"` : ""}
+                                        </p>
                                         <Button 
                                             variant="link" 
                                             onClick={() => {
                                                 setSearchQuery("");
+                                                setSelectedTopic("");
                                                 setIsSearching(false);
                                                 router.push('/discover');
                                             }}

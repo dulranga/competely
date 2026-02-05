@@ -6,6 +6,7 @@ import { LucideIcon } from "lucide-react";
 interface TopicCardProps {
     title: string;
     description?: string[];
+    keywords?: string[];
     icon: LucideIcon;
     colorClass: string; // Tailwincss class for background gradient
     textColorClass?: string;
