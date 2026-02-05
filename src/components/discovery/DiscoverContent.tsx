@@ -12,6 +12,7 @@ import { HeaderPublic } from "~/components/ui/header-public";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { cn, getFileUrlById } from "~/lib/utils";
+import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
 import { filterCompetitions, DEFAULT_FILTERS } from "./filterUtils";
 import type { FilterState } from './types';
@@ -29,9 +30,11 @@ interface DiscoverContentProps {
     isAuthenticated: boolean;
     initialCompetitions?: any[];
     initialSearchQuery?: string;
+    bookmarkStatuses?: Map<string, boolean>;
+    bookmarkCount?: number;
 }
 
-export function DiscoverContent({ isAuthenticated, initialCompetitions = [], initialSearchQuery = "" }: DiscoverContentProps) {
+export function DiscoverContent({ isAuthenticated, initialCompetitions = [], initialSearchQuery = "", bookmarkStatuses = new Map(), bookmarkCount = 0 }: DiscoverContentProps) {
     const router = useRouter();
     const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
@@ -71,7 +74,7 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
             {isAuthenticated ? (
-                <HeaderAuthenticated currentPath="/discover" />
+                <HeaderAuthenticated currentPath="/discover" bookmarkCount={bookmarkCount} />
             ) : (
                 <HeaderPublic />
             )}
@@ -214,21 +217,12 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                 {filteredCompetitions.length > 0 ? (
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                                            {filteredCompetitions.map((comp) => {
-                                                const imageUrl = comp.imageUrl && typeof comp.imageUrl === 'string' ? getFileUrlById(comp.imageUrl) : undefined;
-                                                return (
-                                                    <CompetitionCard 
-                                                        key={comp.id}
-                                                        title={comp.title || "Untitled"}
-                                                        status={comp.status as any}
-                                                        {...(imageUrl && { imageUrl })}
-                                                        organizerName={comp.organizerName}
-                                                        category={comp.category}
-                                                        registeredCount={(comp as any).registeredCount || 0}
-                                                        deadline={comp.deadline ? new Date(comp.deadline).toLocaleDateString() : "TBA"}
-                                                    />
-                                                );
-                                            })}
+                                            {filteredCompetitions.map((comp) => (
+                                                <CompetitionCard 
+                                                    key={comp.id}
+                                                    {...mapCompetitionToCardProps(comp, bookmarkStatuses.get(comp.id) || false)}
+                                                />
+                                            ))}
                                         </div>
 
                                         {/* Pagination (Mock) */}

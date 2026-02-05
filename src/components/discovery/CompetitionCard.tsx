@@ -6,11 +6,14 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
+import { toast } from "sonner";
 
 export type CompetitionStatus = "Ongoing" | "Upcoming" | "Ended" | "Open" | "Closed" | "Registered" | "Finished";
 
 interface CompetitionCardProps {
+    competitionId?: string;
     title?: string;
     description?: string;
     imageUrl?: string;
@@ -36,6 +39,7 @@ const statusStyles: Record<CompetitionStatus, string> = {
 };
 
 export function CompetitionCard({
+    competitionId,
     title = "HackExtreme",
     description = "Add a description here. Add a description here. Add a description here. Add a description here. Add a description here.",
     imageUrl = "https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2574&auto=format&fit=crop",
@@ -50,6 +54,58 @@ export function CompetitionCard({
     onClick,
 }: CompetitionCardProps) {
     const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
+    const [isPending, startTransition] = useTransition();
+
+    const handleBookmarkClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        if (!competitionId) {
+            toast.error("Competition ID is missing");
+            return;
+        }
+
+        const newState = !isBookmarked;
+        setIsBookmarked(newState);
+
+        startTransition(async () => {
+            try {
+                const result = await toggleBookmarkAction(competitionId);
+                if (result.success) {
+                    setIsBookmarked(result.isBookmarked ?? newState);
+                    toast.success(result.isBookmarked ? "Bookmarked!" : "Bookmark removed");
+                } else {
+                    setIsBookmarked(!newState);
+                    toast.error(result.error || "Failed to update bookmark");
+                }
+            } catch (error) {
+                setIsBookmarked(!newState);
+                toast.error("Failed to update bookmark");
+            }
+        });
+    };
+
+    const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
+        <button
+            className={cn(
+                "rounded-full transition-all duration-300 active:scale-95",
+                className
+            )}
+            onClick={handleBookmarkClick}
+            disabled={isPending}
+            type="button"
+        >
+            <Bookmark
+                className={cn(
+                    "transition-all",
+                    iconSize,
+                    isBookmarked
+                        ? "fill-current"
+                        : "hover:scale-110"
+                )}
+            />
+        </button>
+    );
 
     if (variant === "list") {
         return (
@@ -95,22 +151,13 @@ export function CompetitionCard({
                         >
                             {organizerName}
                         </Button>
-                        <button
-                            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors absolute top-3 right-3 sm:static"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsBookmarked(!isBookmarked);
-                            }}
-                        >
-                            <Bookmark
-                                className={cn(
-                                    "h-4 w-4 transition-all",
-                                    isBookmarked
-                                        ? "fill-primary text-primary"
-                                        : "text-muted-foreground hover:text-foreground"
-                                )}
-                            />
-                        </button>
+                        <BookmarkButton 
+                            className="p-1.5 hover:bg-gray-100 absolute top-3 right-3 sm:static"
+                            iconSize={cn(
+                                "h-4 w-4",
+                                isBookmarked ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        />
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
                 </div>
@@ -143,24 +190,15 @@ export function CompetitionCard({
                 </div>
 
                 {/* Bookmark Icon (Top Right) */}
-                <button
-                    className="absolute top-5 right-5 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 active:scale-95 group/bookmark"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setIsBookmarked(!isBookmarked);
-                    }}
-                    type="button"
-                >
-                    <Bookmark
-                        className={cn(
-                            "h-5 w-5 transition-all duration-300",
-                            isBookmarked
-                                ? "fill-white text-white scale-110"
-                                : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white"
-                        )}
-                    />
-                </button>
+                <BookmarkButton 
+                    className="absolute top-5 right-5 z-10 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/bookmark"
+                    iconSize={cn(
+                        "h-5 w-5",
+                        isBookmarked
+                            ? "text-white scale-110"
+                            : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white"
+                    )}
+                />
 
                 {/* Center Text Overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-0 mt-4">

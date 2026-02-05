@@ -19,9 +19,10 @@ const navItems = [
 
 interface HeaderProps {
     currentPath?: string;
+    bookmarkCount?: number;
 }
 
-export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
+export function HeaderAuthenticated({ currentPath = "/", bookmarkCount = 0 }: HeaderProps) {
     const router = useRouter();
 
     const handleSignOut = async () => {
@@ -56,14 +57,14 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                             >
                                 <Icon className="h-4 w-4" />
                                 {item.name}
-                                {item.name === "Bookmarks" && (
+                                {item.name === "Bookmarks" && bookmarkCount > 0 && (
                                     <span
                                         className={cn(
                                             "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none",
                                             isActive ? "bg-primary text-white" : "bg-muted text-muted-foreground",
                                         )}
                                     >
-                                        10
+                                        {bookmarkCount}
                                     </span>
                                 )}
                             </Link>
@@ -110,12 +111,17 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "flex flex-col items-center gap-1 px-2 py-1 rounded-md transition-colors",
+                                    "flex flex-col items-center gap-1 px-2 py-1 rounded-md transition-colors relative",
                                     isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                                 )}
                             >
                                 <Icon className="h-5 w-5" />
                                 <span className="text-xs">{item.name}</span>
+                                {item.name === "Bookmarks" && bookmarkCount > 0 && (
+                                    <span className="absolute top-0 right-0 rounded-full bg-primary text-white text-[9px] font-bold px-1 min-w-[16px] text-center">
+                                        {bookmarkCount}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}
