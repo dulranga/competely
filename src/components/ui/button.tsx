@@ -16,6 +16,8 @@ const buttonVariants = cva(
                     "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
                 secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+                "destructive-ghost":
+                    "text-destructive hover:bg-destructive/10 hover:text-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
                 link: "text-primary underline-offset-4 hover:underline",
                 competely: "bg-[#0c0803] text-white hover:bg-black shadow-lg shadow-black/10 active:scale-95",
                 "competely-outline":

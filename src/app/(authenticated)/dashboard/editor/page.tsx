@@ -4,8 +4,11 @@ import MainInformationSection from "~/components/dashboard/editor/MainInformatio
 import { ContactInformationSection } from "~/components/dashboard/editor/contactsection/ContactInformationSection";
 import { getActiveCompetition } from "~/data-access/competitions/getActiveCompetition";
 
+import { getCompetitionMainInfo } from "~/data-access/competitions/getCompetitionMainInfo";
+
 const EditorPage: FC = async () => {
     const competition = await getActiveCompetition();
+    const mainInfo = await getCompetitionMainInfo(competition!.id);
 
     return (
         <div className="space-y-12">
@@ -18,7 +21,7 @@ const EditorPage: FC = async () => {
 
                 <div className="grid gap-8">
                     <EditThumbnailCard initialData={competition} />
-                    <MainInformationSection />
+                    <MainInformationSection competitionId={competition!.id} initialData={mainInfo} />
                     <ContactInformationSection />
                 </div>
             </div>

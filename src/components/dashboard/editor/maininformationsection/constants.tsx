@@ -21,7 +21,7 @@ export const mainInfoSchema = z.object({
     description: z.string().min(1, "Description is required"),
 
     // logistics
-    location: z.string().optional(),
+
 
     // resources
     resources: z

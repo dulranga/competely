@@ -11,6 +11,7 @@ export const competitions = pgTable(
             .notNull()
             .references(() => organizations.id, { onDelete: "cascade" }),
         tagline: text("tagline"),
+        description: text("description"),
         category: competitionCategoryEnum("category"),
         hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),

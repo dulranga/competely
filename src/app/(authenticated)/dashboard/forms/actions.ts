@@ -1,9 +1,17 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createForm, deleteForm, getFormsByCompetition, setFormFields, updateForm } from "~/data-access/forms";
-import { getUserSession } from "~/data-access/getCurrentUser";
+
 import { eq } from "drizzle-orm";
+import { getFormResponsesByFormId } from "~/data-access/form-responses/getFormResponsesByFormId";
+import { createForm } from "~/data-access/forms/createForm";
+import { deleteForm } from "~/data-access/forms/deleteForm";
+import { getFormById } from "~/data-access/forms/getFormById";
+import { getFormFieldsByFormId } from "~/data-access/forms/getFormFieldsByFormId";
+import { getFormsByCompetition } from "~/data-access/forms/getFormsByCompetition";
+import { setFormFields } from "~/data-access/forms/setFormFields";
+import { updateForm } from "~/data-access/forms/updateForm";
+import { getUserSession } from "~/data-access/getCurrentUser";
 import db from "~/db/client";
 import { competitions } from "~/db/schema";
 
@@ -20,6 +28,12 @@ export async function getFormsAction() {
     if (!competition) return [];
 
     return await getFormsByCompetition(competition.id);
+}
+
+export async function getFormByIdAction(id: string) {
+    "use server";
+    await getUserSession();
+    return await getFormById(id);
 }
 
 export async function deleteFormAction(id: string) {
@@ -48,7 +62,7 @@ export async function saveFormAction(data: {
 }) {
     "use server";
 
-    const session = await getUserSession();
+    await getUserSession();
     let formId = data.id;
 
     if (!formId) {
@@ -68,4 +82,16 @@ export async function saveFormAction(data: {
     await setFormFields(formId, data.fields);
 
     redirect("/dashboard/forms");
+}
+
+export async function getPaginatedFormResponsesAction(formId: string, page = 1, limit = 20) {
+    "use server";
+    await getUserSession();
+    return await getFormResponsesByFormId(formId, page, limit);
+}
+
+export async function getFormFieldsAction(formId: string) {
+    "use server";
+    await getUserSession();
+    return await getFormFieldsByFormId(formId);
 }

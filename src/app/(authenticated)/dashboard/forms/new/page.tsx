@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import FormBuilder from "~/components/dashboard/FormBuilder";
 import { saveFormAction } from "../actions";

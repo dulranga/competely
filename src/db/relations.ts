@@ -1,10 +1,16 @@
 import { relations } from "drizzle-orm";
-import { accounts, invitations, members, organizations, sessions, users, verifications } from "./schemas/auth-schema";
-import { competitionContacts, competitionPrizes, competitionResources, competitionSocialLinks } from "./schemas/competition-home-schema";
+import { accounts, invitations, members, organizations, sessions, users } from "./schemas/auth-schema";
+import {
+    competitionContacts,
+    competitionPrizes,
+    competitionPublishOptions,
+    competitionResources,
+    competitionSocialLinks,
+} from "./schemas/competition-home-schema";
 import { competitionEventResources, competitionEvents, competitionRounds } from "./schemas/competition-timeline-schema";
 import { competitions } from "./schemas/competitions-schema";
 import { files } from "./schemas/files-schema";
-import { formFields, forms } from "./schemas/forms-schema";
+import { formFields, formResponseAnswers, formResponses, forms } from "./schemas/forms-schema";
 import { bookmarks, userInterests } from "./schemas/interests-schema";
 
 // Auth Relations
@@ -100,6 +106,7 @@ export const competitionsRelations = relations(competitions, ({ one, many }) => 
     rounds: many(competitionRounds),
     forms: many(forms),
     bookmarks: many(bookmarks),
+    publishOptions: one(competitionPublishOptions),
 }));
 
 // Competition Home Relations
@@ -135,6 +142,13 @@ export const competitionContactsRelations = relations(competitionContacts, ({ on
     }),
 }));
 
+export const competitionPublishOptionsRelations = relations(competitionPublishOptions, ({ one }) => ({
+    competition: one(competitions, {
+        fields: [competitionPublishOptions.competitionId],
+        references: [competitions.id],
+    }),
+}));
+
 // Competition Timeline Relations
 export const competitionRoundsRelations = relations(competitionRounds, ({ one, many }) => ({
     competition: one(competitions, {
@@ -166,16 +180,41 @@ export const competitionEventResourcesRelations = relations(competitionEventReso
 // Forms Relations
 export const formsRelations = relations(forms, ({ many, one }) => ({
     fields: many(formFields),
+    responses: many(formResponses),
     competition: one(competitions, {
         fields: [forms.competitionId],
         references: [competitions.id],
     }),
 }));
 
-export const formFieldsRelations = relations(formFields, ({ one }) => ({
+export const formFieldsRelations = relations(formFields, ({ many, one }) => ({
     form: one(forms, {
         fields: [formFields.formId],
         references: [forms.id],
+    }),
+    answers: many(formResponseAnswers),
+}));
+
+export const formResponsesRelations = relations(formResponses, ({ one, many }) => ({
+    form: one(forms, {
+        fields: [formResponses.formId],
+        references: [forms.id],
+    }),
+    user: one(users, {
+        fields: [formResponses.userId],
+        references: [users.id],
+    }),
+    answers: many(formResponseAnswers),
+}));
+
+export const formResponseAnswersRelations = relations(formResponseAnswers, ({ one }) => ({
+    response: one(formResponses, {
+        fields: [formResponseAnswers.responseId],
+        references: [formResponses.id],
+    }),
+    field: one(formFields, {
+        fields: [formResponseAnswers.fieldId],
+        references: [formFields.id],
     }),
 }));
 

@@ -12,7 +12,7 @@ const DashboardLayoutInner: FC<DashboardLayoutWrapperProps> = ({ children }) => 
     const { rightSide } = useSidebar();
 
     return (
-        <div className="flex h-screen w-full overflow-hidden bg-[#fbf6f3]">
+        <div className="flex h-screen w-full overflow-hidden bg-background">
             <DashboardSidebar items={sidebarItems} overriddenSecondary={rightSide} />
             <main className="flex-1 relative overflow-y-auto">
                 <div className="p-10 pt-16">{children}</div>

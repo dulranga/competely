@@ -7,38 +7,53 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Form from "~/components/form/Form";
 import { Button } from "~/components/ui/button";
+import { updateMainInfoAction } from "~/app/(authenticated)/dashboard/competition/actions";
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 import { AboutContentSection } from "./maininformationsection/AboutContentSection";
 import { type MainInfoSchema, mainInfoSchema } from "./maininformationsection/constants";
 import { HeroBrandingSection } from "./maininformationsection/HeroBrandingSection";
-import { KeyLogisticsSection } from "./maininformationsection/KeyLogisticsSection";
+import { ResourcesSection } from "./maininformationsection/ResourcesSection";
 import { PrizesSection } from "./maininformationsection/PrizesSection";
 import { PublishOptionsSection } from "./maininformationsection/PublishOptionsSection";
 import { SocialsSection } from "./maininformationsection/SocialsSection";
 
-const MainInformationSection: FC = () => {
+interface MainInformationSectionProps {
+    competitionId: string;
+    initialData: MainInfoSchema;
+}
+
+const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId, initialData }) => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     const form = useForm<MainInfoSchema>({
         resolver: zodResolver(mainInfoSchema),
         defaultValues: {
-            description: "",
-            resources: [], // Default empty resources
-            socials: [{ platform: "website", url: "" }],
-            prizes: [
+            // Merge defaults with initialData
+            description: initialData.description || "",
+            resources: initialData.resources || [],
+            socials: initialData.socials.length > 0 ? initialData.socials : [{ platform: "website", url: "" }],
+            prizes: initialData.prizes.length > 0 ? initialData.prizes : [
                 { name: "Champion", amount: "" },
                 { name: "1st Runners Up", amount: "" },
                 { name: "2nd Runners Up", amount: "" },
             ],
-            showParticipantCount: true,
-            showTimeline: true,
-            showCountdown: true,
-            showPrizes: true,
+            showParticipantCount: initialData.showParticipantCount,
+            showTimeline: initialData.showTimeline,
+            showCountdown: initialData.showCountdown,
+            showPrizes: initialData.showPrizes,
+            bannerId: initialData.bannerId,
+            logoId: initialData.logoId,
         },
     });
 
-    const onSave = () => {
-        toast.success("Main information updated successfully!");
+    const onSave = async () => {
+        const values = form.getValues();
+        try {
+            await updateMainInfoAction(competitionId, values);
+            toast.success("Main information updated successfully!");
+        } catch (e) {
+            toast.error("Failed to save main information");
+        }
     };
 
     return (
@@ -71,7 +86,7 @@ const MainInformationSection: FC = () => {
                 <Form form={form} className="space-y-8">
                     <HeroBrandingSection form={form} />
                     <AboutContentSection form={form} />
-                    <KeyLogisticsSection form={form} />
+                    <ResourcesSection form={form} />
                     <PrizesSection form={form} />
                     <SocialsSection form={form} />
                     <PublishOptionsSection form={form} />
