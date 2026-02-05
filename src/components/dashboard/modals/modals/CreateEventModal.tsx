@@ -36,7 +36,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
             eventTypeSelect: "Workshop",
 
             description: "",
-            notificationEnabled: false,
+            notificationEnabled: true,
             addToTimeline: true,
             resources: [],
             connectFormId: "none", // Default to none
