@@ -3,6 +3,8 @@ import { InfoCard } from "~/components/competition-page/InfoCard"
 import { RegistrationCard } from "~/components/competition-page/RegistrationCard"
 import { CountdownSection } from "~/components/competition-page/CountdownSection"
 import { TimelineSection } from "~/components/competition-page/TimelineSection"
+import { PrizesSection } from "~/components/competition-page/PrizesSection"
+import { ContactUsSection } from "~/components/competition-page/ContactUsSection"
 import { Button } from "~/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
@@ -77,6 +79,10 @@ export default function CodeFest2026() {
       </main>
 
       <TimelineSection />
+
+      <PrizesSection />
+
+      <ContactUsSection />
     </div>
   )
 }
