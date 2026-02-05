@@ -27,14 +27,11 @@ export async function fetchRoundsAction() {
     // Actually, we should check logic: if no rounds, create Registration.
     // If Registration exists, ensure it has the default event.
 
-    let registrationRound = rounds.find((r) => r.name === "Registration");
+    let registrationRound = rounds.find((r) => r.isSystem);
 
     if (!registrationRound) {
         // Initialize default round if none exist (or if Registration is missing)
         registrationRound = await createCompetitionRound(competition.id, "Registration", true);
-
-        // Re-fetch rounds to include the new one
-        // Actually we can just push it to the local array if we want, but simpler to refetch or just continue.
     }
 
     // Now ensure Registration round has the default event
@@ -43,10 +40,10 @@ export async function fetchRoundsAction() {
         if (events.length === 0) {
             await createCompetitionEvent({
                 roundId: registrationRound.id,
-                name: "Registration Period",
-                type: "phase", // or 'system'
-                startDate: competition.startDate, // Sync with competition date initially
-                endDate: competition.endDate,
+                name: "Registration Deadline",
+                type: "Registration",
+                startDate: competition.registrationDeadline || competition.startDate,
+                endDate: null, // Point-in-time event
                 resources: [],
                 isSystem: true,
             });
