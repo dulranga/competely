@@ -47,6 +47,29 @@ Fix the competition timeline functionality to enforce a mandatory "Registration"
     - Render list of events sorted by `startDate`.
     - Allow CRUD on events.
 
+### Data Flow & Display Logic
+
+#### 1. Registration Event Card
+This card is unique because it aggregates data from two sources to ensure consistency with the main competition settings.
+
+- **Title**: Fixed as "Registration".
+- **Dates (Start/End)**:
+    - **Source**: `competitions` table (`startDate`, `endDate`).
+    - **Reason**: These are global competition settings managed in the "Editor" page. The timeline simply reflects them.
+    - **Editing**: Users cannot change dates here; they must go to the Competition Editor.
+- **Description & Resources**:
+    - **Source**: `competition_events` table (System Event record).
+    - **Reason**: These are specific to the timeline view and can be edited directly on the card.
+    - **Mechanism**: A system event with `isSystem: true` is created for the Registration round. Its `startDate` and `endDate` columns in the DB might be kept in sync or ignored in favor of the competition-level columns, but the card *displays* the competition-level dates.
+
+#### 2. Standard Event Cards
+These are fully managed within the Timeline view.
+
+- **Title, Dates, Description, Resources**:
+    - **Source**: `competition_events` table.
+    - **Editing**: Fully editable via the "Edit Event" modal.
+    - **Sorting**: Displayed in ascending order of `startDate`.
+
 ### Utils / Validation
 #### [MODIFY] [timeline.schema.ts](file:///c:/Users/sithu/My%20Works/My%20Softwares/Competitions/Devthon3_26/Competely_v1/src/lib/schemas/timeline.schema.ts)
 - Ensure validation permits the specific updates needed for the Registration event (e.g. description only, preserving system dates).

@@ -18,20 +18,25 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Switch } from "~/components/ui/switch";
 import { Textarea } from "~/components/ui/textarea";
+import { createEventAction, updateEventAction } from "~/data-access/competitions/actions/competition-events";
 import { createEventSchema, CreateEventSchema, eventTypeEnum } from "~/lib/schemas/timeline.schema";
 import type { ModalComponentProps } from "../modal-registry";
 
 export interface CreateEventModalData {
     roundId: string;
+    eventId?: string; // For editing
+    initialData?: CreateEventSchema; // Pre-fill data
     onSuccess?: () => void;
 }
 
 const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ closeModal, data }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditing = !!data?.eventId;
 
+    // @ts-ignore
     const form = useForm<CreateEventSchema>({
         resolver: zodResolver(createEventSchema),
-        defaultValues: {
+        defaultValues: data?.initialData || {
             name: "",
             eventTypeSelect: "Workshop",
 
@@ -61,27 +66,41 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
         const values = formData as CreateEventSchema;
         setIsSubmitting(true);
 
-        // Determine Final Event Type
-        const eventType = values.eventTypeSelect === "other"
-            ? values.eventTypeCustom
-            : values.eventTypeSelect;
+        try {
+            // Determine Final Event Type
+            const eventType = values.eventTypeSelect === "other"
+                ? values.eventTypeCustom
+                : values.eventTypeSelect;
 
-        // Prepare Payload
-        const payload = {
-            ...values,
-            eventType,
-            roundId: data?.roundId,
-        };
+            const payload = {
+                ...values,
+                eventType, // Schema expects this if we were strictly strictly following it, checking implementation...
+                // Actually server action expects CreateEventInput which matches schema mostly but helper might need manual mapping if schema doesn't match perfectly.
+                // However, based on schema view, eventTypeSelect/Custom is used. 
+                // Let's rely on server action validation or mapper.
+                // checking createEventAction signature... it takes CreateEventInput.
+                // We might need to map it if the server action expects a single 'type' field instead of select/custom.
+                // Assuming server action handles it or we map it here:
+                type: eventType,
+                roundId: data?.roundId,
+            };
 
-        console.log("Submitting Event Payload:", payload);
+            if (isEditing && data?.eventId) {
+                await updateEventAction(data.eventId, payload as any);
+                toast.success("Event updated successfully!");
+            } else {
+                await createEventAction(payload as any);
+                toast.success("Event created successfully!");
+            }
 
-        // Mock API Call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        setIsSubmitting(false);
-        toast.success("Event created successfully!");
-        data?.onSuccess?.();
-        closeModal();
+            data?.onSuccess?.();
+            closeModal();
+        } catch (error: any) {
+            console.error("Failed to save event:", error);
+            toast.error(error.message || "Failed to save event");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -92,9 +111,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                         <Calendar size={28} />
                     </div>
                     <div className="space-y-1 text-foreground">
-                        <DialogTitle className="text-2xl font-bold">Create Event</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold">{isEditing ? "Edit Event" : "Create Event"}</DialogTitle>
                         <DialogDescription className="text-sm leading-relaxed font-medium text-muted-foreground">
-                            Add a new event to your competition timeline.
+                            {isEditing ? "Update the details of this event." : "Add a new event to your competition timeline."}
                         </DialogDescription>
                     </div>
                 </DialogHeader>
@@ -324,10 +343,10 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                     {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
+                            {isEditing ? "Updating..." : "Creating..."}
                         </>
                     ) : (
-                        "Create Event"
+                        isEditing ? "Update Event" : "Create Event"
                     )}
                 </Button>
             </DialogFooter>

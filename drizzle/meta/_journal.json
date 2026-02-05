@@ -78,6 +78,20 @@
       "when": 1770213469411,
       "tag": "0010_Added location field to competitionEvents",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770272423288,
+      "tag": "0011_Added is_system feild to competition round and event tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1770280141732,
+      "tag": "0012_Notifications default true",
+      "breakpoints": true
     }
   ]
 }
