@@ -77,7 +77,7 @@ const TimelinePage: FC = () => {
                             return {
                                 ...e,
                                 startDate: comp.startDate,
-                                endDate: comp.endDate
+                                endDate: comp.registrationDeadline || comp.endDate // Sync with registration deadline
                             };
                         }
                         return e;

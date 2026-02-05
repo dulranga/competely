@@ -44,9 +44,9 @@ export async function fetchRoundsAction() {
             await createCompetitionEvent({
                 roundId: registrationRound.id,
                 name: "Registration Period",
-                type: "phase", // or 'system'
-                startDate: competition.startDate, // Sync with competition date initially
-                endDate: competition.endDate,
+                type: "Registration", // Updated to 'Registration'
+                startDate: competition.startDate, // Will be synced in UI specifically for Registration
+                endDate: competition.registrationDeadline || competition.endDate, // Use registration deadline if available
                 resources: [],
                 isSystem: true,
             });

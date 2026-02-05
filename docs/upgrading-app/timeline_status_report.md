@@ -7,10 +7,10 @@
 - **Automatic Initialization**:
     - `fetchRoundsAction` automatically creates a "Registration" round if one does not exist.
     - Safely creates a default "Registration Period" event within that round.
+    - **Registration Logic**: Default event is now typed as "Registration". Its `endDate` automatically syncs with the competition's `registrationDeadline` (or `endDate` if deadline is missing).
 - **Business Logic Enforcement**:
     - **Rounds**: Prevents renaming or deleting any round marked `isSystem` (e.g., Registration).
     - **Events**: Prevents adding new events to the Registration round (enforcing the "single card" rule). Prevents deleting system events.
-    - **Data/Date Syncing**: System Events (Registration) automatically inherit `startDate` and `endDate` from the main Competition settings during retrieval, ensuring the timeline always matches the global competition schedule.
 
 ### Frontend (UI/UX)
 - **Round Management (Sidebar)**:
@@ -19,12 +19,12 @@
     - **Contextual Actions**: Disable actions for System rounds.
 - **Timeline View**:
     - **Dynamic Rendering**: Rendering changes based on the selected round.
-    - **Registration View**: "Registration Period" card with competition-level dates.
-    - **TimelineCard Component**: Now using the shared `TimelineCard` component for consistent UI.
+    - **Registration View**: "Registration Period" card syncs dates with `registrationDeadline`.
+    - **TimelineCard Component**: Using the shared `TimelineCard` component.
 - **Event Management**:
     - **Create**: Modal allows creating events (disabled for Registration round).
     - **Edit**: Clicking a timeline card opens the modal pre-filled with event data for editing.
-    - **Delete**: "Delete" button visible on cards (except System events) to remove them.
+    - **Delete**: "Delete" button visible on cards (except System events).
 
 ## 2. Pending Implementation
 
