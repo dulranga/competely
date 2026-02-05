@@ -1,6 +1,6 @@
 {
-  "id": "fb6e04b2-58a6-4874-96bf-9797fbe86156",
-  "prevId": "fe211174-1bfd-4b98-be25-c360c74db9ce",
+  "id": "d7d5136b-a488-4125-8dfa-e412812a2c5e",
+  "prevId": "5da4edb7-c619-455b-a74b-cfadfe581227",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1822,7 +1822,7 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": true
         },
         "add_to_timeline": {
           "name": "add_to_timeline",
@@ -1830,6 +1830,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": true
+        },
+        "is_system": {
+          "name": "is_system",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -1906,6 +1913,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_system": {
+          "name": "is_system",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",

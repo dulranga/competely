@@ -1,0 +1,1 @@
+ALTER TABLE "competition_events" ALTER COLUMN "notification_enabled" SET DEFAULT true;

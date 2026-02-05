@@ -11,12 +11,14 @@ import {
 } from "~/data-access/competitions/actions/competition-rounds";
 import { RoundItem } from "./RoundItem";
 import { Input } from "~/components/ui/input";
-import { toast } from "sonner"; // Assuming sonner is used, or replace with appropriate toast
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 
-interface Round {
+export interface Round {
     id: string;
     name: string;
     order: number;
+    isSystem: boolean;
 }
 
 const RoundSidebar: FC = () => {
@@ -25,6 +27,9 @@ const RoundSidebar: FC = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [newRoundName, setNewRoundName] = useState("");
     const newRoundInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const currentRoundId = searchParams.get("roundId");
 
     useEffect(() => {
         loadRounds();
@@ -38,9 +43,16 @@ const RoundSidebar: FC = () => {
 
     const loadRounds = async () => {
         try {
-            // @ts-ignore - The action returns inferred Drizzle type which aligns with our interface mostly
+            // @ts-ignore
             const data = await fetchRoundsAction();
             setRounds(data as any);
+
+            // Select first round by default if none selected
+            if (!currentRoundId && data.length > 0) {
+                const firstRound = data[0];
+                // Use replace so we don't build up history when just loading the page
+                router.replace(`/dashboard/timeline?roundId=${firstRound.id}`);
+            }
         } catch (error) {
             console.error("Failed to load rounds:", error);
             toast.error("Failed to load competition rounds");
@@ -75,7 +87,7 @@ const RoundSidebar: FC = () => {
         } catch (error) {
             console.error("Failed to rename round:", error);
             toast.error("Failed to rename round");
-            throw error; // Re-throw to let child component handle error state if needed
+            throw error;
         }
     };
 
@@ -84,6 +96,15 @@ const RoundSidebar: FC = () => {
             await deleteRoundAction(id);
             setRounds(rounds.filter(r => r.id !== id));
             toast.success("Round deleted");
+
+            // If deleted round was selected, select the first one (Registration)
+            if (currentRoundId === id) {
+                // re-fetch or just select first from state (state update is async though)
+                const remaining = rounds.filter(r => r.id !== id);
+                if (remaining.length > 0) {
+                    router.push(`/dashboard/timeline?roundId=${remaining[0].id}`);
+                }
+            }
         } catch (error) {
             console.error("Failed to delete round:", error);
             toast.error("Failed to delete round");
@@ -98,6 +119,10 @@ const RoundSidebar: FC = () => {
             setIsCreating(false);
             setNewRoundName("");
         }
+    };
+
+    const handleSelectRound = (roundId: string) => {
+        router.push(`/dashboard/timeline?roundId=${roundId}`);
     };
 
     if (isLoading) {
@@ -122,6 +147,8 @@ const RoundSidebar: FC = () => {
                     <RoundItem
                         key={round.id}
                         round={round}
+                        isSelected={currentRoundId === round.id}
+                        onSelect={() => handleSelectRound(round.id)}
                         onRename={handleRenameRound}
                         onDelete={handleDeleteRound}
                     />

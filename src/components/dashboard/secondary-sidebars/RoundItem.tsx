@@ -21,19 +21,17 @@ import {
     AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 
-interface Round {
-    id: string;
-    name: string;
-    order: number;
-}
+import { Round } from "./RoundSidebar"; // Import Round interface
 
 interface RoundItemProps {
     round: Round;
+    isSelected?: boolean;
+    onSelect?: () => void;
     onRename: (id: string, newName: string) => Promise<void>;
     onDelete: (id: string) => Promise<void>;
 }
 
-export const RoundItem: FC<RoundItemProps> = ({ round, onRename, onDelete }) => {
+export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onRename, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(round.name);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -123,38 +121,44 @@ export const RoundItem: FC<RoundItemProps> = ({ round, onRename, onDelete }) => 
 
     return (
         <>
-            <div className="group flex items-center gap-1 w-full">
+            <div className={`group flex items-center gap-1 w-full ${isSelected ? "bg-black/5 rounded-xl" : ""}`}>
                 <Button
                     variant="ghost"
-                    className="flex-1 justify-start h-11 rounded-xl bg-white border border-[#e8e2de] text-[#0c0803]/80 hover:text-[#0c0803] hover:bg-white hover:border-[#0c0803]/20 hover:shadow-md transition-all duration-200 active:scale-[0.98] px-4 font-bold text-xs truncate shadow-sm"
+                    onClick={onSelect}
+                    className={`flex-1 justify-start h-11 rounded-xl border transition-all duration-200 active:scale-[0.98] px-4 font-bold text-xs truncate shadow-sm ${isSelected
+                            ? "bg-[#0c0803] text-white border-[#0c0803] hover:bg-[#0c0803]/90 hover:text-white"
+                            : "bg-white border-[#e8e2de] text-[#0c0803]/80 hover:text-[#0c0803] hover:bg-white hover:border-[#0c0803]/20 hover:shadow-md"
+                        }`}
                 >
                     {round.name}
                 </Button>
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                            <MoreVertical size={14} className="text-gray-400" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                            <Pencil className="mr-2 h-3.5 w-3.5" />
-                            Rename
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => setIsDeleting(true)}
-                            className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                        >
-                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {!round.isSystem && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <MoreVertical size={14} className="text-gray-400" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                                <Pencil className="mr-2 h-3.5 w-3.5" />
+                                Rename
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => setIsDeleting(true)}
+                                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                            >
+                                <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </div>
 
             <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
