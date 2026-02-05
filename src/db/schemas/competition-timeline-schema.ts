@@ -12,6 +12,7 @@ export const competitionRounds = pgTable(
             .notNull()
             .references(() => competitions.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
+        isSystem: boolean("is_system").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
             .defaultNow()
@@ -32,10 +33,12 @@ export const competitionEvents = pgTable(
         name: text("name").notNull(),
         type: text("type").notNull(),
         description: text("description"), // nullable
+        location: text("location"), // nullable
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
-        notificationEnabled: boolean("notification_enabled").default(false).notNull(),
+        notificationEnabled: boolean("notification_enabled").default(true).notNull(),
         addToTimeline: boolean("add_to_timeline").default(true).notNull(),
+        isSystem: boolean("is_system").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
             .defaultNow()

@@ -28,6 +28,7 @@ export interface CreateEventInput {
     startDate?: Date | null;
     endDate?: Date | null;
     resources: ResourceInput[];
+    isSystem?: boolean;
 }
 
 // Type for updating events
@@ -53,6 +54,19 @@ export async function getEventsByRound(roundId: string) {
 }
 
 /**
+ * Fetches a single event by ID.
+ * @param eventId 
+ */
+export async function getCompetitionEvent(eventId: string) {
+    return await db.query.competitionEvents.findFirst({
+        where: eq(competitionEvents.id, eventId),
+        with: {
+            resources: true,
+        },
+    });
+}
+
+/**
  * Creates a new event and its associated resources in a transaction.
  */
 export async function createCompetitionEvent(data: CreateEventInput) {
@@ -67,6 +81,7 @@ export async function createCompetitionEvent(data: CreateEventInput) {
                 description: data.description,
                 startDate: data.startDate,
                 endDate: data.endDate,
+                isSystem: data.isSystem ?? false,
             })
             .returning();
 

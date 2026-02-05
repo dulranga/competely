@@ -19,16 +19,27 @@ export async function getCompetitionRounds(competitionId: string) {
 }
 
 /**
+ * Fetches a single round by ID.
+ * @param roundId 
+ */
+export async function getCompetitionRound(roundId: string) {
+    return await db.query.competitionRounds.findFirst({
+        where: eq(competitionRounds.id, roundId),
+    });
+}
+
+/**
  * Creates a new round for a competition.
  * @param competitionId 
  * @param name 
  */
-export async function createCompetitionRound(competitionId: string, name: string) {
+export async function createCompetitionRound(competitionId: string, name: string, isSystem: boolean = false) {
     const [newRound] = await db
         .insert(competitionRounds)
         .values({
             competitionId,
             name,
+            isSystem,
         })
         .returning();
     return newRound;

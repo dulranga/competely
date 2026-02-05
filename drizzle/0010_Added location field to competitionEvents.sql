@@ -1,0 +1,1 @@
+ALTER TABLE "competition_events" ADD COLUMN "location" text;

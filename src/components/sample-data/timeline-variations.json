@@ -1,0 +1,112 @@
+[
+    {
+        "id": "event-1",
+        "variant": "event",
+        "data": {
+            "eventName": "Introductory Webinar",
+            "type": "Session",
+            "startDatetime": "2026-01-11T20:30:00",
+            "endDatetime": "2026-01-11T21:30:00",
+            "location": "Online - Zoom",
+            "description": "Topic: AI Agents and Workflows\nSpeaker: Mr. Jonas Adam",
+            "notificationEnabled": true,
+            "addToTimeline": true,
+            "resources": [
+                {
+                    "id": "res-1",
+                    "label": "Webinar Link",
+                    "url": "https://zoom.us/j/123456",
+                    "type": "url"
+                },
+                {
+                    "id": "res-2",
+                    "label": "Sample File",
+                    "fileId": "file-123",
+                    "type": "document"
+                }
+            ]
+        }
+    },
+    {
+        "id": "event-2",
+        "variant": "event",
+        "data": {
+            "eventName": "Proposal Submission Round",
+            "type": "Submission",
+            "startDatetime": "2026-01-16T00:00:00",
+            "endDatetime": "2026-01-16T23:59:00",
+            "location": "CMD Conference Hall",
+            "description": "Submit your initial proposal documents. Ensure all guidelines are followed.\nLate submissions will not be accepted.",
+            "notificationEnabled": true,
+            "addToTimeline": true,
+            "resources": [
+                {
+                    "id": "res-3",
+                    "label": "Submission Guidelines",
+                    "url": "https://example.com/guidelines",
+                    "type": "url"
+                },
+                {
+                    "id": "res-4",
+                    "label": "Template.docx",
+                    "fileId": "file-456",
+                    "type": "document"
+                },
+                {
+                    "id": "res-5",
+                    "label": "Submit Here",
+                    "url": "https://forms.gle/xyz",
+                    "type": "url"
+                }
+            ]
+        }
+    },
+    {
+        "id": "delegate-1",
+        "variant": "delegate",
+        "data": {
+            "competitionName": "AI Innovation Challenge",
+            "roundName": "Round 1",
+            "eventName": "Project Submission",
+            "type": "Submission",
+            "startDatetime": "2026-02-10T09:00:00",
+            "endDatetime": "2026-02-10T17:00:00",
+            "location": "Main Hall",
+            "description": "Submit your final project files.",
+            "notificationEnabled": false,
+            "addToTimeline": true
+        }
+    },
+    {
+        "id": "home-1",
+        "variant": "home",
+        "data": {
+            "competitionName": "CodeFest 2026",
+            "eventName": "Registration",
+            "startDatetime": "2026-03-01T08:00:00",
+            "status": "active"
+        }
+    },
+    {
+        "id": "home-2",
+        "variant": "home",
+        "data": {
+            "competitionName": "Designathon",
+            "eventName": "Workshop",
+            "startDatetime": "2026-03-05T10:00:00",
+            "status": "upcoming"
+        }
+    },
+    {
+        "id": "calendar-1",
+        "variant": "calendar",
+        "data": {
+            "competitionName": "Hackathon X",
+            "roundName": "Finals",
+            "eventName": "Awarding Ceremony",
+            "startDatetime": "2026-04-15T18:00:00",
+            "endDatetime": "2026-04-15T20:00:00",
+            "location": "Auditorium"
+        }
+    }
+]
