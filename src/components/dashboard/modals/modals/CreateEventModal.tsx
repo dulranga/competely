@@ -308,11 +308,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                             </div>
 
                             {/* Switches */}
-                            <div
-                                className={cn("space-y-4 p-4 rounded-xl border border-border/50 bg-white", {
-                                    "opacity-70": isSystemEvent,
-                                })}
-                            >
+                            <div className={cn("space-y-4 p-4 rounded-xl border border-border/50 bg-white")}>
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <Label>Notifications</Label>
@@ -320,14 +316,15 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             Notify users when this event starts.
                                         </p>
                                     </div>
-                                    <Controller
-                                        disabled={isSystemEvent}
-                                        control={form.control}
-                                        name="notificationEnabled"
-                                        render={({ field }) => (
-                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                        )}
-                                    />
+                                    {!isSystemEvent && (
+                                        <Controller
+                                            control={form.control}
+                                            name="notificationEnabled"
+                                            render={({ field }) => (
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                            )}
+                                        />
+                                    )}{" "}
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
@@ -336,14 +333,15 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             Show this event on public timeline.
                                         </p>
                                     </div>
-                                    <Controller
-                                        disabled={isSystemEvent}
-                                        control={form.control}
-                                        name="addToTimeline"
-                                        render={({ field }) => (
-                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                        )}
-                                    />
+                                    {!isSystemEvent && (
+                                        <Controller
+                                            control={form.control}
+                                            name="addToTimeline"
+                                            render={({ field }) => (
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                            )}
+                                        />
+                                    )}{" "}
                                 </div>
                             </div>
                         </div>
