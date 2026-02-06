@@ -20,11 +20,7 @@ interface Round {
     isSystem: boolean;
 }
 
-export default async function TimelinePage({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function TimelinePage({ searchParams }: PageProps) {
     // 1. Fetch Rounds to determine current round
     // @ts-ignore
     const rounds: Round[] = await fetchRoundsAction();
@@ -34,7 +30,7 @@ export default async function TimelinePage({
     // Assuming safe access pattern or awaiting if needed.
     // Since we don't know exact version, we treat it as object for now
     // but if it errors we fix. The type signature allows direct access usually in 14.
-    const roundIdParam = searchParams?.roundId as string | undefined;
+    const roundIdParam = (await searchParams)?.roundId as string | undefined;
 
     let selectedRound = rounds.find((r) => r.id === roundIdParam);
     if (!selectedRound && rounds.length > 0) {
