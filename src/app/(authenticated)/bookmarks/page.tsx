@@ -1,11 +1,15 @@
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { getBookmarkedCompetitions } from "~/data-access/delegate/bookmark";
+import { getBookmarkedCompetitions, getRegistrationStatuses } from "~/data-access/delegate/bookmark";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
 export default async function BookmarksPage() {
     const bookmarkedCompetitions = await getBookmarkedCompetitions();
+    
+    // Get registration statuses for bookmarked competitions
+    const competitionIds = bookmarkedCompetitions.map((c: any) => c.id);
+    const registrationStatuses = await getRegistrationStatuses(competitionIds);
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
@@ -21,7 +25,11 @@ export default async function BookmarksPage() {
                         {bookmarkedCompetitions.map((comp) => (
                             <CompetitionCard
                                 key={comp.id}
-                                {...mapCompetitionToCardProps(comp, true)}
+                                {...mapCompetitionToCardProps(
+                                    comp, 
+                                    true, 
+                                    registrationStatuses.get(comp.id) || false
+                                )}
                             />
                         ))}
                     </div>

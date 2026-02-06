@@ -31,10 +31,18 @@ interface DiscoverContentProps {
     initialCompetitions?: any[];
     initialSearchQuery?: string;
     bookmarkStatuses?: Map<string, boolean>;
+    registrationStatuses?: Map<string, boolean>;
     bookmarkCount?: number;
 }
 
-export function DiscoverContent({ isAuthenticated, initialCompetitions = [], initialSearchQuery = "", bookmarkStatuses = new Map(), bookmarkCount = 0 }: DiscoverContentProps) {
+export function DiscoverContent({ 
+    isAuthenticated, 
+    initialCompetitions = [], 
+    initialSearchQuery = "", 
+    bookmarkStatuses = new Map(), 
+    registrationStatuses = new Map(),
+    bookmarkCount = 0 
+}: DiscoverContentProps) {
     const router = useRouter();
     const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
@@ -237,7 +245,11 @@ export function DiscoverContent({ isAuthenticated, initialCompetitions = [], ini
                                             {filteredCompetitions.map((comp) => (
                                                 <CompetitionCard 
                                                     key={comp.id}
-                                                    {...mapCompetitionToCardProps(comp, bookmarkStatuses.get(comp.id) || false)}
+                                                    {...mapCompetitionToCardProps(
+                                                        comp, 
+                                                        bookmarkStatuses.get(comp.id) || false,
+                                                        registrationStatuses.get(comp.id) || false
+                                                    )}
                                                 />
                                             ))}
                                         </div>

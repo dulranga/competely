@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import db from "~/db/client";
 import { bookmarks, competitions, organizations, files } from "~/db/schema";
 import { getUserSession } from "../getCurrentUser";
@@ -143,4 +143,92 @@ export async function getBookmarkedCount(): Promise<number> {
         );
 
     return result.length;
+}
+
+/**
+ * Toggle registration status for a competition
+ * @param competitionId - The ID of the competition to register/unregister
+ * @returns Boolean indicating the new registration status
+ */
+export async function toggleRegistrationStatus(competitionId: string): Promise<boolean> {
+    const session = await getUserSession();
+
+    const existingBookmark = await db.query.bookmarks.findFirst({
+        where: and(
+            eq(bookmarks.userId, session.user.id),
+            eq(bookmarks.competitionId, competitionId)
+        ),
+    });
+
+    if (existingBookmark) {
+        // Toggle the isRegistered status
+        const newStatus = !existingBookmark.isRegistered;
+        await db
+            .update(bookmarks)
+            .set({ isRegistered: newStatus })
+            .where(
+                and(
+                    eq(bookmarks.userId, session.user.id),
+                    eq(bookmarks.competitionId, competitionId)
+                )
+            );
+        return newStatus;
+    } else {
+        // Create new bookmark entry with isRegistered = true
+        await db.insert(bookmarks).values({
+            userId: session.user.id,
+            competitionId,
+            isBookmarked: false,
+            isRegistered: true,
+        });
+        return true;
+    }
+}
+
+/**
+ * Get registration statuses for multiple competitions for the current user
+ * @param competitionIds - Array of competition IDs to check
+ * @returns Map of competitionId -> isRegistered status
+ */
+export async function getRegistrationStatuses(competitionIds: string[]): Promise<Map<string, boolean>> {
+    const session = await getUserSession();
+
+    const results = await db
+        .select({
+            competitionId: bookmarks.competitionId,
+            isRegistered: bookmarks.isRegistered,
+        })
+        .from(bookmarks)
+        .where(
+            and(
+                eq(bookmarks.userId, session.user.id),
+                inArray(bookmarks.competitionId, competitionIds)
+            )
+        );
+
+    // Create a map of competitionId -> isRegistered
+    const statusMap = new Map<string, boolean>();
+    for (const bookmark of results) {
+        statusMap.set(bookmark.competitionId, bookmark.isRegistered);
+    }
+
+    return statusMap;
+}
+
+/**
+ * Check if a specific competition is registered by the current user
+ * @param competitionId - The ID of the competition to check
+ * @returns Boolean indicating if the user is registered for the competition
+ */
+export async function isCompetitionRegistered(competitionId: string): Promise<boolean> {
+    const session = await getUserSession();
+
+    const bookmark = await db.query.bookmarks.findFirst({
+        where: and(
+            eq(bookmarks.userId, session.user.id),
+            eq(bookmarks.competitionId, competitionId)
+        ),
+    });
+
+    return bookmark ? bookmark.isRegistered : false;
 }
