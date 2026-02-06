@@ -61,13 +61,6 @@ export default async function CodeFest2026(props: { params: Params }) {
                 )}
               </div>
 
-              <div>
-                <h3 className="text-foreground font-bold mb-2">Who Should Join?</h3>
-                <p>
-                  Open to all undergraduates backend builders, UI/UX designers, data strategists, and creative thinkers.
-                  Bring your laptop and your team; we'll provide the rest.
-                </p>
-              </div>
             </div>
 
             <div className="mt-10">

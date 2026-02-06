@@ -15,8 +15,9 @@ export async function updateCompetitionMainInfo(competitionId: string, data: Mai
         await tx
             .update(competitions)
             .set({
+                tagline: data.tagline,
                 description: data.description,
-                bannerId: data.bannerId,
+                bannerId: data.bannerId || null,
                 // logoId is not in competition schema directly?
                 // Checking schema: competitions table has `bannerId`.
                 // It does NOT have `logoId`.

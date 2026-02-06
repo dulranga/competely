@@ -13,6 +13,11 @@ export async function updateMainInfoAction(competitionId: string, data: MainInfo
     // TODO: Verify user has permission to edit this competition (e.g. is organizer).
     // For now, assuming basic auth is enough for this task or handled by middleware/context safety.
 
-    await updateCompetitionMainInfo(competitionId, data);
-    return { success: true };
+    try {
+        await updateCompetitionMainInfo(competitionId, data);
+        return { success: true };
+    } catch (error) {
+        console.error("Server Action Failed: updateMainInfoAction", error);
+        throw error;
+    }
 }
