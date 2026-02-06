@@ -1,11 +1,24 @@
-"use client";
-
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { Timeline } from "~/components/timeline/Timeline";
 import { Button } from "~/components/ui/button";
+import { auth } from "~/lib/auth";
+import { getDelegateTimeline } from "~/data-access/delegate/timeline";
 
-export default function HomePage() {
+export default async function HomePage() {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        redirect("/");
+    }
+
+    const { user } = session;
+    const timelineEvents = await getDelegateTimeline(user);
+
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
 
@@ -24,7 +37,7 @@ export default function HomePage() {
                             <a href="/timeline">View Full Timeline</a>
                         </Button>
                     </div>
-                    <Timeline />
+                    <Timeline events={timelineEvents} />
                 </section>
 
                 {/* 2. Recommended Section */}
