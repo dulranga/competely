@@ -1,11 +1,11 @@
 import { FC } from "react";
-// import { PublicHeader } from "~/components/marketing/header"; 
-// import { PublicFooter } from "~/components/marketing/footer";
+import { HeaderPublic } from "~/components/ui/header-public";
 
 const Layout: FC<LayoutProps<"/">> = async ({ children }) => {
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            {/* <PublicHeader /> */}
+            <HeaderPublic />
+
             <div className="relative flex flex-1 flex-col">
                 <main className="flex-1 relative transition-all duration-300 flex flex-col">
                     <div className="flex-1 w-full">{children}</div>

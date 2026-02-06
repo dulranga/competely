@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { ModalProvider } from "~/components/dashboard/modals/modal-provider";
 import { auth } from "~/lib/auth";
 import getCurrentPath from "~/lib/getCurrentPathServer";
+import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
+import { getUserProfile } from "~/data-access/profile";
 
 export default async function AuthLayout({
     children,
@@ -19,5 +21,12 @@ export default async function AuthLayout({
         redirect(`/login?callbackURL=${encodeURIComponent(pathname)}`);
     }
 
-    return <ModalProvider>{children}</ModalProvider>;
+    const user = await getUserProfile();
+
+    return (
+        <ModalProvider>
+            <HeaderAuthenticated currentPath={pathname} user={user} />
+            {children}
+        </ModalProvider>
+    );
 }

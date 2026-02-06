@@ -1,6 +1,6 @@
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
-import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
+import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { getBookmarkedCompetitions } from "~/data-access/delegate/bookmark";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
@@ -19,10 +19,7 @@ export default async function BookmarksPage() {
                 {bookmarkedCompetitions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {bookmarkedCompetitions.map((comp) => (
-                            <CompetitionCard
-                                key={comp.id}
-                                {...mapCompetitionToCardProps(comp, true)}
-                            />
+                            <CompetitionCard key={comp.id} {...mapCompetitionToCardProps(comp, true)} />
                         ))}
                     </div>
                 ) : (
