@@ -16,7 +16,15 @@ export async function updateMainInfoAction(competitionId: string, data: MainInfo
     try {
         await updateCompetitionMainInfo(competitionId, data);
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
+        const fs = require('fs');
+        const path = require('path');
+        const logPath = path.join(process.cwd(), 'server_error_log.txt');
+        const timestamp = new Date().toISOString();
+        const errorMessage = `[${timestamp}] Error: ${error?.message || error}\nStack: ${error?.stack || ''}\nFull: ${JSON.stringify(error, null, 2)}\n\n`;
+
+        fs.appendFileSync(logPath, errorMessage);
+
         console.error("Server Action Failed: updateMainInfoAction", error);
         throw error;
     }
