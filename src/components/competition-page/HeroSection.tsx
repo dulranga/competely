@@ -3,12 +3,29 @@
 import Image from "next/image"
 import { Badge } from "~/components/ui/badge"
 
-export function HeroSection() {
+interface HeroSectionProps {
+    bannerUrl?: string | null;
+    organization?: {
+        name: string;
+        // The organization schema doesn't seem to have logoUrl directly exposed in our previous views, 
+        // but let's assume we can pass a name or an avatar URL if available.
+        // For now, I'll stick to the placeholder avatar for the org logo if real data isn't ready,
+        // or accept a prop for it.
+    } | null;
+}
+
+export function HeroSection({ bannerUrl }: HeroSectionProps) {
+    // Default fallback image if no banner is provided
+    const bgImage = bannerUrl ?? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
+
     return (
         <section className="relative w-full h-[300px] md:h-[400px] bg-muted">
             {/* Background Image - Pure, no gradient overlay */}
             <div className="absolute inset-0 z-0">
-                <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center" />
+                <div
+                    className="w-full h-full bg-cover bg-center"
+                    style={{ backgroundImage: `url('${bgImage}')` }}
+                />
             </div>
 
             {/* Upcoming Badge */}

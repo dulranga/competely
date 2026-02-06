@@ -12,6 +12,7 @@ import { competitions } from "./schemas/competitions-schema";
 import { files } from "./schemas/files-schema";
 import { formFields, formResponseAnswers, formResponses, forms } from "./schemas/forms-schema";
 import { bookmarks, userInterests } from "./schemas/interests-schema";
+import { notifications } from "./schemas/notifications";
 
 // Auth Relations
 export const usersRelations = relations(users, ({ many }) => ({
@@ -22,6 +23,7 @@ export const usersRelations = relations(users, ({ many }) => ({
     files: many(files),
     interests: many(userInterests),
     bookmarks: many(bookmarks),
+    notifications: many(notifications),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -55,6 +57,7 @@ export const organizationsRelations = relations(organizations, ({ many }) => ({
     // So it should be `competitions: many(competitions)`.
     // Previously `organizationsRelationsExtended` used `one`? "competition: one(competitions...)"
     // If it was `one`, it implies 1:1. But semantic logic says 1 org -> N competitions.
+    // I will use `competitions: many(competitions)`.
     // I will use `competitions: many(competitions)`.
     // I will use `competitions: many(competitions)`.
 }));
@@ -234,5 +237,12 @@ export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
     competition: one(competitions, {
         fields: [bookmarks.competitionId],
         references: [competitions.id],
+    }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+    user: one(users, {
+        fields: [notifications.userId],
+        references: [users.id],
     }),
 }));
