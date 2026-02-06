@@ -9,6 +9,7 @@ import { string, type infer as zInfer } from "zod";
 import { updateCompetitionAction } from "~/app/(authenticated)/dashboard/editor/actions";
 import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
+import TagsInput from "~/components/form-inputs/TagsInput";
 import Form from "~/components/form/Form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -29,6 +30,7 @@ interface EditThumbnailCardProps {
         name: string | null;
         tagline: string | null;
         category: string | null;
+        hashtags: string[] | null;
         bannerId: string | null;
         startDate: Date | null;
         endDate: Date | null;
@@ -48,6 +50,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             name: initialData?.name || "",
             tagline: initialData?.tagline || "",
             category: initialData?.category || "Open",
+            hashtags: [], // Will be set properly in useEffect
             bannerId: initialData?.bannerId || null,
             customCategory: "",
             startDate: initialData?.startDate || new Date(),
@@ -64,6 +67,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                 name: initialData.name || "",
                 tagline: initialData.tagline || "",
                 category: initialData.category || "Open",
+                hashtags: initialData.hashtags || [],
                 bannerId: initialData.bannerId || null,
                 customCategory: "",
                 startDate: initialData.startDate || new Date(),
@@ -159,6 +163,17 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 helperText="A catchy one-liner shown on discovery cards (max 150 characters)."
                             >
                                 <Textarea placeholder="e.g. Building the future of AI together" className="min-h-32" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Keywords / Hashtags"
+                                name="hashtags"
+                                helperText="Add keywords to help delegates find your competition. Press Enter or comma to add each keyword."
+                            >
+                                <TagsInput
+                                    placeholder="e.g. AI, machine learning, innovation"
+                                    maxTags={10}
+                                />
                             </Form.Item>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

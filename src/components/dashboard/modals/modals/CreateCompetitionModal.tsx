@@ -9,6 +9,7 @@ import { createCompetitionAction } from "~/app/(authenticated)/create/actions";
 
 import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
+import TagsInput from "~/components/form-inputs/TagsInput";
 import Form from "~/components/form/Form";
 import FormDebug from "~/components/form/FormDebug";
 import { Button } from "~/components/ui/button";
@@ -39,6 +40,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
             name: "",
             tagline: "",
             category: "Open",
+            hashtags: [],
             bannerId: null,
         },
     });
@@ -92,6 +94,17 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                 helperText="A catchy one-liner shown on discovery cards (max 150 characters)."
                             >
                                 <Textarea placeholder="e.g. Building the future of AI together" className="min-h-32" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Keywords / Hashtags"
+                                name="hashtags"
+                                helperText="Add keywords to help delegates find your competition. Press Enter or comma to add each keyword."
+                            >
+                                <TagsInput
+                                    placeholder="e.g. AI, machine learning, innovation"
+                                    maxTags={10}
+                                />
                             </Form.Item>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -34,6 +34,7 @@ export async function createCompetition(data: CreateCompetitionSchema) {
         organizationId: response.id,
         tagline: data.tagline,
         category: data.category,
+        hashtags: data.hashtags,
         bannerId: data.bannerId,
         startDate: data.startDate,
         endDate: data.endDate,
