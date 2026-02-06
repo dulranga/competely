@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FC, Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,9 +28,10 @@ const registerSchema = z.object({
     is_agreed: z.boolean(),
 });
 
-const Register: FC<PageProps> = ({ }) => {
+const Register: FC<PageProps> = ({}) => {
     const [disableButton, setDisableButton] = useState(false);
     const searchParams = useSearchParams();
+    const router = useRouter();
     const form = useForm({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -74,7 +75,9 @@ const Register: FC<PageProps> = ({ }) => {
             if (res.data) {
                 toast(`Successfully Registered`);
 
-                toast(`Verification email sent. Please check your inbox.`);
+                router.push(callbackURL || "/home");
+
+                // toast(`Verification email sent. Please check your inbox.`);
             } else {
                 toast(`Registration failed. Please try again later.`);
             }
@@ -144,8 +147,9 @@ const Register: FC<PageProps> = ({ }) => {
                             <div className="text-center text-sm">
                                 Already have an account?{" "}
                                 <Link
-                                    href={`/login${callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                        }`}
+                                    href={`/login${
+                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                    }`}
                                     className="underline underline-offset-4"
                                 >
                                     Log in here

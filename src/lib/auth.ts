@@ -42,7 +42,7 @@ export const auth = betterAuth({
     }),
 
     emailAndPassword: {
-        requireEmailVerification: true,
+        // requireEmailVerification: true,
         enabled: true,
         signUp: {
             enabled: true,
@@ -67,21 +67,21 @@ export const auth = betterAuth({
         },
     },
 
-    emailVerification: {
-        autoSignInAfterVerification: true,
-        sendOnSignUp: true,
-        sendVerificationEmail: async ({ user, url }) => {
-            sendEmail({
-                emailAddress: user.email,
-                subject: "Verify your email address",
-                // template: EmailVerification,
-                data: {
-                    userName: user.name,
-                    verificationUrl: url,
-                },
-            });
-        },
-    },
+    // emailVerification: {
+    //     autoSignInAfterVerification: true,
+    //     sendOnSignUp: true,
+    //     sendVerificationEmail: async ({ user, url }) => {
+    //         sendEmail({
+    //             emailAddress: user.email,
+    //             subject: "Verify your email address",
+    //             // template: EmailVerification,
+    //             data: {
+    //                 userName: user.name,
+    //                 verificationUrl: url,
+    //             },
+    //         });
+    //     },
+    // },
 
     socialProviders: {
         google: {
