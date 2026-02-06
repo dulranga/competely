@@ -6,6 +6,8 @@ import { competitions, organizations } from "~/db/schema";
 import type { CreateCompetitionSchema } from "~/lib/schemas/competition.schema";
 
 export async function updateCompetition(competitionId: string, data: Partial<CreateCompetitionSchema>) {
+    console.log("updateCompetition called with:", { competitionId, data }); // Debug log
+    
     // 1. Get the organizationId for this competition
     const competition = await db.query.competitions.findFirst({
         where: eq(competitions.id, competitionId),
@@ -18,6 +20,8 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
         throw new Error("Competition not found");
     }
 
+    console.log("Found competition:", competition); // Debug log
+
     // 2. Update the organization name if provided
     if (data.name) {
         await db
@@ -27,17 +31,24 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
     }
 
     // 3. Update the competition details
-    await db
+    const updateData = {
+        tagline: data.tagline,
+        category: data.category,
+        bannerId: data.bannerId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        registrationDeadline: data.registrationDeadline,
+    };
+    
+    console.log("Updating competition with:", updateData); // Debug log
+    
+    const result = await db
         .update(competitions)
-        .set({
-            tagline: data.tagline,
-            category: data.category,
-            bannerId: data.bannerId,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            registrationDeadline: data.registrationDeadline,
-        })
-        .where(eq(competitions.id, competitionId));
+        .set(updateData)
+        .where(eq(competitions.id, competitionId))
+        .returning({ id: competitions.id, category: competitions.category });
+        
+    console.log("Update result:", result); // Debug log
 
     return { success: true };
 }

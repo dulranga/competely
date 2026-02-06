@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Textarea } from "~/components/ui/textarea";
 import {
     type CreateCompetitionSchema,
-    competitionCategoryEnum,
+    competitionCategoryOptions,
     createCompetitionSchema,
 } from "~/lib/schemas/competition.schema";
 import type { ModalComponentProps } from "../modal-registry";
@@ -30,13 +30,15 @@ export interface CreateCompetitionModalData {
 
 const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>> = ({ closeModal, data }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [customCategory, setCustomCategory] = useState("");
+    const [showCustomInput, setShowCustomInput] = useState(false);
 
     const form = useForm<CreateCompetitionSchema>({
         resolver: zodResolver(createCompetitionSchema),
         defaultValues: {
             name: "",
             tagline: "",
-            category: "tech",
+            category: "Open",
             bannerId: null,
         },
     });
@@ -103,18 +105,47 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                             {...props}
                                             helperText="Helps delegates find your competition in their niche."
                                         >
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <SelectTrigger className="bg-input-background px-4">
-                                                    <SelectValue placeholder="Select a category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {competitionCategoryEnum.map((cat) => (
-                                                        <SelectItem key={cat} value={cat} className="capitalize">
-                                                            {cat}
+                                            <div className="space-y-3">
+                                                <Select 
+                                                    onValueChange={(value) => {
+                                                        if (value === "custom") {
+                                                            setShowCustomInput(true);
+                                                            if (customCategory) {
+                                                                field.onChange(customCategory);
+                                                            }
+                                                        } else {
+                                                            setShowCustomInput(false);
+                                                            field.onChange(value);
+                                                        }
+                                                    }} 
+                                                    defaultValue={competitionCategoryOptions.includes(field.value as any) ? field.value : "custom"}
+                                                >
+                                                    <SelectTrigger className="bg-input-background px-4">
+                                                        <SelectValue placeholder="Select a category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {competitionCategoryOptions.map((cat) => (
+                                                            <SelectItem key={cat} value={cat}>
+                                                                {cat}
+                                                            </SelectItem>
+                                                        ))}
+                                                        <SelectItem value="custom">
+                                                            Custom
                                                         </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                    </SelectContent>
+                                                </Select>
+                                                {showCustomInput && (
+                                                    <Input
+                                                        placeholder="Enter custom category"
+                                                        value={customCategory}
+                                                        onChange={(e) => {
+                                                            setCustomCategory(e.target.value);
+                                                            field.onChange(e.target.value);
+                                                        }}
+                                                        className="bg-input-background px-4"
+                                                    />
+                                                )}
+                                            </div>
                                         </Form.CustomController>
                                     )}
                                 />
