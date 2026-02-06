@@ -14,7 +14,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { competitionCategoryEnum, createCompetitionSchema } from "~/lib/schemas/competition.schema";
+import { competitionCategoryOptions, createCompetitionSchema } from "~/lib/schemas/competition.schema";
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 
 const ExtendedSchema = createCompetitionSchema.extend({
@@ -39,6 +39,8 @@ interface EditThumbnailCardProps {
 
 const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [customCategory, setCustomCategory] = useState("");
+    const [showCustomInput, setShowCustomInput] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<ExtendedSchemaType>({
@@ -55,6 +57,32 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             registrationDeadline: initialData?.registrationDeadline || new Date(),
         },
     });
+
+    // Initialize custom category state and form when component mounts or data changes
+    useEffect(() => {
+        if (initialData) {
+            // Reset form with updated data
+            form.reset({
+                name: initialData.name || "",
+                tagline: initialData.tagline || "",
+                category: initialData.category || "Open",
+                bannerId: initialData.bannerId || null,
+                customCategory: "",
+                startDate: initialData.startDate || new Date(),
+                endDate: initialData.endDate || new Date(),
+                registrationDeadline: initialData.registrationDeadline || new Date(),
+            });
+
+            // Handle custom category initialization
+            if (initialData.category && !competitionCategoryOptions.includes(initialData.category as any)) {
+                setCustomCategory(initialData.category);
+                setShowCustomInput(true);
+            } else {
+                setCustomCategory("");
+                setShowCustomInput(false);
+            }
+        }
+    }, [initialData, form]);
 
     const category = form.watch("category");
 
@@ -92,6 +120,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             }
             toast.error(result.error);
         } else {
+            console.log("Save success:", result); // Debug log
             toast.success("Changes saved successfully!");
             setIsConfirmOpen(false);
         }
@@ -124,7 +153,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             </div>
 
             <div className="px-8 pb-8">
-                <Form form={form} className="space-y-6">
+                <Form form={form} className="space-y-6" onFinish={onSave}>
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-x-10 gap-y-6 items-start">
                         <div className="space-y-6 px-1">
                             <Form.Item
@@ -162,18 +191,48 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                             {...props}
                                             helperText="Helps delegates find your competition in their niche."
                                         >
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <SelectTrigger className="bg-input-background px-4">
-                                                    <SelectValue placeholder="Select a category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {competitionCategoryEnum.map((cat) => (
-                                                        <SelectItem key={cat} value={cat} className="capitalize">
-                                                            {cat}
+                                            <div className="space-y-3">
+                                                <Select 
+                                                    value={competitionCategoryOptions.includes(field.value as any) ? field.value : "custom"}
+                                                    onValueChange={(value) => {
+                                                        if (value === "custom") {
+                                                            setShowCustomInput(true);
+                                                            if (customCategory) {
+                                                                field.onChange(customCategory);
+                                                            }
+                                                        } else {
+                                                            setShowCustomInput(false);
+                                                            setCustomCategory("");
+                                                            field.onChange(value);
+                                                        }
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="bg-input-background px-4">
+                                                        <SelectValue placeholder="Select a category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {competitionCategoryOptions.map((cat) => (
+                                                            <SelectItem key={cat} value={cat}>
+                                                                {cat}
+                                                            </SelectItem>
+                                                        ))}
+                                                        <SelectItem value="custom">
+                                                            Specify custom category
                                                         </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                    </SelectContent>
+                                                </Select>
+                                                {showCustomInput && (
+                                                    <Input
+                                                        placeholder="Enter custom category"
+                                                        value={customCategory}
+                                                        onChange={(e) => {
+                                                            setCustomCategory(e.target.value);
+                                                            field.onChange(e.target.value);
+                                                        }}
+                                                        className="bg-input-background px-4"
+                                                    />
+                                                )}
+                                            </div>
                                         </Form.CustomController>
                                     )}
                                 />
@@ -187,15 +246,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 </Form.Item>
                             </div>
 
-                            {category === "other" && (
-                                <Form.Item
-                                    label="Custom Category"
-                                    name="customCategory"
-                                    helperText="Specify your unique competition category."
-                                >
-                                    <Input placeholder="e.g. Robotics, Gaming, etc." />
-                                </Form.Item>
-                            )}
+
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Form.Item

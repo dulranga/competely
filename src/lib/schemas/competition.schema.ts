@@ -1,6 +1,6 @@
-import { date, enum as enumType, object, string, uuid, type infer as zInfer } from "zod";
+import { date, object, string, uuid, type infer as zInfer } from "zod";
 
-export const competitionCategoryEnum = ["tech", "business", "design", "science", "sports", "arts", "other"] as const;
+export const competitionCategoryOptions = ["Open", "University", "School"] as const;
 
 export const createCompetitionSchema = object({
     name: string().min(3, "Competition name must be at least 3 characters"),

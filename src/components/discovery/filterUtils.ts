@@ -33,9 +33,14 @@ export function filterCompetitions(competitions: any[], filters: FilterState) {
         const allCategoriesChecked = categoryFilterValues.every(v => v);
         if (!allCategoriesChecked) {
             const category = (comp.category || '').toLowerCase();
+            const predefinedCategories = ['open', 'university', 'school'];
             const hasMatchingCategory = Object.entries(filters.categories).some(([key, value]) => {
                 if (!value) return false;
-                return category.includes(key.toLowerCase()) || (key === 'other' && category === '');
+                if (key === 'other') {
+                    // "Other" should match any category that is not one of the predefined options
+                    return !predefinedCategories.includes(category) && category !== '';
+                }
+                return category === key.toLowerCase();
             });
             if (!hasMatchingCategory) {
                 return false;

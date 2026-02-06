@@ -1,5 +1,5 @@
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { competitionCategoryEnum, competitionStatusEnum } from "../enums";
+import { competitionStatusEnum } from "../enums";
 import { organizations } from "./auth-schema";
 import { files } from "./files-schema";
 
@@ -13,7 +13,7 @@ export const competitions = pgTable(
         tagline: text("tagline"),
         societyName: text("society_name"),
         description: text("description"),
-        category: competitionCategoryEnum("category"),
+        category: text("category"),
         hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),
         posterId: uuid("poster_id").references(() => files.id), // Card/Thumbnail Image
