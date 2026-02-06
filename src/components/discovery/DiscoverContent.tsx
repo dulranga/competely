@@ -55,6 +55,7 @@ interface DiscoverContentProps {
     initialCompetitions?: any[];
     initialSearchQuery?: string;
     bookmarkStatuses?: Map<string, boolean>;
+    registrationStatuses?: Map<string, boolean>;
     bookmarkCount?: number;
 }
 

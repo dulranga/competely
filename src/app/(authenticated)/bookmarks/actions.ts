@@ -21,3 +21,22 @@ export async function toggleBookmarkAction(competitionId: string) {
         return { success: false, error: "Failed to toggle bookmark" };
     }
 }
+
+/**
+ * Server Action to toggle registration status
+ * @param competitionId - The ID of the competition to register/unregister
+ */
+export async function toggleRegistrationAction(competitionId: string) {
+    try {
+        const newStatus = await toggleRegistrationStatus(competitionId);
+        
+        // Revalidate relevant pages
+        revalidatePath("/bookmarks");
+        revalidatePath("/discover");
+        
+        return { success: true, isRegistered: newStatus };
+    } catch (error) {
+        console.error("Failed to toggle registration:", error);
+        return { success: false, error: "Failed to toggle registration" };
+    }
+}

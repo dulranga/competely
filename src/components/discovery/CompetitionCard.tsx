@@ -1,16 +1,16 @@
 "use client";
 
-import { Calendar, MapPin, Users, Shapes, Bookmark } from "lucide-react";
+import { Calendar, MapPin, Users, Shapes, Bookmark, UserPlus, UserMinus } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
-import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
+import { toggleBookmarkAction, toggleRegistrationAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
 
-export type CompetitionStatus = "Ongoing" | "Upcoming" | "Ended" | "Open" | "Closed" | "Registered" | "Finished";
+export type CompetitionStatus = "Ongoing" | "Upcoming" | "Closed" | "Registered" | "Finished";
 
 interface CompetitionCardProps {
     competitionId?: string;
@@ -25,14 +25,13 @@ interface CompetitionCardProps {
     status?: CompetitionStatus;
     variant?: "grid" | "list";
     isBookmarked?: boolean;
+    isRegistered?: boolean;
     onClick?: () => void;
 }
 
 const statusStyles: Record<CompetitionStatus, string> = {
     Ongoing: "bg-amber-500/90 text-white hover:bg-amber-600 shadow-[0_0_12px_rgba(245,158,11,0.4)] border-amber-400/20",
     Upcoming: "bg-blue-500/90 text-white hover:bg-blue-600 shadow-[0_0_12px_rgba(59,130,246,0.4)] border-blue-400/20",
-    Open: "bg-emerald-500/90 text-white hover:bg-emerald-600 shadow-[0_0_12px_rgba(16,185,129,0.4)] border-emerald-400/20",
-    Ended: "bg-gray-500/90 text-white hover:bg-gray-600 border-gray-400/20",
     Closed: "bg-red-500/90 text-white hover:bg-red-600 shadow-[0_0_12px_rgba(239,68,68,0.4)] border-red-400/20",
     Registered: "bg-green-500/90 text-white hover:bg-green-600 shadow-[0_0_12px_rgba(34,197,94,0.4)] border-green-400/20",
     Finished: "bg-gray-600/90 text-white hover:bg-gray-700 border-gray-500/20",
@@ -51,9 +50,11 @@ export function CompetitionCard({
     status = "Ongoing",
     variant = "grid",
     isBookmarked: initialIsBookmarked = false,
+    isRegistered = false,
     onClick,
 }: CompetitionCardProps) {
-    const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
+    const [isBookmarkedState, setIsBookmarked] = useState(initialIsBookmarked);
+    const [isRegisteredState, setIsRegistered] = useState(isRegistered);
     const [isPending, startTransition] = useTransition();
 
     const handleBookmarkClick = async (e: React.MouseEvent) => {
@@ -65,7 +66,7 @@ export function CompetitionCard({
             return;
         }
 
-        const newState = !isBookmarked;
+        const newState = !isBookmarkedState;
         setIsBookmarked(newState);
 
         startTransition(async () => {
@@ -85,6 +86,33 @@ export function CompetitionCard({
         });
     };
 
+    const handleRegistrationClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!competitionId) {
+            toast.error("Competition ID is missing");
+            return;
+        }
+
+        const newState = !isRegisteredState;
+        setIsRegistered(newState);
+
+        startTransition(async () => {
+            try {
+                const result = await toggleRegistrationAction(competitionId);
+                if (result.success) {
+                    setIsRegistered(result.isRegistered ?? newState);
+                    toast.success(result.isRegistered ? "Successfully registered!" : "Registration cancelled");
+                } else {
+                    setIsRegistered(!newState);
+                    toast.error(result.error || "Failed to update registration");
+                }
+            } catch (error) {
+                setIsRegistered(!newState);
+                toast.error("Failed to update registration");
+            }
+        });
+    };
+
     const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
             className={cn(
@@ -99,11 +127,40 @@ export function CompetitionCard({
                 className={cn(
                     "transition-all",
                     iconSize,
-                    isBookmarked
+                    isBookmarkedState
                         ? "fill-current"
                         : "hover:scale-110"
                 )}
             />
+        </button>
+    );
+
+    const RegisterButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
+        <button
+            className={cn(
+                "rounded-full transition-all duration-300 active:scale-95",
+                className
+            )}
+            onClick={handleRegistrationClick}
+            disabled={isPending}
+            type="button"
+            title={isRegisteredState ? "Unregister" : "Register"}
+        >
+            {isRegisteredState ? (
+                <UserMinus
+                    className={cn(
+                        "transition-all text-red-500 hover:text-red-600",
+                        iconSize
+                    )}
+                />
+            ) : (
+                <UserPlus
+                    className={cn(
+                        "transition-all text-green-500 hover:text-green-600 hover:scale-110",
+                        iconSize
+                    )}
+                />
+            )}
         </button>
     );
 
@@ -152,11 +209,15 @@ export function CompetitionCard({
                             {organizerName}
                         </Button>
                         <BookmarkButton 
-                            className="p-1.5 hover:bg-gray-100 absolute top-3 right-3 sm:static"
+                            className="p-1.5 hover:bg-gray-100"
                             iconSize={cn(
                                 "h-4 w-4",
-                                isBookmarked ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground"
                             )}
+                        />
+                        <RegisterButton 
+                            className="p-1.5 hover:bg-gray-100"
+                            iconSize="h-4 w-4"
                         />
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
@@ -189,16 +250,22 @@ export function CompetitionCard({
                     </Badge>
                 </div>
 
-                {/* Bookmark Icon (Top Right) */}
-                <BookmarkButton 
-                    className="absolute top-5 right-5 z-10 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/bookmark"
-                    iconSize={cn(
-                        "h-5 w-5",
-                        isBookmarked
-                            ? "text-white scale-110"
-                            : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white"
-                    )}
-                />
+                {/* Action Buttons (Top Right) */}
+                <div className="absolute top-5 right-5 z-10 flex flex-col gap-2">
+                    <BookmarkButton 
+                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/bookmark"
+                        iconSize={cn(
+                            "h-5 w-5",
+                            isBookmarkedState
+                                ? "text-white scale-110"
+                                : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white"
+                        )}
+                    />
+                    <RegisterButton 
+                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/register"
+                        iconSize="h-5 w-5"
+                    />
+                </div>
 
                 {/* Center Text Overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-0 mt-4">

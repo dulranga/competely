@@ -6,6 +6,10 @@ import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
 export default async function BookmarksPage() {
     const bookmarkedCompetitions = await getBookmarkedCompetitions();
+    
+    // Get registration statuses for bookmarked competitions
+    const competitionIds = bookmarkedCompetitions.map((c: any) => c.id);
+    const registrationStatuses = await getRegistrationStatuses(competitionIds);
 
     return (
         <div className="flex-1 bg-[#fbf6f3] min-h-[calc(100vh-64px)]">
