@@ -1,49 +1,40 @@
 "use client";
 
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon, Clock, List } from "lucide-react";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "~/lib/utils";
-import "react-day-picker/style.css"; // Ensure this is available or use custom styles
+import "react-day-picker/style.css";
+import { TimelineCard } from "./TimelineCard";
 
-interface TimelineEvent {
+export interface TimelineEventDef {
     id: string;
-    title: string;
-    description: string;
-    date: string;
-    type: "MAJOR" | "MILESTONE" | "CRITICAL";
-    status: "completed" | "active" | "upcoming";
+    competitionName: string;
+    roundName?: string;
+    eventName: string;
+    description?: string;
+    startDatetime: Date;
+    endDatetime?: Date;
+    type: string;
+    status: "completed" | "active" | "upcoming" | string;
+    location?: string;
 }
 
-import timelineEvents from "~/components/sample-data/timeline.json";
+interface VerticalTimelineProps {
+    events: TimelineEventDef[];
+}
 
-const events: TimelineEvent[] = timelineEvents.map(event => ({
-    ...event,
-    type: event.type as "MAJOR" | "MILESTONE" | "CRITICAL",
-    status: event.status as "completed" | "active" | "upcoming"
-}));
-
-const typeStyles: Record<string, string> = {
-    MAJOR: "bg-gray-100 text-gray-600",
-    MILESTONE: "bg-gray-100 text-gray-600",
-    CRITICAL: "bg-red-100 text-red-600",
-};
-
-export function VerticalTimeline() {
+export function VerticalTimeline({ events }: VerticalTimelineProps) {
     const [view, setView] = useState<"timeline" | "calendar">("timeline");
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         new Date(),
     );
 
-    // Helper to parse event dates
-    const getEventDate = (dateStr: string) =>
-        parse(dateStr, "MMM dd, yyyy", new Date());
-
     // Get events for a specific date
     const getEventsForDate = (date: Date) => {
         return events.filter((event) => {
-            const eventDate = getEventDate(event.date);
+            const eventDate = event.startDatetime;
             return (
                 eventDate.getDate() === date.getDate() &&
                 eventDate.getMonth() === date.getMonth() &&
@@ -53,7 +44,7 @@ export function VerticalTimeline() {
     };
 
     // Modifiers for the calendar to highlight dates with events
-    const eventDates = events.map((event) => getEventDate(event.date));
+    const eventDates = events.map((event) => event.startDatetime);
     const modifiers = {
         hasEvent: eventDates,
     };
@@ -120,65 +111,65 @@ export function VerticalTimeline() {
                     <div className="absolute left-[50px] md:left-[80px] top-4 bottom-4 w-0.5 bg-gray-200" />
 
                     <div className="space-y-12">
-                        {events.map((event) => (
-                            <div
-                                key={event.id}
-                                className="relative flex items-start gap-8 md:gap-12"
-                            >
-                                {/* Date Node (Left) */}
-                                <div className="shrink-0 z-10">
-                                    <div
-                                        className={cn(
-                                            "w-[100px] h-[100px] md:w-[160px] md:h-28 rounded-3xl bg-white border border-border/40 shadow-sm flex flex-col items-center justify-center gap-1 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer group",
-                                            event.status === "active"
-                                                ? "border-primary/20 ring-4 ring-primary/5"
-                                                : "",
-                                        )}
-                                    >
-                                        <CalendarIcon
-                                            className={cn(
-                                                "h-6 w-6 mb-1",
-                                                event.type === "CRITICAL"
-                                                    ? "text-red-500"
-                                                    : "text-amber-500",
-                                            )}
-                                        />
-                                        <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest text-center px-2">
-                                            {event.date}
-                                        </span>
-                                    </div>
-                                </div>
+                        {events.map((event) => {
+                            const isCritical = event.type.toLowerCase().includes("deadline");
+                            const isActive = event.status === "active";
 
-                                {/* Content Card (Right) */}
-                                <div className="flex-1 pt-2">
-                                    <div
-                                        className={cn(
-                                            "bg-white rounded-[2rem] p-6 md:p-8 border border-border/40 shadow-sm hover:shadow-md transition-all duration-300 w-full group",
-                                            event.status === "active"
-                                                ? "border-l-[6px] border-l-primary shadow-lg"
-                                                : "",
-                                        )}
-                                    >
-                                        <div className="flex items-start justify-between mb-3">
-                                            <span
+                            return (
+                                <div
+                                    key={event.id}
+                                    className="relative flex items-start gap-8 md:gap-12"
+                                >
+                                    {/* Date Node (Left) */}
+                                    <div className="shrink-0 z-10">
+                                        <div
+                                            className={cn(
+                                                "w-[100px] h-[100px] md:w-[160px] md:h-28 rounded-3xl bg-white border border-border/40 shadow-sm flex flex-col items-center justify-center gap-1 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer group",
+                                                isActive
+                                                    ? "border-primary/20 ring-4 ring-primary/5"
+                                                    : "",
+                                            )}
+                                        >
+                                            <CalendarIcon
                                                 className={cn(
-                                                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
-                                                    typeStyles[event.type] || "bg-gray-100 text-gray-600",
+                                                    "h-6 w-6 mb-1",
+                                                    isCritical
+                                                        ? "text-red-500"
+                                                        : "text-amber-500",
                                                 )}
-                                            >
-                                                {event.type}
+                                            />
+                                            <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest text-center px-2">
+                                                {format(event.startDatetime, "MMM dd")}
+                                            </span>
+                                            <span className="text-[10px] text-gray-400">
+                                                {format(event.startDatetime, "yyyy")}
                                             </span>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-[#1a1b25] mb-2 group-hover:text-primary transition-colors">
-                                            {event.title}
-                                        </h3>
-                                        <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-                                            {event.description}
-                                        </p>
+                                    </div>
+
+                                    {/* Content Card (Right) */}
+                                    <div className="flex-1 pt-2">
+                                        <TimelineCard
+                                            variant="delegate"
+                                            data={{
+                                                competitionName: event.competitionName,
+                                                roundName: event.roundName,
+                                                eventName: event.eventName,
+                                                type: event.type,
+                                                status: event.status,
+                                                startDatetime: event.startDatetime,
+                                                endDatetime: event.endDatetime,
+                                                location: event.location,
+                                                description: event.description,
+                                            }}
+                                            className={cn(
+                                                isActive ? "border-l-[6px] border-l-primary shadow-lg" : ""
+                                            )}
+                                        />
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             ) : (
@@ -214,29 +205,21 @@ export function VerticalTimeline() {
                         {selectedEvents.length > 0 ? (
                             <div className="space-y-4">
                                 {selectedEvents.map((event) => (
-                                    <div
+                                    <TimelineCard
                                         key={event.id}
-                                        className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
-                                    >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h4 className="font-bold text-lg text-gray-900">
-                                                {event.title}
-                                            </h4>
-                                            <span
-                                                className={cn(
-                                                    "px-2 py-1 rounded text-[10px] font-bold uppercase",
-                                                    typeStyles[event.type],
-                                                )}
-                                            >
-                                                {event.type}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-600">{event.description}</p>
-                                        <div className="mt-3 pt-3 border-t border-gray-50 flex items-center gap-2 text-sm text-gray-500">
-                                            <CalendarIcon className="w-4 h-4" />
-                                            {event.date}
-                                        </div>
-                                    </div>
+                                        variant="calendar"
+                                        data={{
+                                            competitionName: event.competitionName,
+                                            roundName: event.roundName,
+                                            eventName: event.eventName,
+                                            type: event.type,
+                                            status: event.status,
+                                            startDatetime: event.startDatetime,
+                                            endDatetime: event.endDatetime,
+                                            location: event.location,
+                                            description: event.description,
+                                        }}
+                                    />
                                 ))}
                             </div>
                         ) : (
