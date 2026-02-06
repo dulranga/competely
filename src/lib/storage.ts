@@ -12,6 +12,8 @@ import { getUser } from "~/data-access/getCurrentUser";
 import db from "~/db/client";
 import { files } from "~/db/schema";
 import logger from "./logger";
+import { isDev } from "./isDev";
+import { getSupabaseAdminClient, getSupabaseBucketName } from "./supabase";
 
 export const fileCategorySchema = z.enum(FILE_CATEGORY);
 
@@ -40,44 +42,48 @@ export const fileCategorySchema = z.enum(FILE_CATEGORY);
 
 //     return fileKey;
 // }
-async function saveFileLocally(file: File, category: FileCategory = "uploads") {
-    const user = await getUser();
-
-    const fileId = randomUUID();
-    const ext = path.extname(file.name) || "";
-    const sanitizedName = path.basename(file.name, ext).replace(/\s+/g, "_");
-    const fileKey = `users/${user.id}/${category}/${sanitizedName}-${fileId}${ext}`;
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
+async function saveFileLocally(file: File, fileKey: string) {
+    const buffer = await fileToBuffer(file);
     const uploadPath = path.join(process.cwd(), "user-uploads", fileKey);
 
-    // logger.info(`Saving file locally: ${uploadPath}`);
     await mkdir(path.dirname(uploadPath), { recursive: true });
     await writeFile(uploadPath, buffer);
+}
 
-    return fileKey;
+async function saveFileToSupabase(file: File, fileKey: string) {
+    const supabase = getSupabaseAdminClient();
+    const bucket = getSupabaseBucketName();
+    const buffer = await fileToBuffer(file);
+
+    logger.info(`Uploading file to Supabase bucket ${bucket}: ${fileKey}`);
+    const { error } = await supabase.storage.from(bucket).upload(fileKey, buffer, {
+        contentType: file.type,
+        upsert: false,
+    });
+
+    if (error) {
+        logger.error(`Failed to upload file to Supabase: ${error.message}`);
+        throw new Error("Unable to upload file to storage");
+    }
 }
 
 export async function storeFile(file: File, category: FileCategory = "uploads") {
     const user = await getUser();
+    const fileKey = generateFileKey(user.id, file, category);
 
-    // let key;
     // if (isDev()) {
-    //     key = await saveFileLocally(file, category);
+    //     await saveFileLocally(file, fileKey);
     // } else {
-    //     key = await saveFileToS3(file, category);
+    //     await saveFileToSupabase(file, fileKey);
     // }
 
-    // TODO: to be changed when deploying
-    const key = await saveFileLocally(file, category);
+    await saveFileToSupabase(file, fileKey);
 
     const [savedFile] = await db
         .insert(files)
         .values({
             user_id: user.id,
-            fileKey: key,
+            fileKey,
             fileName: file.name,
             size: file.size,
             mimeType: file.type,
@@ -115,15 +121,8 @@ export async function getFile(fileId: string) {
         throw new Error("File not found");
     }
 
-    // let file: Buffer;
-    // if (isDev()) {
-    //     file = await getFileLocally(fileRecord.fileKey);
-    // } else {
-    //     file = await getFileFromS3(fileRecord.fileKey);
-    // }
-
-    // TODO: to be changed when deploying
-    const file = await getFileLocally(fileRecord.fileKey);
+    // const file = isDev() ? await getFileLocally(fileRecord.fileKey) : await getFileFromSupabase(fileRecord.fileKey);
+    const file = await getFileFromSupabase(fileRecord.fileKey);
 
     return {
         file,
@@ -140,4 +139,32 @@ async function getFileLocally(fileKey: string) {
     const file = await readFile(uploadPath);
 
     return file;
+}
+
+async function getFileFromSupabase(fileKey: string) {
+    const supabase = getSupabaseAdminClient();
+    const bucket = getSupabaseBucketName();
+
+    logger.info(`Getting file from Supabase bucket ${bucket}: ${fileKey}`);
+    const { data, error } = await supabase.storage.from(bucket).download(fileKey);
+    if (error || !data) {
+        logger.error(`Failed to download file from Supabase: ${error?.message ?? "Unknown error"}`);
+        throw new Error("Unable to download file from storage");
+    }
+
+    const arrayBuffer = await data.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
+
+function generateFileKey(userId: string, file: File, category: FileCategory) {
+    const fileId = randomUUID();
+    const ext = path.extname(file.name) || "";
+    const sanitizedName = path.basename(file.name, ext).replace(/\s+/g, "_");
+
+    return `users/${userId}/${category}/${sanitizedName}-${fileId}${ext}`;
+}
+
+async function fileToBuffer(file: File) {
+    const bytes = await file.arrayBuffer();
+    return Buffer.from(bytes);
 }

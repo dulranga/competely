@@ -2,6 +2,7 @@
 
 import { Plus, Loader2, Check, X } from "lucide-react";
 import { FC, useEffect, useState, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "~/components/ui/button";
 import {
     createRoundAction,
@@ -17,106 +18,107 @@ import { useRouter, useSearchParams } from "next/navigation";
 export interface Round {
     id: string;
     name: string;
-    order: number;
     isSystem: boolean;
 }
 
 const RoundSidebar: FC = () => {
-    const [rounds, setRounds] = useState<Round[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isCreating, setIsCreating] = useState(false);
+    const queryClient = useQueryClient();
+    const [isCreatingInput, setIsCreatingInput] = useState(false);
     const [newRoundName, setNewRoundName] = useState("");
     const newRoundInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentRoundId = searchParams.get("roundId");
 
-    useEffect(() => {
-        loadRounds();
-    }, []);
+    const {
+        data: rounds = [],
+        isLoading,
+        error: roundsError,
+    } = useQuery({
+        queryKey: ["timeline", "rounds"],
+        queryFn: () => fetchRoundsAction(),
+    });
 
     useEffect(() => {
-        if (isCreating && newRoundInputRef.current) {
+        if (isCreatingInput && newRoundInputRef.current) {
             newRoundInputRef.current.focus();
         }
-    }, [isCreating]);
+    }, [isCreatingInput]);
 
-    const loadRounds = async () => {
-        try {
-            // @ts-ignore
-            const data = await fetchRoundsAction();
-            setRounds(data as any);
-
-            // Select first round by default if none selected
-            if (!currentRoundId && data.length > 0) {
-                const firstRound = data[0];
-                // Use replace so we don't build up history when just loading the page
-                router.replace(`/dashboard/timeline?roundId=${firstRound.id}`);
-            }
-        } catch (error) {
-            console.error("Failed to load rounds:", error);
+    useEffect(() => {
+        if (roundsError) {
+            console.error("Failed to load rounds:", roundsError);
             toast.error("Failed to load competition rounds");
-        } finally {
-            setIsLoading(false);
         }
-    };
+    }, [roundsError]);
+
+    const createRoundMutation = useMutation({
+        mutationFn: (name: string) => createRoundAction(name),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["timeline", "rounds"] });
+            toast.success("Round created successfully");
+        },
+        onError: (error) => {
+            console.error("Failed to create round:", error);
+            toast.error("Failed to create round");
+        },
+    });
+
+    const renameRoundMutation = useMutation({
+        mutationFn: ({ id, name }: { id: string; name: string }) => updateRoundAction(id, name),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["timeline", "rounds"] });
+            toast.success("Round renamed");
+        },
+        onError: (error) => {
+            console.error("Failed to rename round:", error);
+            toast.error("Failed to rename round");
+        },
+    });
+
+    const deleteRoundMutation = useMutation({
+        mutationFn: (id: string) => deleteRoundAction(id),
+        onSuccess: async (_, id) => {
+            await queryClient.invalidateQueries({ queryKey: ["timeline", "rounds"] });
+            toast.success("Round deleted");
+
+            if (currentRoundId === id) {
+                const fallbackRound = rounds.find((round) => round.id !== id);
+                if (fallbackRound) {
+                    router.push(`/dashboard/timeline?roundId=${fallbackRound.id}`);
+                }
+            }
+        },
+        onError: (error) => {
+            console.error("Failed to delete round:", error);
+            toast.error("Failed to delete round");
+        },
+    });
 
     const handleCreateRound = async () => {
         if (!newRoundName.trim()) {
-            setIsCreating(false);
+            setIsCreatingInput(false);
             return;
         }
 
-        try {
-            await createRoundAction(newRoundName);
-            await loadRounds();
-            setNewRoundName("");
-            setIsCreating(false);
-            toast.success("Round created successfully");
-        } catch (error) {
-            console.error("Failed to create round:", error);
-            toast.error("Failed to create round");
-        }
+        await createRoundMutation.mutateAsync(newRoundName.trim());
+        setNewRoundName("");
+        setIsCreatingInput(false);
     };
 
     const handleRenameRound = async (id: string, newName: string) => {
-        try {
-            await updateRoundAction(id, newName);
-            setRounds(rounds.map(r => r.id === id ? { ...r, name: newName } : r));
-            toast.success("Round renamed");
-        } catch (error) {
-            console.error("Failed to rename round:", error);
-            toast.error("Failed to rename round");
-            throw error;
-        }
+        await renameRoundMutation.mutateAsync({ id, name: newName });
     };
 
     const handleDeleteRound = async (id: string) => {
-        try {
-            await deleteRoundAction(id);
-            setRounds(rounds.filter(r => r.id !== id));
-            toast.success("Round deleted");
-
-            // If deleted round was selected, select the first one (Registration)
-            if (currentRoundId === id) {
-                // re-fetch or just select first from state (state update is async though)
-                const remaining = rounds.filter(r => r.id !== id);
-                if (remaining.length > 0) {
-                    router.push(`/dashboard/timeline?roundId=${remaining[0].id}`);
-                }
-            }
-        } catch (error) {
-            console.error("Failed to delete round:", error);
-            toast.error("Failed to delete round");
-            throw error;
-        }
+        await deleteRoundMutation.mutateAsync(id);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
             handleCreateRound();
         } else if (e.key === "Escape") {
-            setIsCreating(false);
+            setIsCreatingInput(false);
             setNewRoundName("");
         }
     };
@@ -130,6 +132,14 @@ const RoundSidebar: FC = () => {
             <div className="flex flex-col h-full items-center justify-center text-gray-400">
                 <Loader2 className="w-6 h-6 animate-spin mb-2" />
                 <span className="text-xs">Loading rounds...</span>
+            </div>
+        );
+    }
+
+    if (roundsError) {
+        return (
+            <div className="flex flex-col h-full items-center justify-center text-destructive text-sm px-4 text-center">
+                Unable to load competition phases. Please refresh and try again.
             </div>
         );
     }
@@ -154,7 +164,7 @@ const RoundSidebar: FC = () => {
                     />
                 ))}
 
-                {isCreating && (
+                {isCreatingInput && (
                     <div className="flex items-center gap-2 h-11 px-2 animate-in slide-in-from-bottom-2 fade-in">
                         <Input
                             ref={newRoundInputRef}
@@ -169,6 +179,7 @@ const RoundSidebar: FC = () => {
                             variant="ghost"
                             className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
                             onClick={handleCreateRound}
+                            disabled={createRoundMutation.isPending}
                         >
                             <Check size={14} />
                         </Button>
@@ -177,7 +188,7 @@ const RoundSidebar: FC = () => {
                             variant="ghost"
                             className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
                             onClick={() => {
-                                setIsCreating(false);
+                                setIsCreatingInput(false);
                                 setNewRoundName("");
                             }}
                         >
@@ -191,8 +202,8 @@ const RoundSidebar: FC = () => {
                 <Button
                     variant="competely"
                     className="w-full h-11 rounded-xl text-xs uppercase tracking-widest font-black"
-                    onClick={() => setIsCreating(true)}
-                    disabled={isCreating}
+                    onClick={() => setIsCreatingInput(true)}
+                    disabled={isCreatingInput}
                 >
                     <Plus size={16} />
                     Add Round

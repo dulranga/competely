@@ -1,16 +1,17 @@
-import { HeroSection } from "~/components/competition-page/HeroSection"
-import { InfoCard } from "~/components/competition-page/InfoCard"
-import { RegistrationCard } from "~/components/competition-page/RegistrationCard"
-import { CountdownSection } from "~/components/competition-page/CountdownSection"
-import { TimelineSection } from "~/components/competition-page/TimelineSection"
-import { PrizesSection } from "~/components/competition-page/PrizesSection"
-import { ContactUsSection } from "~/components/competition-page/ContactUsSection"
-import { Button } from "~/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { HeroSection } from "~/components/competition-page/HeroSection";
+import { InfoCard } from "~/components/competition-page/InfoCard";
+import { RegistrationCard } from "~/components/competition-page/RegistrationCard";
+import { CountdownSection } from "~/components/competition-page/CountdownSection";
+import { TimelineSection } from "~/components/competition-page/TimelineSection";
+import { PrizesSection } from "~/components/competition-page/PrizesSection";
+import { ContactUsSection } from "~/components/competition-page/ContactUsSection";
+import { RegisterButton } from "~/components/competition-page/RegisterButton";
+import { Button } from "~/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
-import { getPublicCompetitionDetails } from "~/data-access/competitions/public/get-details"
+import { getPublicCompetitionDetails } from "~/data-access/competitions/public/get-details";
 
-type Params = Promise<{ competitionId: string }>
+type Params = Promise<{ competitionId: string }>;
 
 export default async function CodeFest2026(props: { params: Params }) {
   const params = await props.params;
@@ -77,26 +78,31 @@ export default async function CodeFest2026(props: { params: Params }) {
           </div>
         </div>
 
-        {/* Separator */}
-        <div className="border-t border-border my-12" />
+                    {/* Sidebar Column (Top) */}
+                    <div className="lg:col-span-4 space-y-8">
+                        <InfoCard />
+                    </div>
+                </div>
 
-        {/* Bottom Section: Countdown + RegistrationCard Side-by-Side */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <div className="lg:col-span-8">
-            <CountdownSection />
-          </div>
-          <div className="lg:col-span-4">
-            <RegistrationCard />
-          </div>
+                {/* Separator */}
+                <div className="border-t border-border my-12" />
+
+                {/* Bottom Section: Countdown + RegistrationCard Side-by-Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                    <div className="lg:col-span-8">
+                        <CountdownSection />
+                    </div>
+                    <div className="lg:col-span-4">
+                        <RegistrationCard competitionId={params.competitionId} />
+                    </div>
+                </div>
+            </main>
+
+            <TimelineSection />
+
+            <PrizesSection />
+
+            <ContactUsSection />
         </div>
-
-      </main >
-
-      <TimelineSection />
-
-      <PrizesSection />
-
-      <ContactUsSection />
-    </div >
-  )
+    );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
-import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { Timeline } from "~/components/timeline/Timeline";
 import { Button } from "~/components/ui/button";
@@ -9,7 +8,7 @@ import { Button } from "~/components/ui/button";
 export default function HomePage() {
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-            <HeaderAuthenticated currentPath="/home" />
+
 
             <div className="flex-1 pb-20 space-y-16 pt-10">
 

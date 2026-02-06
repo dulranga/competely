@@ -6,7 +6,6 @@ import { CompetitionRole, MyCompetitionCard } from "~/components/create/MyCompet
 import { useModal } from "~/components/dashboard/modals/modal-provider";
 import { Button } from "~/components/ui/button";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { getRandomAvatar } from "~/lib/getRandomAvatar";
@@ -59,7 +58,6 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-            <HeaderAuthenticated currentPath="/create" />
 
             <main className="flex-1 max-w-[1500px] mx-auto w-full px-4 md:px-8 py-8 space-y-10">
                 {/* Top Action Bar */}

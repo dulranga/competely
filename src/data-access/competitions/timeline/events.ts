@@ -2,10 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import db from "~/db/client";
-import {
-    competitionEventResources,
-    competitionEvents,
-} from "~/db/schema";
+import { competitionEventResources, competitionEvents } from "~/db/schema";
 import { InferSelectModel } from "drizzle-orm";
 
 export type CompetitionEvent = InferSelectModel<typeof competitionEvents>;
@@ -39,6 +36,9 @@ export interface UpdateEventInput {
     startDate?: Date | null;
     endDate?: Date | null;
     resources: ResourceInput[];
+    addToTimeline?: boolean;
+    notificationEnabled?: boolean;
+    location?: string | null;
 }
 
 /**
@@ -55,7 +55,7 @@ export async function getEventsByRound(roundId: string) {
 
 /**
  * Fetches a single event by ID.
- * @param eventId 
+ * @param eventId
  */
 export async function getCompetitionEvent(eventId: string) {
     return await db.query.competitionEvents.findFirst({
@@ -94,7 +94,7 @@ export async function createCompetitionEvent(data: CreateEventInput) {
                     type: res.type,
                     url: res.url,
                     fileId: res.fileId,
-                }))
+                })),
             );
         }
 
@@ -117,15 +117,16 @@ export async function updateCompetitionEvent(eventId: string, data: UpdateEventI
                 description: data.description,
                 startDate: data.startDate,
                 endDate: data.endDate,
+                addToTimeline: data.addToTimeline,
+                notificationEnabled: data.notificationEnabled,
+                location: data.location,
             })
             .where(eq(competitionEvents.id, eventId))
             .returning();
 
         // 2. Handle Resources: Delete all existing and re-insert
         // This is a simple strategy ensuring the UI state matches DB state exactly.
-        await tx
-            .delete(competitionEventResources)
-            .where(eq(competitionEventResources.eventId, eventId));
+        await tx.delete(competitionEventResources).where(eq(competitionEventResources.eventId, eventId));
 
         if (data.resources.length > 0) {
             await tx.insert(competitionEventResources).values(
@@ -135,7 +136,7 @@ export async function updateCompetitionEvent(eventId: string, data: UpdateEventI
                     type: res.type,
                     url: res.url,
                     fileId: res.fileId,
-                }))
+                })),
             );
         }
 
@@ -151,9 +152,6 @@ export async function deleteCompetitionEvent(eventId: string) {
     // Note: If ON DELETE CASCADE is set in schema, resources delete automatically.
     // If not, we might fail here. Assuming cascade is set or we delete manual if needed.
     // The schema defined `references(() => competitionEvents.id, { onDelete: "cascade" })` so we are good.
-    const [deletedEvent] = await db
-        .delete(competitionEvents)
-        .where(eq(competitionEvents.id, eventId))
-        .returning();
+    const [deletedEvent] = await db.delete(competitionEvents).where(eq(competitionEvents.id, eventId)).returning();
     return deletedEvent;
 }

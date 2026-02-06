@@ -1,111 +1,118 @@
 {
-    "version": "7",
-    "dialect": "postgresql",
-    "entries": [
-        {
-            "idx": 0,
-            "version": "7",
-            "when": 1769775174180,
-            "tag": "0000_rate_limit_and_auth",
-            "breakpoints": true
-        },
-        {
-            "idx": 1,
-            "version": "7",
-            "when": 1769786845596,
-            "tag": "0001_added_form_builder",
-            "breakpoints": true
-        },
-        {
-            "idx": 2,
-            "version": "7",
-            "when": 1769787995387,
-            "tag": "0002_added_form_publish_state",
-            "breakpoints": true
-        },
-        {
-            "idx": 3,
-            "version": "7",
-            "when": 1769923133666,
-            "tag": "0003_added_orgs",
-            "breakpoints": true
-        },
-        {
-            "idx": 4,
-            "version": "7",
-            "when": 1769935871086,
-            "tag": "0004_added_files",
-            "breakpoints": true
-        },
-        {
-            "idx": 5,
-            "version": "7",
-            "when": 1769939359382,
-            "tag": "0005_added_competition_categories_dummy",
-            "breakpoints": true
-        },
-        {
-            "idx": 6,
-            "version": "7",
-            "when": 1769943961639,
-            "tag": "0006_moved_forms_to_competition",
-            "breakpoints": true
-        },
-        {
-            "idx": 7,
-            "version": "7",
-            "when": 1770043591452,
-            "tag": "0007_competiton-home-schema",
-            "breakpoints": true
-        },
-        {
-            "idx": 8,
-            "version": "7",
-            "when": 1770101198008,
-            "tag": "0008_add_competition_schema",
-            "breakpoints": true
-        },
-        {
-            "idx": 9,
-            "version": "7",
-            "when": 1770131392959,
-            "tag": "0009_Added a isRegistered field to bookmarks table",
-            "breakpoints": true
-        },
-        {
-            "idx": 10,
-            "version": "7",
-            "when": 1770213469411,
-            "tag": "0010_Added location field to competitionEvents",
-            "breakpoints": true
-        },
-        {
-            "idx": 11,
-            "version": "7",
-            "when": 1770272423288,
-            "tag": "0011_Added is_system feild to competition round and event tables",
-            "breakpoints": true
-        },
-        {
-            "idx": 12,
-            "version": "7",
-            "when": 1770280141732,
-            "tag": "0012_Notifications default true",
-            "breakpoints": true
-        },
-        {
-            "idx": 13,
-            "version": "7",
-            "when": 1770214355786,
-            "tag": "0013_added_form_upload",
-            "breakpoints": true
-        },
-        {
-            "idx": 14,
-            "version": "7",
-            "when": 1770214962226,
-            "tag": "0014_added_form_responses",
-            "breakpoints": true
-        }
-    ]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1769775174180,
+      "tag": "0000_rate_limit_and_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769786845596,
+      "tag": "0001_added_form_builder",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769787995387,
+      "tag": "0002_added_form_publish_state",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1769923133666,
+      "tag": "0003_added_orgs",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769935871086,
+      "tag": "0004_added_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1769939359382,
+      "tag": "0005_added_competition_categories_dummy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769943961639,
+      "tag": "0006_moved_forms_to_competition",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1770043591452,
+      "tag": "0007_competiton-home-schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1770101198008,
+      "tag": "0008_add_competition_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770131392959,
+      "tag": "0009_Added a isRegistered field to bookmarks table",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770213469411,
+      "tag": "0010_Added location field to competitionEvents",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770272423288,
+      "tag": "0011_Added is_system feild to competition round and event tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1770280141732,
+      "tag": "0012_Notifications default true",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1770214355786,
+      "tag": "0013_added_form_upload",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1770214962226,
+      "tag": "0014_added_form_responses",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1770369094900,
+      "tag": "0015_Notification table added",
+      "breakpoints": true
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { toggleBookmark } from "~/data-access/delegate/bookmark";
+import { toggleBookmark, getBookmarkedCompetitions } from "~/data-access/delegate/bookmark";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -10,11 +10,11 @@ import { revalidatePath } from "next/cache";
 export async function toggleBookmarkAction(competitionId: string) {
     try {
         const newStatus = await toggleBookmark(competitionId);
-        
+
         // Revalidate relevant pages
         revalidatePath("/bookmarks");
         revalidatePath("/discover");
-        
+
         return { success: true, isBookmarked: newStatus };
     } catch (error) {
         console.error("Failed to toggle bookmark:", error);
