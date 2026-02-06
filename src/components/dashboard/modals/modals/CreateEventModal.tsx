@@ -20,17 +20,21 @@ import { Textarea } from "~/components/ui/textarea";
 import { createEventAction, updateEventAction } from "~/data-access/competitions/actions/competition-events";
 import { createEventSchema, CreateEventSchema, eventTypeEnum } from "~/lib/schemas/timeline.schema";
 import type { ModalComponentProps } from "../modal-registry";
+import { cn } from "~/lib/utils";
 
 export interface CreateEventModalData {
     roundId: string;
     eventId?: string; // For editing
     initialData?: CreateEventSchema; // Pre-fill data
     onSuccess?: () => void;
+    isSystemEvent?: boolean;
 }
 
 const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ closeModal, data }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isEditing = !!data?.eventId;
+
+    const isSystemEvent = data.isSystemEvent;
 
     // @ts-ignore
     const form = useForm({
@@ -45,6 +49,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
             resources: [],
             connectFormId: null,
         },
+        disabled: isSystemEvent,
     });
 
     const { fields, append, remove } = useFieldArray({
@@ -210,7 +215,12 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => append({ label: "", type: "url", url: "" })}
+                                        onClick={() => {
+                                            if (isSystemEvent) {
+                                                return;
+                                            }
+                                            return append({ label: "", type: "url", url: "" });
+                                        }}
                                         className="h-8 gap-2"
                                     >
                                         <Plus size={14} /> Add Resource
@@ -298,7 +308,11 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                             </div>
 
                             {/* Switches */}
-                            <div className="space-y-4 p-4 rounded-xl border border-border/50 bg-white">
+                            <div
+                                className={cn("space-y-4 p-4 rounded-xl border border-border/50 bg-white", {
+                                    "opacity-70": isSystemEvent,
+                                })}
+                            >
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <Label>Notifications</Label>
@@ -307,6 +321,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                         </p>
                                     </div>
                                     <Controller
+                                        disabled={isSystemEvent}
                                         control={form.control}
                                         name="notificationEnabled"
                                         render={({ field }) => (
@@ -322,6 +337,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                         </p>
                                     </div>
                                     <Controller
+                                        disabled={isSystemEvent}
                                         control={form.control}
                                         name="addToTimeline"
                                         render={({ field }) => (
@@ -347,7 +363,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                     <Button
                         type="submit"
                         className="h-11 rounded-xl text-sm uppercase tracking-widest font-black bg-primary text-primary-foreground hover:bg-primary/90"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isSystemEvent}
                     >
                         {isSubmitting ? (
                             <>

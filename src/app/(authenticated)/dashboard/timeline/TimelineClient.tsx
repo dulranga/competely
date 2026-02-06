@@ -50,6 +50,7 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
                 modalData.onSuccess?.();
                 router.refresh();
             },
+            isSystemEvent: currentRound?.isSystem || false,
         });
     };
 

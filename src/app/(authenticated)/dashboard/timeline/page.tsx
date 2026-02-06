@@ -1,3 +1,9 @@
+"use client";
+
+import { useMemo } from "react";
+import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { fetchEventsAction } from "~/data-access/competitions/actions/competition-events";
 import { fetchRoundsAction, fetchCompetitionAction } from "~/data-access/competitions/actions/competition-rounds";
 import { TimelineClient } from "./TimelineClient";
@@ -20,60 +26,91 @@ interface Round {
     isSystem: boolean;
 }
 
-export default async function TimelinePage({ searchParams }: PageProps) {
-    // 1. Fetch Rounds to determine current round
-    // @ts-ignore
-    const rounds: Round[] = await fetchRoundsAction();
-    const comp = await fetchCompetitionAction();
+type Competition = Awaited<ReturnType<typeof fetchCompetitionAction>>;
 
-    // Await searchParams if using Next.js 15, or access directly if 14.
-    // Assuming safe access pattern or awaiting if needed.
-    // Since we don't know exact version, we treat it as object for now
-    // but if it errors we fix. The type signature allows direct access usually in 14.
-    const roundIdParam = (await searchParams)?.roundId as string | undefined;
+const TimelinePage = () => {
+    const searchParams = useSearchParams();
+    const roundIdParam = searchParams.get("roundId");
 
-    let selectedRound = rounds.find((r) => r.id === roundIdParam);
-    if (!selectedRound && rounds.length > 0) {
-        selectedRound = rounds[0];
-    }
+    const {
+        data: competition,
+        isLoading: isCompetitionLoading,
+        error: competitionError,
+    } = useQuery<Competition>({
+        queryKey: ["timeline", "competition"],
+        queryFn: () => fetchCompetitionAction(),
+    });
 
-    let events: Event[] = [];
+    const {
+        data: rounds = [],
+        isLoading: isRoundsLoading,
+        error: roundsError,
+    } = useQuery<Round[]>({
+        queryKey: ["timeline", "rounds"],
+        queryFn: () => fetchRoundsAction() as Promise<Round[]>,
+    });
 
-    if (selectedRound) {
-        // 2. Fetch Events for selected round
-        // @ts-ignore
-        const roundEvents = await fetchEventsAction(selectedRound.id);
-
-        // If System Round (Registration), sync dates with Competition Global Dates for display
-        if (selectedRound.isSystem && comp) {
-            const mappedEvents = roundEvents.map((e: any) => {
-                if (e.isSystem) {
-                    return {
-                        ...e,
-                        // Registration Logic Update:
-                        // Start Date = Registration Deadline
-                        // End Date = null (or kept as is, but user requested Deadline as Start)
-                        startDate: comp.registrationDeadline || comp.startDate,
-                        endDate: null, // Making it a point-in-time event as implied by "Deadline" usage
-                    };
-                }
-                return e;
-            });
-            // @ts-ignore
-            events = mappedEvents;
-        } else {
-            // @ts-ignore
-            events = roundEvents;
+    const selectedRound = useMemo(() => {
+        if (!rounds.length) {
+            return null;
         }
+        if (!roundIdParam) {
+            return rounds[0];
+        }
+        return rounds.find((round) => round.id === roundIdParam) ?? rounds[0];
+    }, [rounds, roundIdParam]);
+
+    const {
+        data: rawEvents = [],
+        isLoading: isEventsLoading,
+        error: eventsError,
+    } = useQuery<Event[]>({
+        queryKey: ["timeline", "events", selectedRound?.id],
+        queryFn: () => fetchEventsAction(selectedRound!.id) as Promise<Event[]>,
+        enabled: Boolean(selectedRound?.id),
+    });
+
+    const events = useMemo(() => {
+        if (!selectedRound) {
+            return [] as Event[];
+        }
+
+        if (selectedRound.isSystem && competition) {
+            return rawEvents.map((event) => {
+                if (!event.isSystem) {
+                    return event;
+                }
+
+                return {
+                    ...event,
+                    startDate: competition.registrationDeadline || competition.startDate,
+                    endDate: null,
+                };
+            });
+        }
+
+        return rawEvents;
+    }, [rawEvents, selectedRound, competition]);
+
+    const isLoading = isRoundsLoading || isCompetitionLoading || (Boolean(selectedRound?.id) && isEventsLoading);
+
+    if (roundsError || competitionError || eventsError) {
+        return (
+            <div className="flex h-full items-center justify-center py-24">
+                <p className="text-sm text-destructive">Unable to load timeline data. Please try again.</p>
+            </div>
+        );
     }
 
-    return (
-        <TimelineClient
-            competition={comp}
-            currentRound={selectedRound || null}
-            events={events}
-            // @ts-ignore
-            rounds={rounds}
-        />
-    );
-}
+    if (isLoading || !competition) {
+        return (
+            <div className="flex h-full items-center justify-center py-24">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    return <TimelineClient competition={competition} currentRound={selectedRound} events={events} />;
+};
+
+export default TimelinePage;

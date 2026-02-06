@@ -83,7 +83,7 @@ export function TimelineCard({ variant, data, onEdit, onDelete, className }: Tim
                         <div className="flex items-center gap-2">
                             {startDate && (
                                 <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
-                                    {format(startDate, "MXdd, yyyy")}
+                                    {format(startDate, "MMM d, yyyy")}
                                 </span>
                             )}
                             {startDate && (
