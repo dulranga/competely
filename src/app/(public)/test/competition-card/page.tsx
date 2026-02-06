@@ -15,10 +15,10 @@ export default function CompetitionCardTestPage() {
                     {/* Default Card */}
                     <CompetitionCard />
 
-                    {/* Variant 1: Ended */}
+                    {/* Variant 1: Closed */}
                     <CompetitionCard
                         title="CodeFest 2025"
-                        status="Ended"
+                        status="Closed"
                         imageUrl="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop"
                         description="An annual gathering of coding enthusiasts. Join us for 48 hours of uninterrupted coding and innovation."
                         deadline="Dec 20, 2025 (Ended)"
