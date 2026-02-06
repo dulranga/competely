@@ -14,9 +14,15 @@ interface HeroSectionProps {
     } | null;
 }
 
-export function HeroSection({ bannerUrl }: HeroSectionProps) {
+export function HeroSection({ bannerUrl, organization }: HeroSectionProps) {
     // Default fallback image if no banner is provided
     const bgImage = bannerUrl ?? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
+
+    // Organization details
+    const orgName = organization?.name || "Tec Dev club";
+    // TODO: Ideally fetch a real logo URL if available in the future. For now, using UI Avatars with the org name.
+    const orgLogoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(orgName)}&background=0D8ABC&color=fff&size=128`;
+
 
     return (
         <section className="relative w-full h-[300px] md:h-[400px] bg-muted">
@@ -43,16 +49,17 @@ export function HeroSection({ bannerUrl }: HeroSectionProps) {
                             {/* Logo Image */}
                             <div className="w-full h-full relative flex items-center justify-center bg-background rounded-full overflow-hidden">
                                 <Image
-                                    src="https://ui-avatars.com/api/?name=Tec+Dev&background=0D8ABC&color=fff&size=128"
-                                    alt="Tec Dev Club"
+                                    src={orgLogoUrl}
+                                    alt={orgName}
                                     width={128}
                                     height={128}
                                     className="object-cover"
                                 />
                             </div>
                         </div>
-                        <p className="mt-2 text-xs md:text-sm font-medium text-muted-foreground hidden md:block">Tec Dev club</p>
-                        <p className="text-[10px] text-muted-foreground hidden md:block">University of colombia</p>
+                        <p className="mt-2 text-xs md:text-sm font-medium text-muted-foreground hidden md:block">{orgName}</p>
+                        {/* Placeholder for university or extra info if available, hardcoded for now or hidden if empty */}
+                        {/* <p className="text-[10px] text-muted-foreground hidden md:block">University</p> */}
                     </div>
                 </div>
             </div>

@@ -25,7 +25,7 @@ export default async function CodeFest2026(props: { params: Params }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <HeroSection bannerUrl={bannerUrl} />
+      <HeroSection bannerUrl={bannerUrl} organization={data.organization} />
 
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
 
@@ -34,8 +34,8 @@ export default async function CodeFest2026(props: { params: Params }) {
           {/* Main Content Column */}
           <div className="lg:col-span-8 space-y-12">
             <div>
-              <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">{data.tagline || "HACKEXTREME"}</h1>
-              <p className="text-xl text-muted-foreground font-medium mb-8">Compile your dreams into reality.</p>
+              <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">{data.organization?.name || "HACKEXTREME"}</h1>
+              <p className="text-xl text-muted-foreground font-medium mb-8">{data.tagline || "Compile your dreams into reality."}</p>
 
               <div className="prose prose-lg text-muted-foreground space-y-6 max-w-none">
                 {data.description ? (
