@@ -18,7 +18,7 @@ export async function getCompetitionMainInfo(competitionId: string): Promise<Mai
             id: true,
             description: true,
             bannerId: true,
-            // logoId is not in competition schema, skipping
+            logoId: true,
         },
     });
 
@@ -29,7 +29,7 @@ export async function getCompetitionMainInfo(competitionId: string): Promise<Mai
     // Map to Zod Schema
     return {
         bannerId: competition.bannerId,
-        logoId: null, // Not persisted yet
+        logoId: competition.logoId || null, // Not persisted yet
         description: competition.description || "",
         prizes: competition.prizes.map((p) => ({
             id: p.id,

@@ -12,6 +12,8 @@ export async function getPublicCompetitionDetails(competitionId: string) {
         with: {
             organization: true,
             banner: true,
+            poster: true,
+            logo: true,
             prizes: true,
             resources: {
                 with: {

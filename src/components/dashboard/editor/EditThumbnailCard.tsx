@@ -29,7 +29,7 @@ interface EditThumbnailCardProps {
         name: string | null;
         tagline: string | null;
         category: "tech" | "business" | "design" | "science" | "sports" | "arts" | "other" | null;
-        bannerId: string | null;
+        posterId: string | null;
         startDate: Date | null;
         endDate: Date | null;
         registrationDeadline: Date | null;
@@ -46,7 +46,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             name: initialData?.name || "",
             tagline: initialData?.tagline || "",
             category: initialData?.category || "tech",
-            bannerId: initialData?.bannerId || null,
+            posterId: initialData?.posterId || null,
             customCategory: "",
             startDate: initialData?.startDate || new Date(),
             endDate: initialData?.endDate || new Date(),
@@ -179,11 +179,11 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
 
                         <div className="lg:sticky lg:top-0">
                             <Controller
-                                name="bannerId"
+                                name="posterId"
                                 control={form.control}
                                 render={({ field, ...props }) => (
                                     <Form.CustomController
-                                        label="Banner Image"
+                                        label="Card Image (Poster)"
                                         field={field}
                                         {...props}
                                         helperText="Recommended: 16:9 ratio. High quality images help attract more delegates."

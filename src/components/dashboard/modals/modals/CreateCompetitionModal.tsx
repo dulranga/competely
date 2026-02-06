@@ -37,7 +37,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
             name: "",
             tagline: "",
             category: "tech",
-            bannerId: null,
+            posterId: null,
         },
     });
 
@@ -145,11 +145,11 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
 
                         <div className="lg:sticky lg:top-0">
                             <Controller
-                                name="bannerId"
+                                name="posterId"
                                 control={form.control}
                                 render={({ field, ...props }) => (
                                     <Form.CustomController
-                                        label="Banner Image"
+                                        label="Card Image (Poster)"
                                         field={field}
                                         {...props}
                                         helperText="Recommended: 16:9 ratio. High quality images help attract more delegates."

@@ -22,10 +22,11 @@ export default async function CodeFest2026(props: { params: Params }) {
   }
 
   const bannerUrl = data.banner?.id ? `/api/upload?file_id=${data.banner.id}` : null;
+  const logoUrl = data.logo?.id ? `/api/upload?file_id=${data.logo.id}` : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <HeroSection bannerUrl={bannerUrl} organization={data.organization} />
+      <HeroSection bannerUrl={bannerUrl} logoUrl={logoUrl} organization={data.organization} />
 
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
 

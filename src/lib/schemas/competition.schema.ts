@@ -6,7 +6,7 @@ export const createCompetitionSchema = object({
     name: string().min(3, "Competition name must be at least 3 characters"),
     tagline: string().max(200, "Tagline must be less than 200 characters").optional(),
     category: enumType(competitionCategoryEnum, { error: "Please select a category" }),
-    bannerId: uuid("Invalid banner ID").optional().nullable(),
+    posterId: uuid("Invalid banner ID").optional().nullable(),
     startDate: date({ error: "Start date is required" }),
     endDate: date({ error: "End date is required" }),
     registrationDeadline: date({ error: "Registration deadline is required" }),
