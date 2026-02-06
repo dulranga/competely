@@ -3,13 +3,10 @@
 import { useState } from "react";
 import { User } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 interface UserDropdownProps {
     user: {
@@ -70,35 +67,21 @@ export default function UserDropdown({ user }: UserDropdownProps) {
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    {user.image ? (
-                        <img
-                            src={user.image}
-                            alt={user.name}
-                            className="h-10 w-10 rounded-full object-cover border border-border"
-                        />
-                    ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted border border-border">
-                            <span className="text-sm font-medium">
-                                {user.name.charAt(0).toUpperCase()}
-                            </span>
-                        </div>
-                    )}
+                    <Avatar size="lg">
+                        <AvatarImage src={user.image ?? undefined} alt={user.name} />
+                        <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-80 p-4" align="end">
                 <div className="flex flex-col space-y-4">
                     <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center">
-                            {user.image ? (
-                                <img
-                                    src={user.image}
-                                    alt={user.name}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
+                        <Avatar className="h-16 w-16 border">
+                            <AvatarImage src={user.image ?? undefined} alt={user.name} />
+                            <AvatarFallback>
                                 <User className="h-8 w-8 text-muted-foreground" />
-                            )}
-                        </div>
+                            </AvatarFallback>
+                        </Avatar>
                         <div>
                             <h4 className="font-semibold text-lg">{formData.name}</h4>
                             <p className="text-sm text-muted-foreground break-all">{formData.email}</p>
@@ -112,9 +95,7 @@ export default function UserDropdown({ user }: UserDropdownProps) {
                                 <Input
                                     id="name"
                                     value={formData.name}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, name: e.target.value })
-                                    }
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-1">
@@ -122,9 +103,7 @@ export default function UserDropdown({ user }: UserDropdownProps) {
                                 <Input
                                     id="email"
                                     value={formData.email}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, email: e.target.value })
-                                    }
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
 
@@ -185,11 +164,7 @@ export default function UserDropdown({ user }: UserDropdownProps) {
                         </div>
                     ) : (
                         <div className="pt-2">
-                            <Button
-                                variant="outline"
-                                className="w-full"
-                                onClick={() => setIsEditing(true)}
-                            >
+                            <Button variant="outline" className="w-full" onClick={() => setIsEditing(true)}>
                                 Edit Profile
                             </Button>
                         </div>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { registerToCompetitionDAL } from "./register-to-competition";
+import { getBookmarkedCompetitions } from "./bookmark";
 
 /**
  * Server action to register a user to a competition.
@@ -18,5 +19,17 @@ export async function registerToCompetitionAction(competitionId: string) {
         return {
             error: (error as Error).message || "An unexpected error occurred during registration.",
         };
+    }
+}
+
+/**
+ * Server Action to get bookmark count
+ */
+export async function getBookmarksCountAction() {
+    try {
+        const bookmarks = await getBookmarkedCompetitions();
+        return bookmarks.length;
+    } catch (error) {
+        return 0;
     }
 }

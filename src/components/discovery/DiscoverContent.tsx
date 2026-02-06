@@ -22,7 +22,6 @@ import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { TopicCard } from "~/components/discovery/TopicCard";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { HeaderPublic } from "~/components/ui/header-public";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { cn, getFileUrlById } from "~/lib/utils";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
@@ -32,7 +31,6 @@ import type { FilterState } from "./types";
 
 import topicsData from "~/components/sample-data/topics.json";
 import competitionsData from "~/components/sample-data/competitions.json";
-import { HeaderAuthenticated } from "../ui/header-authenticated";
 
 // Map icon names to components
 const iconMap: Record<string, any> = {
@@ -105,12 +103,6 @@ export function DiscoverContent({
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-            {isAuthenticated ? (
-                <HeaderAuthenticated currentPath="/discover" bookmarkCount={bookmarkCount} />
-            ) : (
-                <HeaderPublic />
-            )}
-
             <div className="flex-1 pb-20">
                 {/* Search Header - Only visible to authenticated users */}
                 {isAuthenticated && (
