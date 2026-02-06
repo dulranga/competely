@@ -12,7 +12,7 @@ import { getUserSession } from "../getCurrentUser";
  */
 export async function toggleBookmark(competitionId: string) {
     const session = await getUserSession();
-    
+
     // Check if bookmark exists
     const existingBookmark = await db.query.bookmarks.findFirst({
         where: and(
