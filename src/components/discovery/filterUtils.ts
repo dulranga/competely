@@ -4,6 +4,8 @@ import type { FilterState } from './types';
  * Filter competitions based on all active filter criteria
  */
 export function filterCompetitions(competitions: any[], filters: FilterState) {
+    console.log('Filtering competitions:', { competitions: competitions.length, filters }); // Debug log
+    
     return competitions.filter((comp) => {
         // Registered count filter
         const count = (comp as any).registeredCount || 0;
@@ -47,12 +49,23 @@ export function filterCompetitions(competitions: any[], filters: FilterState) {
             }
         }
 
-        // Keywords filter (search in title, tagline, organizer)
+        // Keywords filter (search in hashtags only)
         if (filters.keywords.length > 0) {
-            const searchText = `${comp.title || ''} ${comp.tagline || ''} ${comp.organizerName || ''}`.toLowerCase();
+            const hashtagsText = (comp.hashtags && Array.isArray(comp.hashtags)) 
+                ? comp.hashtags.join(' ').toLowerCase() 
+                : '';
+            console.log('Checking keywords for comp:', comp.title, 'hashtags:', comp.hashtags, 'filter keywords:', filters.keywords); // Debug log
+            
+            // If no hashtags exist, skip this competition for keyword filtering
+            if (!comp.hashtags || !Array.isArray(comp.hashtags) || comp.hashtags.length === 0) {
+                console.log('No hashtags found for', comp.title, '- excluding from keyword filter results'); // Debug log
+                return false;
+            }
+            
             const hasKeyword = filters.keywords.some(keyword => 
-                searchText.includes(keyword.toLowerCase())
+                hashtagsText.includes(keyword.toLowerCase())
             );
+            console.log('Keyword match result:', hasKeyword); // Debug log
             if (!hasKeyword) return false;
         }
 

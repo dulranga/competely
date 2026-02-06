@@ -72,6 +72,9 @@ export function DiscoverContent({
 
     // Filter states - using the default filters as initial values
     const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+    
+    // Debug log whenever filters change
+    console.log('Current filters state:', filters);
 
     const handleSearch = () => {
         if (searchQuery.trim()) {
@@ -98,8 +101,16 @@ export function DiscoverContent({
         }
     };
 
-    // Filter competitions using the utility function
-    const filteredCompetitions = filterCompetitions(initialCompetitions, filters);
+    // Filter competitions using the utility function - use sample data if no real data
+    const competitionsToFilter = initialCompetitions.length > 0 ? initialCompetitions : competitionsData;
+    const filteredCompetitions = filterCompetitions(competitionsToFilter, filters);
+    
+    console.log('DiscoverContent state:', { 
+        filterKeywords: filters.keywords, 
+        initialCompetitionsCount: initialCompetitions.length,
+        usingTestData: initialCompetitions.length === 0,
+        filteredCount: filteredCompetitions.length 
+    }); // Debug log
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
@@ -199,7 +210,10 @@ export function DiscoverContent({
                                             setFilters({ ...filters, registeredRange: range })
                                         }
                                         keywords={filters.keywords}
-                                        onKeywordsChange={(keywords) => setFilters({ ...filters, keywords })}
+                                        onKeywordsChange={(keywords) => {
+                                            console.log('Keywords changed in sidebar:', keywords); // Debug log
+                                            setFilters({ ...filters, keywords });
+                                        }}
                                         statusFilters={filters.statusFilters}
                                         onStatusFiltersChange={(statusFilters) =>
                                             setFilters({ ...filters, statusFilters })
@@ -231,7 +245,10 @@ export function DiscoverContent({
                                                     setFilters({ ...filters, registeredRange: range })
                                                 }
                                                 keywords={filters.keywords}
-                                                onKeywordsChange={(keywords) => setFilters({ ...filters, keywords })}
+                                                onKeywordsChange={(keywords) => {
+                                                    console.log('Keywords changed in mobile sidebar:', keywords); // Debug log
+                                                    setFilters({ ...filters, keywords });
+                                                }}
                                                 statusFilters={filters.statusFilters}
                                                 onStatusFiltersChange={(statusFilters) =>
                                                     setFilters({ ...filters, statusFilters })

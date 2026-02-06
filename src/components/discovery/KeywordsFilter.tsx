@@ -15,9 +15,12 @@ export function KeywordsFilter({ keywords, onKeywordsChange }: KeywordsFilterPro
     const [newKeyword, setNewKeyword] = useState("");
 
     const currentKeywords = keywords || internalKeywords;
+    
+    console.log('KeywordsFilter render:', { keywords, currentKeywords, hasOnKeywordsChange: !!onKeywordsChange }); // Debug log
 
     const removeKeyword = (keyword: string) => {
         const newKeywords = currentKeywords.filter(k => k !== keyword);
+        console.log('Removing keyword:', keyword, 'new keywords array:', newKeywords); // Debug log
         if (onKeywordsChange) {
             onKeywordsChange(newKeywords);
         } else {
@@ -28,6 +31,7 @@ export function KeywordsFilter({ keywords, onKeywordsChange }: KeywordsFilterPro
     const addKeyword = () => {
         if (newKeyword.trim() && !currentKeywords.includes(newKeyword.trim())) {
             const newKeywords = [...currentKeywords, newKeyword.trim()];
+            console.log('Adding keyword:', newKeyword.trim(), 'new keywords array:', newKeywords); // Debug log
             if (onKeywordsChange) {
                 onKeywordsChange(newKeywords);
             } else {

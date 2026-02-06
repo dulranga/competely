@@ -31,6 +31,7 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
     const updateData = {
         tagline: data.tagline,
         category: data.category,
+        hashtags: data.hashtags,
         bannerId: data.bannerId,
         startDate: data.startDate,
         endDate: data.endDate,

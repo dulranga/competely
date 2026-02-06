@@ -24,6 +24,7 @@ export async function searchCompetitions(query: string) {
             tagline: competitions.tagline,
             organizerName: organizations.name,
             category: competitions.category,
+            hashtags: competitions.hashtags,
             status: competitions.status,
             deadline: competitions.registrationDeadline,
             startDate: competitions.startDate,

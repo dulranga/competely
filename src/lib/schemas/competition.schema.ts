@@ -1,4 +1,4 @@
-import { date, object, string, uuid, type infer as zInfer } from "zod";
+import { array, date, object, string, uuid, type infer as zInfer } from "zod";
 
 export const competitionCategoryOptions = ["Open", "University", "School"] as const;
 
