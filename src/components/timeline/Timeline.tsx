@@ -18,7 +18,7 @@ export function Timeline({ events }: TimelineProps) {
     return (
         <div className="w-full">
             <div className="relative w-full overflow-x-auto pb-12 pt-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                <div className="flex px-4 md:px-8 min-w-max pb-8 relative pt-4 [--pl-offset:1rem] md:[--pl-offset:2rem]">
+                <div className="flex px-4 md:px-8 w-fit mx-auto pb-8 relative pt-4 [--pl-offset:1rem] md:[--pl-offset:2rem]">
                     {/* Horizontal Line (Background) */}
                     <div className="absolute top-[180px] left-0 w-full h-1 bg-gray-200 z-0" />
 
