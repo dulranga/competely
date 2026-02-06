@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { Calendar, Loader2, Plus, Trash2 } from "lucide-react";
 import { type FC, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -34,17 +33,17 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
     const isEditing = !!data?.eventId;
 
     // @ts-ignore
-    const form = useForm<CreateEventSchema>({
+    const form = useForm({
+        // @ts-ignore
         resolver: zodResolver(createEventSchema),
         defaultValues: data?.initialData || {
             name: "",
             eventTypeSelect: "Workshop",
-
             description: "",
             notificationEnabled: true,
             addToTimeline: true,
             resources: [],
-            connectFormId: "none", // Default to none
+            connectFormId: null,
         },
     });
 
@@ -55,28 +54,19 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
 
     const eventTypeSelect = form.watch("eventTypeSelect");
 
-    // Mock Forms List - In real app, fetch from DB/API
-    const availableForms = [
-        { id: "none", name: "None" },
-        { id: "form-123", name: "Registration Form" },
-        { id: "form-456", name: "Feedback Survey" },
-    ];
-
     const onSubmit = async (formData: unknown) => {
         const values = formData as CreateEventSchema;
         setIsSubmitting(true);
 
         try {
             // Determine Final Event Type
-            const eventType = values.eventTypeSelect === "other"
-                ? values.eventTypeCustom
-                : values.eventTypeSelect;
+            const eventType = values.eventTypeSelect === "other" ? values.eventTypeCustom : values.eventTypeSelect;
 
             const payload = {
                 ...values,
                 eventType, // Schema expects this if we were strictly strictly following it, checking implementation...
                 // Actually server action expects CreateEventInput which matches schema mostly but helper might need manual mapping if schema doesn't match perfectly.
-                // However, based on schema view, eventTypeSelect/Custom is used. 
+                // However, based on schema view, eventTypeSelect/Custom is used.
                 // Let's rely on server action validation or mapper.
                 // checking createEventAction signature... it takes CreateEventInput.
                 // We might need to map it if the server action expects a single 'type' field instead of select/custom.
@@ -104,25 +94,28 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
     };
 
     return (
-        <DialogContent className="md:max-w-4xl rounded-3xl p-0 gap-0 overflow-hidden bg-background">
+        <DialogContent className="md:max-w-4xl rounded-3xl p-0 gap-0 bg-background">
             <div className="p-8 pb-4">
                 <DialogHeader className="flex flex-row items-center gap-5 text-left space-y-0">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary/10 text-primary shrink-0">
                         <Calendar size={28} />
                     </div>
                     <div className="space-y-1 text-foreground">
-                        <DialogTitle className="text-2xl font-bold">{isEditing ? "Edit Event" : "Create Event"}</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold">
+                            {isEditing ? "Edit Event" : "Create Event"}
+                        </DialogTitle>
                         <DialogDescription className="text-sm leading-relaxed font-medium text-muted-foreground">
-                            {isEditing ? "Update the details of this event." : "Add a new event to your competition timeline."}
+                            {isEditing
+                                ? "Update the details of this event."
+                                : "Add a new event to your competition timeline."}
                         </DialogDescription>
                     </div>
                 </DialogHeader>
             </div>
 
-            <ScrollArea className="max-h-[70vh] px-8">
-                <Form form={form} onFinish={onSubmit} className="space-y-6 pb-8">
+            <Form form={form} onFinish={onSubmit} className="space-y-6 pb-8">
+                <ScrollArea className="max-h-[70vh] px-8 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                         {/* Left Column */}
                         <div className="space-y-6">
                             <Form.Item label="Event Name" name="name" helperText="e.g. Opening Ceremony">
@@ -146,7 +139,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {eventTypeEnum.options.map((opt) => (
-                                                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                        <SelectItem key={opt} value={opt}>
+                                                            {opt}
+                                                        </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
@@ -168,7 +163,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                 <Input placeholder="e.g. Main Hall or Zoom Link" />
                             </Form.Item>
 
-                            <Controller
+                            {/* <Controller
                                 name="connectFormId"
                                 control={form.control}
                                 render={({ field, fieldState, formState }) => (
@@ -185,13 +180,15 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {availableForms.map((f) => (
-                                                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                                    <SelectItem key={f.id} value={f.id}>
+                                                        {f.name}
+                                                    </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </Form.CustomController>
                                 )}
-                            />
+                            /> */}
                         </div>
 
                         {/* Right Column */}
@@ -221,12 +218,17 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                 </div>
 
                                 {fields.length === 0 && (
-                                    <p className="text-sm text-muted-foreground italic text-center py-2">No resources added.</p>
+                                    <p className="text-sm text-muted-foreground italic text-center py-2">
+                                        No resources added.
+                                    </p>
                                 )}
 
                                 <div className="space-y-3">
                                     {fields.map((field, index) => (
-                                        <div key={field.id} className="flex gap-3 items-start bg-white p-3 rounded-lg border border-border/40 shadow-sm relative group">
+                                        <div
+                                            key={field.id}
+                                            className="flex gap-3 items-start bg-white p-3 rounded-lg border border-border/40 shadow-sm relative group"
+                                        >
                                             <div className="flex flex-col gap-3 flex-1">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <Input
@@ -238,7 +240,10 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                         name={`resources.${index}.type` as const}
                                                         control={form.control}
                                                         render={({ field }) => (
-                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <Select
+                                                                onValueChange={field.onChange}
+                                                                defaultValue={field.value}
+                                                            >
                                                                 <SelectTrigger className="h-9">
                                                                     <SelectValue />
                                                                 </SelectTrigger>
@@ -266,7 +271,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                                 <div className="h-70">
                                                                     <FileUpload<{ id: string }>
                                                                         endpoint="/api/upload"
-                                                                        onChange={(files) => fileField.onChange(files[0]?.response?.id)}
+                                                                        onChange={(files) =>
+                                                                            fileField.onChange(files[0]?.response?.id)
+                                                                        }
                                                                         maxFiles={1}
                                                                         className="h-full"
                                                                     />
@@ -295,7 +302,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <Label>Notifications</Label>
-                                        <p className="text-xs text-muted-foreground">Notify users when this event starts.</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            Notify users when this event starts.
+                                        </p>
                                     </div>
                                     <Controller
                                         control={form.control}
@@ -308,7 +317,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <Label>Add to Timeline</Label>
-                                        <p className="text-xs text-muted-foreground">Show this event on public timeline.</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            Show this event on public timeline.
+                                        </p>
                                     </div>
                                     <Controller
                                         control={form.control}
@@ -319,37 +330,38 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                     />
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <FormDebug />
-                </Form>
-            </ScrollArea>
+                </ScrollArea>
 
-            <DialogFooter className="p-8 pt-4 bg-input-background border-t border-border/40 grid grid-cols-2 gap-3 sm:justify-end">
-                <Button
-                    variant="ghost"
-                    onClick={closeModal}
-                    className="h-11 rounded-xl font-bold text-muted-foreground"
-                    disabled={isSubmitting}
-                >
-                    Cancel
-                </Button>
-                <Button
-                    onClick={form.handleSubmit(onSubmit)}
-                    className="h-11 rounded-xl text-sm uppercase tracking-widest font-black bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {isEditing ? "Updating..." : "Creating..."}
-                        </>
-                    ) : (
-                        isEditing ? "Update Event" : "Create Event"
-                    )}
-                </Button>
-            </DialogFooter>
+                <DialogFooter className="p-8 pt-4 bg-input-background border-t border-border/40 grid grid-cols-2 gap-3 sm:justify-end">
+                    <Button
+                        variant="ghost"
+                        onClick={closeModal}
+                        className="h-11 rounded-xl font-bold text-muted-foreground"
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="h-11 rounded-xl text-sm uppercase tracking-widest font-black bg-primary text-primary-foreground hover:bg-primary/90"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {isEditing ? "Updating..." : "Creating..."}
+                            </>
+                        ) : isEditing ? (
+                            "Update Event"
+                        ) : (
+                            "Create Event"
+                        )}
+                    </Button>
+                </DialogFooter>
+            </Form>
         </DialogContent>
     );
 };

@@ -30,9 +30,9 @@ export default async function TimelinePage({
     const rounds: Round[] = await fetchRoundsAction();
     const comp = await fetchCompetitionAction();
 
-    // Await searchParams if using Next.js 15, or access directly if 14. 
-    // Assuming safe access pattern or awaiting if needed. 
-    // Since we don't know exact version, we treat it as object for now 
+    // Await searchParams if using Next.js 15, or access directly if 14.
+    // Assuming safe access pattern or awaiting if needed.
+    // Since we don't know exact version, we treat it as object for now
     // but if it errors we fix. The type signature allows direct access usually in 14.
     const roundIdParam = searchParams?.roundId as string | undefined;
 
@@ -54,11 +54,11 @@ export default async function TimelinePage({
                 if (e.isSystem) {
                     return {
                         ...e,
-                        // Registration Logic Update: 
+                        // Registration Logic Update:
                         // Start Date = Registration Deadline
                         // End Date = null (or kept as is, but user requested Deadline as Start)
                         startDate: comp.registrationDeadline || comp.startDate,
-                        endDate: null // Making it a point-in-time event as implied by "Deadline" usage
+                        endDate: null, // Making it a point-in-time event as implied by "Deadline" usage
                     };
                 }
                 return e;

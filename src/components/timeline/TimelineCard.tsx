@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import {
+    AlarmClockOffIcon,
     Bell,
     BellOff,
     Calendar,
@@ -46,13 +47,7 @@ export interface TimelineCardProps {
     className?: string;
 }
 
-export function TimelineCard({
-    variant,
-    data,
-    onEdit,
-    onDelete,
-    className,
-}: TimelineCardProps) {
+export function TimelineCard({ variant, data, onEdit, onDelete, className }: TimelineCardProps) {
     const {
         competitionName,
         roundName,
@@ -77,7 +72,7 @@ export function TimelineCard({
             <div
                 className={cn(
                     "relative w-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all",
-                    className
+                    className,
                 )}
             >
                 {/* Header */}
@@ -104,9 +99,11 @@ export function TimelineCard({
                             <span
                                 className={cn(
                                     "px-3 py-1 rounded-full text-sm font-medium",
-                                    type.toLowerCase() === 'session' ? "bg-green-100 text-green-700" :
-                                        type.toLowerCase() === 'submission' ? "bg-green-100 text-green-700" :
-                                            "bg-gray-100 text-gray-700"
+                                    type.toLowerCase() === "session"
+                                        ? "bg-green-100 text-green-700"
+                                        : type.toLowerCase() === "submission"
+                                          ? "bg-green-100 text-green-700"
+                                          : "bg-gray-100 text-gray-700",
                                 )}
                             >
                                 {type}
@@ -159,9 +156,7 @@ export function TimelineCard({
 
                     {/* Description */}
                     {description && (
-                        <div className="text-gray-700 whitespace-pre-line text-sm leading-relaxed">
-                            {description}
-                        </div>
+                        <div className="text-gray-700 whitespace-pre-line text-sm leading-relaxed">{description}</div>
                     )}
 
                     {/* Location */}
@@ -182,7 +177,7 @@ export function TimelineCard({
                     {addToTimeline === true ? (
                         <Clock className="w-5 h-5 text-gray-700" />
                     ) : (
-                        <Clock className="w-5 h-5 text-gray-300" />
+                        <AlarmClockOffIcon className="w-5 h-5 text-gray-300" />
                     )}
                 </div>
             </div>
@@ -195,7 +190,7 @@ export function TimelineCard({
             <div
                 className={cn(
                     "w-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all",
-                    className
+                    className,
                 )}
             >
                 <div className="flex justify-between items-start mb-2">
@@ -222,9 +217,11 @@ export function TimelineCard({
                         <span
                             className={cn(
                                 "px-3 py-1 rounded-full text-sm font-medium",
-                                type.toLowerCase() === 'session' ? "bg-green-100 text-green-700" :
-                                    type.toLowerCase() === 'submission' ? "bg-green-100 text-green-700" :
-                                        "bg-gray-100 text-gray-700"
+                                type.toLowerCase() === "session"
+                                    ? "bg-green-100 text-green-700"
+                                    : type.toLowerCase() === "submission"
+                                      ? "bg-green-100 text-green-700"
+                                      : "bg-gray-100 text-gray-700",
                             )}
                         >
                             {type}
@@ -232,41 +229,35 @@ export function TimelineCard({
                     )}
                 </div>
 
-                {description && (
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                        {description}
-                    </p>
-                )}
+                {description && <p className="text-gray-600 text-sm leading-relaxed">{description}</p>}
             </div>
         );
     }
 
     // --- Variant 3: Home Page Timeline ---
     if (variant === "home") {
-        const isActive = status === 'active';
+        const isActive = status === "active";
         return (
             <div
                 className={cn(
                     "relative w-48 bg-white rounded-2xl p-4 border border-border/40 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 text-center group",
                     isActive ? "ring-2 ring-green-500/20 py-6" : "mb-8", // slight height diff or just styling
-                    className
+                    className,
                 )}
             >
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-b border-r border-border/40" />
 
-                <div className={cn(
-                    "text-xs font-bold tracking-widest uppercase mb-1",
-                    isActive ? "text-green-600" : "text-muted-foreground"
-                )}>
+                <div
+                    className={cn(
+                        "text-xs font-bold tracking-widest uppercase mb-1",
+                        isActive ? "text-green-600" : "text-muted-foreground",
+                    )}
+                >
                     {startDate ? format(startDate, "MMM dd") : "TBD"}
                 </div>
 
-                <h3 className="font-bold text-gray-900 leading-tight mb-1 text-sm">
-                    {competitionName}
-                </h3>
-                <p className="text-xs text-muted-foreground font-medium mb-3">
-                    {eventName}
-                </p>
+                <h3 className="font-bold text-gray-900 leading-tight mb-1 text-sm">{competitionName}</h3>
+                <p className="text-xs text-muted-foreground font-medium mb-3">{eventName}</p>
 
                 {startDate && (
                     <div className="px-2 py-1 bg-gray-50 rounded-lg text-xs font-bold text-gray-600 inline-block">
@@ -283,7 +274,7 @@ export function TimelineCard({
             <div
                 className={cn(
                     "bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all",
-                    className
+                    className,
                 )}
             >
                 <div className="flex justify-between items-start mb-2">
@@ -291,13 +282,9 @@ export function TimelineCard({
                         <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
                             {competitionName}
                         </div>
-                        <h4 className="font-bold text-lg text-gray-900 leading-tight">
-                            {eventName}
-                        </h4>
+                        <h4 className="font-bold text-lg text-gray-900 leading-tight">{eventName}</h4>
                         {roundName && (
-                            <div className="text-xs text-muted-foreground font-medium mt-0.5">
-                                {roundName}
-                            </div>
+                            <div className="text-xs text-muted-foreground font-medium mt-0.5">{roundName}</div>
                         )}
                     </div>
                 </div>
@@ -306,7 +293,9 @@ export function TimelineCard({
                     {startDate && (
                         <div className="flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5" />
-                            <span>{format(startDate, "MMM d, yyyy")} • {format(startDate, "h:mm a")}</span>
+                            <span>
+                                {format(startDate, "MMM d, yyyy")} • {format(startDate, "h:mm a")}
+                            </span>
                             {endDate && <span> - {format(endDate, "h:mm a")}</span>}
                         </div>
                     )}
@@ -318,7 +307,7 @@ export function TimelineCard({
                     )}
                 </div>
             </div>
-        )
+        );
     }
 
     return null;
