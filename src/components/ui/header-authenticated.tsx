@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { Logo } from "~/components/ui/logo";
 import { Button } from "~/components/ui/button";
-import { Bell, User, Home, Compass, Trophy, Plus, Bookmark, LogOut } from "lucide-react";
+import { Bell, Home, Compass, Trophy, Plus, Bookmark, LogOut } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { authClient } from "~/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import UserDropdown from "~/components/user/dropdownmenu";
 
 const navItems = [
     { name: "Home", href: "/home", icon: Home },
@@ -19,9 +20,15 @@ const navItems = [
 
 interface HeaderProps {
     currentPath?: string;
+    user?: {
+        id: string;
+        name: string;
+        email: string;
+        image: string | null;
+    };
 }
 
-export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
+export function HeaderAuthenticated({ currentPath = "/", user }: HeaderProps) {
     const router = useRouter();
 
     const handleSignOut = async () => {
@@ -81,13 +88,8 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
                         </Link>
                     </Button>
 
-                    {/* Profile Icon */}
-                    <Button variant="ghost" size="icon" asChild>
-                        <Link href="/profile">
-                            <User className="h-5 w-5" />
-                            <span className="sr-only">Profile</span>
-                        </Link>
-                    </Button>
+                    {/* Profile Dropdown */}
+                    {user && <UserDropdown user={user} />}
 
                     {/* Sign Out Button */}
                     <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign Out">
@@ -124,3 +126,4 @@ export function HeaderAuthenticated({ currentPath = "/" }: HeaderProps) {
         </header>
     );
 }
+

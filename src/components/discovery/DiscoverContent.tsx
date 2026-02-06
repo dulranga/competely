@@ -8,7 +8,6 @@ import { TopicCard } from "~/components/discovery/TopicCard";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { HeaderPublic } from "~/components/ui/header-public";
-import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { cn } from "~/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
@@ -52,9 +51,7 @@ export function DiscoverContent({ isAuthenticated }: DiscoverContentProps) {
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-            {isAuthenticated ? (
-                <HeaderAuthenticated currentPath="/discover" />
-            ) : (
+            {!isAuthenticated && (
                 <HeaderPublic />
             )}
 

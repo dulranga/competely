@@ -4,7 +4,6 @@ import { useState } from "react";
 import { CompetitionCard, CompetitionStatus } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { Button } from "~/components/ui/button";
-import { HeaderAuthenticated } from "~/components/ui/header-authenticated";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { SearchBar } from "~/components/ui/search-bar";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
@@ -114,8 +113,7 @@ export default function CompetitionsPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-            {/* Header */}
-            <HeaderAuthenticated currentPath="/competitions" />
+
 
             {/* Main Layout */}
             <div className="flex-1 flex max-w-[1500px] mx-auto w-full px-4 md:px-8 py-8 gap-8">
