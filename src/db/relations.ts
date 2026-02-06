@@ -102,6 +102,14 @@ export const competitionsRelations = relations(competitions, ({ one, many }) => 
         fields: [competitions.bannerId],
         references: [files.id],
     }),
+    poster: one(files, {
+        fields: [competitions.posterId],
+        references: [files.id],
+    }),
+    logo: one(files, {
+        fields: [competitions.logoId],
+        references: [files.id],
+    }),
     prizes: many(competitionPrizes),
     resources: many(competitionResources),
     socialLinks: many(competitionSocialLinks),

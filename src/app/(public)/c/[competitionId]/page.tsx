@@ -14,82 +14,69 @@ import { getPublicCompetitionDetails } from "~/data-access/competitions/public/g
 type Params = Promise<{ competitionId: string }>;
 
 export default async function CodeFest2026(props: { params: Params }) {
-    const params = await props.params;
-    const data = await getPublicCompetitionDetails(params.competitionId);
-    // console.log("VERIFICATION DATA:", JSON.stringify(data, null, 2));
+  const params = await props.params;
+  const data = await getPublicCompetitionDetails(params.competitionId);
+  // console.log("VERIFICATION DATA:", JSON.stringify(data, null, 2));
 
-    if (!data) {
-        return <div>Competition not found</div>;
-    }
+  if (!data) {
+    return <div>Competition not found</div>
+  }
 
-    const bannerUrl = data.banner?.id ? `/api/upload?file_id=${data.banner.id}` : null;
+  const bannerUrl = data.banner?.id ? `/api/upload?file_id=${data.banner.id}` : null;
+  const logoUrl = data.logo?.id ? `/api/upload?file_id=${data.logo.id}` : null;
 
-    return (
-        <div className="min-h-screen bg-background text-foreground font-sans">
-            <HeroSection bannerUrl={bannerUrl} />
+  return (
+    <div className="min-h-screen bg-background text-foreground font-sans">
+      <HeroSection bannerUrl={bannerUrl} logoUrl={logoUrl} organization={data.organization} />
 
-            <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
-                {/* Top Section: Info + InfoCard */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
-                    {/* Main Content Column */}
-                    <div className="lg:col-span-8 space-y-12">
-                        <div>
-                            <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">
-                                {data.tagline || "HACKEXTREME"}
-                            </h1>
-                            <p className="text-xl text-muted-foreground font-medium mb-8">
-                                Compile your dreams into reality.
-                            </p>
+      <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
 
-                            <div className="prose prose-lg text-muted-foreground space-y-6 max-w-none">
-                                {data.description ? (
-                                    <div dangerouslySetInnerHTML={{ __html: data.description }} />
-                                ) : (
-                                    <>
-                                        <p>
-                                            Codefest is the ultimate 24-hour hackathon organized by Tec Dev club. We
-                                            challenge developers, designers, and visionaries to step away from textbooks
-                                            and turn wild ideas into working prototypes. Whether you are a coding
-                                            veteran or a first-time hacker, this is your platform to build the future.
-                                        </p>
-                                        {/* Fallback Static Content */}
-                                        <div>
-                                            <h3 className="text-foreground font-bold mb-2">Why Participate?</h3>
-                                            <ul className="list-disc pl-5 space-y-1">
-                                                <li>
-                                                    <strong>Build Real Solutions:</strong> Tackle industry challenges in
-                                                    tracks like [List 2-3 main themes, e.g., AI, FinTech].
-                                                </li>
-                                                <li>
-                                                    <strong>Connect & Learn:</strong> Network with industry experts and
-                                                    find your future mentors.
-                                                </li>
-                                                <li>
-                                                    <strong>Win Big:</strong> Compete for a prize pool of [Amount] and
-                                                    exclusive titles.
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
+        {/* Top Section: Info + InfoCard */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
+          {/* Main Content Column */}
+          <div className="lg:col-span-8 space-y-12">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">{data.organization?.name || "HACKEXTREME"}</h1>
+              <p className="text-xl text-muted-foreground font-medium mb-8">{data.tagline || "Compile your dreams into reality."}</p>
 
-                            <div>
-                                <h3 className="text-foreground font-bold mb-2">Who Should Join?</h3>
-                                <p>
-                                    Open to all undergraduates backend builders, UI/UX designers, data strategists, and
-                                    creative thinkers. Bring your laptop and your team; we'll provide the rest.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="mt-10">
-                            <RegisterButton
-                                competitionId={params.competitionId}
-                                className="font-bold text-xl px-8 py-6"
-                            />
-                        </div>
+              <div className="prose prose-lg text-muted-foreground space-y-6 max-w-none">
+                {data.description ? (
+                  <div dangerouslySetInnerHTML={{ __html: data.description }} />
+                ) : (
+                  <>
+                    <p>
+                      Codefest is the ultimate 24-hour hackathon organized by Tec Dev club.
+                      We challenge developers, designers, and visionaries to step away from
+                      textbooks and turn wild ideas into working prototypes. Whether you are a
+                      coding veteran or a first-time hacker, this is your platform to build the future.
+                    </p>
+                    {/* Fallback Static Content */}
+                    <div>
+                      <h3 className="text-foreground font-bold mb-2">Why Participate?</h3>
+                      <ul className="list-disc pl-5 space-y-1">
+                        <li><strong>Build Real Solutions:</strong> Tackle industry challenges in tracks like [List 2-3 main themes, e.g., AI, FinTech].</li>
+                        <li><strong>Connect & Learn:</strong> Network with industry experts and find your future mentors.</li>
+                        <li><strong>Win Big:</strong> Compete for a prize pool of [Amount] and exclusive titles.</li>
+                      </ul>
                     </div>
+                  </>
+                )}
+              </div>
+
+            </div>
+
+            <div className="mt-10">
+              <Button className="font-bold text-xl px-8 py-6" size="lg">
+                Register Now <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Sidebar Column (Top) */}
+          <div className="lg:col-span-4 space-y-8">
+            <InfoCard />
+          </div>
+        </div>
 
                     {/* Sidebar Column (Top) */}
                     <div className="lg:col-span-4 space-y-8">

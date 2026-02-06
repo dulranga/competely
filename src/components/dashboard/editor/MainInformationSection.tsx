@@ -29,6 +29,7 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
         resolver: zodResolver(mainInfoSchema),
         defaultValues: {
             // Merge defaults with initialData
+            tagline: initialData.tagline || "",
             description: initialData.description || "",
             resources: initialData.resources || [],
             socials: initialData.socials.length > 0 ? initialData.socials : [{ platform: "website", url: "" }],
@@ -46,13 +47,30 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
         },
     });
 
+    // Subscribe to errors for debugging
+    const { errors } = form.formState;
+
     const onSave = async () => {
         const values = form.getValues();
         try {
             await updateMainInfoAction(competitionId, values);
             toast.success("Main information updated successfully!");
-        } catch (e) {
-            toast.error("Failed to save main information");
+        } catch (e: any) {
+            console.error("Save Error:", e);
+            toast.error(`Server Error: ${e.message || "Check console"}`);
+        }
+    };
+
+    const handleSaveClick = async () => {
+        const isValid = await form.trigger();
+        if (isValid) {
+            setIsConfirmOpen(true);
+        } else {
+            console.log("Validation Errors:", errors);
+            // Try to show the first error field name
+            const firstErrorKey = Object.keys(errors)[0];
+            const errorMessage = errors[firstErrorKey as keyof typeof errors]?.message || "Invalid value";
+            toast.error(`Validation Failed: ${firstErrorKey} - ${errorMessage}`);
         }
     };
 
@@ -74,7 +92,7 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
                         </div>
                     </div>
                     <Button
-                        onClick={() => setIsConfirmOpen(true)}
+                        onClick={handleSaveClick}
                         className="h-10 rounded-xl font-bold bg-primary text-primary-foreground"
                     >
                         Save Changes

@@ -15,6 +15,8 @@ export const competitions = pgTable(
         category: competitionCategoryEnum("category"),
         hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),
+        posterId: uuid("poster_id").references(() => files.id), // Card/Thumbnail Image
+        logoId: uuid("logo_id").references(() => files.id), // Competition Logo
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
         registrationDeadline: timestamp("registration_deadline"),

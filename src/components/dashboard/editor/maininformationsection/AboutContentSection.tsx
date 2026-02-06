@@ -15,7 +15,13 @@ export const AboutContentSection: FC<AboutContentSectionProps> = ({ form }) => {
             <CardHeader>
                 <CardTitle className="text-lg font-bold">About & Content</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
+                <Form.Item label="Tagline (Short Subtitle)" name="tagline">
+                    <Textarea
+                        placeholder="A short catchy phrase..."
+                        className="h-20"
+                    />
+                </Form.Item>
                 <Form.Item label="Description (About the Competition)" name="description">
                     <Textarea
                         placeholder="Describe your event, why participate, and who should join..."
