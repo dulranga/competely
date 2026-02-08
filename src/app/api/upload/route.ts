@@ -62,10 +62,18 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "File not found" }, { status: 400 });
         }
 
-        const { file, authorId, category } = await getFile(fileId);
+        const { file, authorId, category, fileName, mimeType } = await getFile(fileId);
+
+        const isDownload = searchParams.get("download") === "true";
+        const contentDisposition = isDownload ? `attachment; filename="${fileName}"` : `inline; filename="${fileName}"`;
+
+        const headers = {
+            "Content-Type": mimeType,
+            "Content-Disposition": contentDisposition,
+        };
 
         if (publicAccessCategories.includes(category)) {
-            return new NextResponse(new Uint8Array(file));
+            return new NextResponse(new Uint8Array(file), { headers });
         }
 
         const user = await getUser();
@@ -75,7 +83,7 @@ export async function GET(req: NextRequest) {
         if (inSpecialAccess) {
             const canAccess = await inSpecialAccess.canAccess(fileId, user.id);
             if (canAccess) {
-                return new NextResponse(new Uint8Array(file));
+                return new NextResponse(new Uint8Array(file), { headers });
             }
         }
 
@@ -85,12 +93,12 @@ export async function GET(req: NextRequest) {
         ]);
 
         if (canReadOwn && authorId === user.id) {
-            return new NextResponse(new Uint8Array(file));
+            return new NextResponse(new Uint8Array(file), { headers });
         }
 
         if (canReadAll && authorId !== user.id) {
             // no one else can see files unless have permission
-            return new NextResponse(new Uint8Array(file));
+            return new NextResponse(new Uint8Array(file), { headers });
         }
 
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
