@@ -94,7 +94,16 @@ export default async function CodeFest2026(props: { params: Params }) {
             <CountdownSection />
           </div>
           <div className="lg:col-span-4">
-            <RegistrationCard competitionId={params.competitionId} />
+            <RegistrationCard
+              competitionId={params.competitionId}
+              resources={data.resources.map(r => ({
+                id: r.id,
+                label: r.label,
+                type: r.type as "document" | "url",
+                url: r.url,
+                file: r.file ? { id: r.file.id, fileName: r.file.fileName } : null
+              }))}
+            />
           </div>
         </div>
       </main>

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Loader2 } from "lucide-react";
+import { FileText, Loader2, Link as LinkIcon } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -9,7 +9,15 @@ import { Card, CardContent } from "~/components/ui/card";
 import { registerToCompetitionAction } from "~/data-access/delegate/actions";
 import { authClient } from "~/lib/auth-client";
 
-export function RegistrationCard({ competitionId }: { competitionId: string }) {
+type Resource = {
+    id: string;
+    label: string;
+    type: "document" | "url";
+    url?: string | null;
+    file?: { id: string; fileName: string } | null;
+};
+
+export function RegistrationCard({ competitionId, resources = [] }: { competitionId: string; resources?: Resource[] }) {
     const [isPending, setIsPending] = useState(false);
     const router = useRouter();
     const { data: session } = authClient.useSession();
@@ -51,9 +59,28 @@ export function RegistrationCard({ competitionId }: { competitionId: string }) {
                         )}
                     </Button>
 
-                    <Button variant="outline" className="w-full font-bold" size="lg">
-                        <FileText className="w-4 h-4 mr-2" /> Get guidelines
-                    </Button>
+                    {resources.map((resource) => (
+                        <Button
+                            key={resource.id}
+                            variant="outline"
+                            className="w-full font-bold"
+                            size="lg"
+                            asChild
+                        >
+                            <a
+                                href={resource.type === "url" ? (resource.url || "#") : `/api/upload?file_id=${resource.file?.id}&download=true`}
+                                target={resource.type === "url" ? "_blank" : undefined}
+                                rel={resource.type === "url" ? "noopener noreferrer" : undefined}
+                            >
+                                {resource.type === "url" ? (
+                                    <LinkIcon className="w-4 h-4 mr-2" />
+                                ) : (
+                                    <FileText className="w-4 h-4 mr-2" />
+                                )}
+                                {resource.label || (resource.type === "document" ? resource.file?.fileName : "Resource")}
+                            </a>
+                        </Button>
+                    ))}
                 </div>
             </CardContent>
         </Card>
