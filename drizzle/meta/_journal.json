@@ -113,6 +113,13 @@
       "when": 1770369094900,
       "tag": "0015_Notification table added",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1770551350183,
+      "tag": "0016_classy_tarantula",
+      "breakpoints": true
     }
   ]
 }

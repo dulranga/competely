@@ -3,9 +3,6 @@
 export function CountdownSection() {
     return (
         <div className="py-8">
-            <h2 className="text-4xl font-black text-foreground mb-2 uppercase">Registration</h2>
-            <p className="text-lg text-muted-foreground mb-8">Sign up in minutes and get started.</p>
-
             <div className="flex items-center gap-4 md:gap-8">
                 <div className="text-center">
                     <div className="flex gap-2">

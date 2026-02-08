@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { registerToCompetitionAction } from "~/data-access/delegate/actions";
 import { authClient } from "~/lib/auth-client";
 
@@ -38,15 +38,7 @@ export function RegistrationCard({ competitionId }: { competitionId: string }) {
 
     return (
         <Card className="rounded-3xl border-border shadow-sm text-center overflow-hidden">
-            <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-bold">Ready to Win? Register Now</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
-                    Join the competition today and show what you're capable of. Register now to lock in your spot,
-                    challenge yourself, and compete for exciting prizes alongside others just like you.
-                </p>
-
+            <CardContent className="pt-6">
                 <div className="space-y-3">
                     <Button className="w-full font-bold" size="lg" onClick={handleRegister} disabled={isPending}>
                         {isPending ? (

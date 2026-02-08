@@ -69,7 +69,22 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
             console.log("Validation Errors:", errors);
             // Try to show the first error field name
             const firstErrorKey = Object.keys(errors)[0];
-            const errorMessage = errors[firstErrorKey as keyof typeof errors]?.message || "Invalid value";
+            const firstError = errors[firstErrorKey as keyof typeof errors];
+            // Handle array/nested errors (e.g. resources[0].message won't exist directly on resources array validation result which might be an array itself)
+            let errorMessage = "Invalid value";
+            if (firstError && typeof firstError === 'object' && 'message' in firstError && typeof firstError.message === 'string') {
+                errorMessage = firstError.message;
+            } else if (Array.isArray(firstError)) {
+                // It's an array error (like resources specific items)
+                // Find the first item with an error
+                const firstItemError = firstError.find(e => e);
+                if (firstItemError) {
+                    // recurse or just take first key
+                    const nestedKey = Object.keys(firstItemError)[0];
+                    errorMessage = `Item ${nestedKey}: ${firstItemError[nestedKey]?.message || "Invalid"}`;
+                }
+            }
+
             toast.error(`Validation Failed: ${firstErrorKey} - ${errorMessage}`);
         }
     };
