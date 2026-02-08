@@ -15,6 +15,21 @@ interface ResourcesSectionProps {
     form: UseFormReturn<MainInfoSchema>;
 }
 
+// Adapter to handle the mismatch between Form.Item (expects string value) and FileUpload (returns array)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SingleFileUpload = ({ onChange, value, ...props }: any) => {
+    return (
+        <FileUpload
+            {...props}
+            onChange={(files: any[]) => {
+                const fileId = files?.[0]?.response?.id;
+                // Pass the string ID (or undefined) to the form
+                onChange(fileId);
+            }}
+        />
+    );
+};
+
 export const ResourcesSection: FC<ResourcesSectionProps> = ({ form }) => {
     const { fields, append, remove } = useFieldArray({
         control: form.control,
@@ -112,9 +127,8 @@ export const ResourcesSection: FC<ResourcesSectionProps> = ({ form }) => {
                                         <div className="pl-[152px] pr-12">
                                             {type === "document" ? (
                                                 <Form.Item label="Resource File" name={`resources.${index}.fileId`} hideLabel className="space-y-0">
-                                                    <FileUpload<{ id: string }>
+                                                    <SingleFileUpload
                                                         endpoint="/api/upload?type=competition_guidelines"
-                                                        onChange={(files) => form.setValue(`resources.${index}.fileId`, files[0]?.response?.id)}
                                                         maxFiles={1}
                                                         acceptedFileTypes={["application/pdf", "image/png", "image/jpeg"]}
                                                         supportedTypesHelpText="Supported: PDF, PNG, JPG"

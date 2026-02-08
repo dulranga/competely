@@ -32,7 +32,7 @@ export const mainInfoSchema = z.object({
                 type: z.enum(["document", "url"]),
                 label: z.string().min(1, "Label is required"),
                 fileId: z.string().nullable().optional(),
-                url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+                url: z.string().url("Must be a valid URL").optional().or(z.literal("")).nullable(),
             })
         )
         .max(3, "Maximum 3 resources allowed"),
