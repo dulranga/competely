@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trophy } from "lucide-react";
-import { type FC, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { string, type infer as zInfer } from "zod";
@@ -55,6 +55,25 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     });
 
     const category = form.watch("category");
+
+    // Sync form with initialData when it changes (e.g. after save/revalidate)
+    // Also handling the initial load if data comes in late
+    useEffect(() => {
+        if (initialData) {
+            console.log("EditThumbnailCard received initialData:", initialData);
+            form.reset({
+                name: initialData.name || "",
+                tagline: initialData.tagline || "",
+                category: initialData.category || "tech",
+                posterId: initialData.posterId || null,
+                customCategory: "",
+                startDate: initialData.startDate || new Date(),
+                endDate: initialData.endDate || new Date(),
+                registrationDeadline: initialData.registrationDeadline || new Date(),
+            });
+        }
+    }, [initialData, form]);
+
 
     const onSave = async () => {
         setIsSubmitting(true);

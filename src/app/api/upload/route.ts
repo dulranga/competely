@@ -12,7 +12,7 @@ const specialAccessCategories: {
     canAccess: (fileId: string, userId: string) => boolean | Promise<boolean>;
 }[] = [];
 
-const publicAccessCategories: FileCategory[] = ["competition_banner", "profile_pic"];
+const publicAccessCategories: FileCategory[] = ["competition_banner", "profile_pic", "competition_guidelines"];
 
 export const POST = withRateLimit(
     async function (req: NextRequest) {
