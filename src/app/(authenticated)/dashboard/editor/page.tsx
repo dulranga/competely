@@ -9,6 +9,8 @@ import { getCompetitionMainInfo } from "~/data-access/competitions/getCompetitio
 const EditorPage: FC = async () => {
     const competition = await getActiveCompetition();
     const mainInfo = await getCompetitionMainInfo(competition!.id);
+    console.log("DEBUG COMPETITION:", JSON.stringify(competition, null, 2));
+
 
     return (
         <div className="space-y-12">
