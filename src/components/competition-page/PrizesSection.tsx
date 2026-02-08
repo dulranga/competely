@@ -12,20 +12,43 @@ import {
     Cell
 } from "recharts";
 
-const prizeData = [
-    { name: "1st Place", value: 10000, color: "#e5ab7d" }, // Primary
-    { name: "2nd Place", value: 5000, color: "#bcde8c" },  // Secondary
-    { name: "3rd Place", value: 2500, color: "#6dd594" },  // Accent
-    { name: "Best AI", value: 1500, color: "#d4a373" },
-    { name: "Best Design", value: 1000, color: "#a3b18a" }
-]
+export interface Prize {
+    id: string;
+    title: string;
+    description: string | null;
+    cashPrize: number;
+}
 
-export function PrizesSection() {
+interface PrizesSectionProps {
+    prizes?: Prize[];
+}
+
+export function PrizesSection({ prizes = [] }: PrizesSectionProps) {
+    if (!prizes || prizes.length === 0) {
+        return null;
+    }
+
+    // Sort prizes by value (highest first)
+    const sortedPrizes = [...prizes].sort((a, b) => b.cashPrize - a.cashPrize);
+
+    // Calculate total prize pool
+    const totalPool = sortedPrizes.reduce((sum, prize) => sum + prize.cashPrize, 0);
+
+    // Define colors for ranks
+    const colors = ["#e5ab7d", "#bcde8c", "#6dd594", "#d4a373", "#a3b18a"];
+
+    // Map to chart data
+    const chartData = sortedPrizes.map((prize, index) => ({
+        name: prize.title,
+        value: prize.cashPrize,
+        color: colors[index % colors.length]
+    }));
+
     return (
         <section className="py-16 bg-muted/30">
             <div className="max-w-6xl mx-auto px-4">
                 <h2 className="text-4xl font-black text-foreground mb-2 uppercase">Prize Pool</h2>
-                <p className="text-lg text-muted-foreground mb-12">Total Prize Pool: <span className="font-bold text-primary">$20,000</span></p>
+                <p className="text-lg text-muted-foreground mb-12">Total Prize Pool: <span className="font-bold text-primary">${totalPool.toLocaleString()}</span></p>
 
                 <div className="bg-background rounded-3xl p-8 md:p-12 border border-border shadow-sm animate-fade-in flex flex-col h-[600px] relative">
                     {/* Corner accents similar to Timeline if desired, but keeping it clean for now */}
@@ -34,7 +57,7 @@ export function PrizesSection() {
 
                     <div className="flex-1 w-full min-h-0">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={prizeData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                 <XAxis
                                     dataKey="name"
@@ -62,7 +85,7 @@ export function PrizesSection() {
                                     formatter={(value: any) => [`$${value.toLocaleString()}`, 'Prize']}
                                 />
                                 <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={60} animationDuration={1500}>
-                                    {prizeData.map((entry, index) => (
+                                    {chartData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Bar>

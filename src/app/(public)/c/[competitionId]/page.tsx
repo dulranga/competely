@@ -110,7 +110,7 @@ export default async function CodeFest2026(props: { params: Params }) {
 
       <TimelineSection />
 
-      <PrizesSection />
+      <PrizesSection prizes={data.prizes} />
 
       <ContactUsSection />
     </div>
