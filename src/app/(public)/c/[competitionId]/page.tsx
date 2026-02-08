@@ -78,31 +78,27 @@ export default async function CodeFest2026(props: { params: Params }) {
           </div>
         </div>
 
-                    {/* Sidebar Column (Top) */}
-                    <div className="lg:col-span-4 space-y-8">
-                        <InfoCard />
-                    </div>
-                </div>
 
-                {/* Separator */}
-                <div className="border-t border-border my-12" />
 
-                {/* Bottom Section: Countdown + RegistrationCard Side-by-Side */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                    <div className="lg:col-span-8">
-                        <CountdownSection />
-                    </div>
-                    <div className="lg:col-span-4">
-                        <RegistrationCard competitionId={params.competitionId} />
-                    </div>
-                </div>
-            </main>
+        {/* Separator */}
+        <div className="border-t border-border my-12" />
 
-            <TimelineSection />
-
-            <PrizesSection />
-
-            <ContactUsSection />
+        {/* Bottom Section: Countdown + RegistrationCard Side-by-Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-8">
+            <CountdownSection />
+          </div>
+          <div className="lg:col-span-4">
+            <RegistrationCard competitionId={params.competitionId} />
+          </div>
         </div>
-    );
+      </main>
+
+      <TimelineSection />
+
+      <PrizesSection />
+
+      <ContactUsSection />
+    </div>
+  );
 }
