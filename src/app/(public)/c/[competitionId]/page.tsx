@@ -32,6 +32,8 @@ export default async function CodeFest2026(props: { params: Params }) {
         societyName={data.societyName}
         startDate={data.startDate}
         endDate={data.endDate}
+        competitionId={params.competitionId}
+        isBookmarked={data.isBookmarked}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
