@@ -4,6 +4,7 @@ export const competitionCategoryEnum = ["tech", "business", "design", "science",
 
 export const createCompetitionSchema = object({
     name: string().min(3, "Competition name must be at least 3 characters"),
+    societyName: string().optional(),
     tagline: string().max(200, "Tagline must be less than 200 characters").optional(),
     category: enumType(competitionCategoryEnum, { error: "Please select a category" }),
     posterId: uuid("Invalid banner ID").optional().nullable(),
