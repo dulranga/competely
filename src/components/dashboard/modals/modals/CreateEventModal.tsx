@@ -1,10 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Calendar, Loader2, Plus, Trash2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Calendar, ExternalLink, Loader2, Plus, RefreshCcw, Trash2 } from "lucide-react";
 import { type FC, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { getFormsAction } from "~/app/(authenticated)/dashboard/forms/actions";
 import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import Form from "~/components/form/Form";
@@ -14,13 +16,14 @@ import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTit
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Switch } from "~/components/ui/switch";
 import { Textarea } from "~/components/ui/textarea";
 import { createEventAction, updateEventAction } from "~/data-access/competitions/actions/competition-events";
+import { authClient } from "~/lib/auth-client";
 import { createEventSchema, CreateEventSchema, eventTypeEnum } from "~/lib/schemas/timeline.schema";
-import type { ModalComponentProps } from "../modal-registry";
 import { cn } from "~/lib/utils";
+import type { ModalComponentProps } from "../modal-registry";
 
 export interface CreateEventModalData {
     roundId: string;
@@ -32,9 +35,25 @@ export interface CreateEventModalData {
 
 const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ closeModal, data }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isFormSelectOpen, setFormSelectOpen] = useState(false);
     const isEditing = !!data?.eventId;
 
     const isSystemEvent = data.isSystemEvent;
+
+    const queryClient = useQueryClient();
+
+    const openInNewTab = (path: string) => {
+        const newWindow = window.open(path, "_blank", "noopener,noreferrer");
+        newWindow?.focus();
+    };
+
+    const openFormBuilder = () => {
+        openInNewTab("/dashboard/forms/new");
+    };
+
+    const openFormsDashboard = () => {
+        openInNewTab("/dashboard/forms");
+    };
 
     // @ts-ignore
     const form = useForm({
@@ -49,12 +68,21 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
             resources: [],
             connectFormId: null,
         },
-        disabled: isSystemEvent,
     });
+
+    const { data: userSession } = authClient.useSession();
 
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "resources",
+    });
+
+    const { data: forms = [], refetch } = useQuery({
+        queryKey: ["availableForms", userSession?.session.activeOrganizationId],
+        queryFn: async () => {
+            if (!userSession?.session.activeOrganizationId) return [];
+            return await getFormsAction();
+        },
     });
 
     const eventTypeSelect = form.watch("eventTypeSelect");
@@ -87,6 +115,8 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                 await createEventAction(payload as any);
                 toast.success("Event created successfully!");
             }
+
+            await queryClient.invalidateQueries({ queryKey: ["timeline", "competition"] });
 
             data?.onSuccess?.();
             closeModal();
@@ -123,13 +153,19 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Left Column */}
                         <div className="space-y-6">
-                            <Form.Item label="Event Name" name="name" helperText="e.g. Opening Ceremony">
+                            <Form.Item
+                                disabled={isSystemEvent}
+                                label="Event Name"
+                                name="name"
+                                helperText="e.g. Opening Ceremony"
+                            >
                                 <Input placeholder="Event Name" />
                             </Form.Item>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <Controller
                                     name="eventTypeSelect"
+                                    disabled={isSystemEvent}
                                     control={form.control}
                                     render={({ field, fieldState, formState }) => (
                                         <Form.CustomController
@@ -154,55 +190,107 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                     )}
                                 />
                                 {eventTypeSelect === "other" && (
-                                    <Form.Item label="Custom Type" name="eventTypeCustom">
+                                    <Form.Item disabled={isSystemEvent} label="Custom Type" name="eventTypeCustom">
                                         <Input placeholder="Custom Type" maxLength={30} />
                                     </Form.Item>
                                 )}
                             </div>
 
-                            <Form.Item label="Description" name="description">
-                                <Textarea className="min-h-[100px]" placeholder="Event details..." />
+                            <Form.Item disabled={isSystemEvent} label="Description" name="description">
+                                <Textarea rows={5} placeholder="Event details..." />
                             </Form.Item>
 
-                            <Form.Item label="Location" name="location">
+                            <Form.Item disabled={isSystemEvent} label="Location" name="location">
                                 <Input placeholder="e.g. Main Hall or Zoom Link" />
                             </Form.Item>
 
-                            {/* <Controller
+                            <Controller
                                 name="connectFormId"
                                 control={form.control}
-                                render={({ field, fieldState, formState }) => (
-                                    <Form.CustomController
-                                        label="Connect a Form"
-                                        field={field}
-                                        helperText="Link a form for users to fill out during this event."
-                                        fieldState={fieldState}
-                                        formState={formState}
-                                    >
-                                        <Select onValueChange={field.onChange} defaultValue={field.value || "none"}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a form" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {availableForms.map((f) => (
-                                                    <SelectItem key={f.id} value={f.id}>
-                                                        {f.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </Form.CustomController>
-                                )}
-                            /> */}
+                                disabled={false}
+                                render={({ field, fieldState, formState }) => {
+                                    const enabledField = { ...field, disabled: false };
+
+                                    return (
+                                        <Form.CustomController
+                                            label="Connect a Form"
+                                            field={enabledField}
+                                            helperText="Link a form for users to fill out during this event. By default, you will only recieve information of the user's profile if no form is linked."
+                                            fieldState={fieldState}
+                                            formState={formState}
+                                        >
+                                            <Select
+                                                onValueChange={enabledField.onChange}
+                                                value={enabledField.value ?? undefined}
+                                                disabled={false}
+                                                open={isFormSelectOpen}
+                                                onOpenChange={setFormSelectOpen}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a form" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {forms.map((f) => (
+                                                        <SelectItem key={f.id} value={f.id}>
+                                                            {f.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                    <SelectSeparator />
+                                                    <div className="px-2 py-2 space-y-2">
+                                                        <div className="flex items-center gap-1">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                                                Quick actions
+                                                            </p>
+                                                            <Button
+                                                                onClick={() => refetch()}
+                                                                size={"xs"}
+                                                                variant={"outline"}
+                                                            >
+                                                                <RefreshCcw /> Refresh
+                                                            </Button>
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            className="w-full justify-between rounded-lg border border-dashed border-primary/40 bg-transparent text-primary hover:bg-primary/10"
+                                                            onClick={() => {
+                                                                enabledField.onChange(null);
+                                                                setFormSelectOpen(false);
+                                                                openFormBuilder();
+                                                            }}
+                                                        >
+                                                            Create a new form
+                                                            <ExternalLink className="size-4" />
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            className="w-full justify-between rounded-lg bg-input-background text-foreground hover:bg-input-background/80"
+                                                            onClick={() => {
+                                                                enabledField.onChange(null);
+                                                                setFormSelectOpen(false);
+                                                                openFormsDashboard();
+                                                            }}
+                                                        >
+                                                            Manage forms
+                                                            <ExternalLink className="size-4" />
+                                                        </Button>
+                                                    </div>
+                                                </SelectContent>
+                                            </Select>
+                                        </Form.CustomController>
+                                    );
+                                }}
+                            />
                         </div>
 
                         {/* Right Column */}
                         <div className="space-y-6">
                             <div className="grid grid-cols-1 gap-4">
-                                <Form.Item label="Start Date" name="startDate">
+                                <Form.Item disabled={isSystemEvent} label="Start Date" name="startDate">
                                     <DateTimePicker />
                                 </Form.Item>
-                                <Form.Item label="End Date" name="endDate">
+                                <Form.Item disabled={isSystemEvent} label="End Date" name="endDate">
                                     <DateTimePicker />
                                 </Form.Item>
                             </div>
@@ -240,7 +328,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             className="flex gap-3 items-start bg-white p-3 rounded-lg border border-border/40 shadow-sm relative group"
                                         >
                                             <div className="flex flex-col gap-3 flex-1">
-                                                <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex items-center gap-2">
                                                     <Input
                                                         {...form.register(`resources.${index}.label` as const)}
                                                         placeholder="Label"
@@ -264,8 +352,16 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                             </Select>
                                                         )}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => remove(index)}
+                                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 shrink-0"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
                                                 </div>
-
                                                 <div className="w-full">
                                                     {form.watch(`resources.${index}.type`) === "url" ? (
                                                         <Input
@@ -278,9 +374,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                             name={`resources.${index}.fileId` as const}
                                                             control={form.control}
                                                             render={({ field: fileField }) => (
-                                                                <div className="h-70">
+                                                                <div className="min-h-70">
                                                                     <FileUpload<{ id: string }>
-                                                                        endpoint="/api/upload"
+                                                                        endpoint="/api/upload?type=competition_guidelines"
                                                                         onChange={(files) =>
                                                                             fileField.onChange(files[0]?.response?.id)
                                                                         }
@@ -293,15 +389,6 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                     )}
                                                 </div>
                                             </div>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => remove(index)}
-                                                className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 shrink-0"
-                                            >
-                                                <Trash2 size={16} />
-                                            </Button>
                                         </div>
                                     ))}
                                 </div>
@@ -361,7 +448,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                     <Button
                         type="submit"
                         className="h-11 rounded-xl text-sm uppercase tracking-widest font-black bg-primary text-primary-foreground hover:bg-primary/90"
-                        disabled={isSubmitting || isSystemEvent}
+                        disabled={isSubmitting}
                     >
                         {isSubmitting ? (
                             <>

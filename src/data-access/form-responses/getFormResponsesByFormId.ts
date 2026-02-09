@@ -36,3 +36,29 @@ export async function getFormResponsesByFormId(formId: string, page = 1, limit =
         total: totalResult[0]?.count ?? 0,
     };
 }
+
+export async function getAllFormResponsesByFormId(formId: string) {
+    const data = await db.query.formResponses.findMany({
+        where: eq(formResponses.formId, formId),
+        orderBy: [desc(formResponses.submittedAt)],
+        with: {
+            user: {
+                columns: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                },
+            },
+            answers: {
+                with: {
+                    field: true,
+                },
+            },
+        },
+    });
+
+    return {
+        data,
+    };
+}

@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/providers/theme-provider";
 import { QueryProvider } from "~/providers/query-provider";
+import { ModalProvider } from "~/components/dashboard/modals/modal-provider";
 
 import "./globals.css";
 
@@ -27,7 +28,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <body className={`${fontSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
                 <QueryProvider>
                     <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-                        {children}
+                        <ModalProvider>{children}</ModalProvider>
 
                         <Toaster />
                     </ThemeProvider>

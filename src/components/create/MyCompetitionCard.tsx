@@ -77,7 +77,7 @@ export function MyCompetitionCard({
         <Card
             onClick={onClick}
             className={cn(
-                "relative w-full overflow-hidden rounded-xl border-0 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white group",
+                "relative w-full overflow-hidden rounded-xl border-0 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white group pt-0",
                 className,
             )}
         >
@@ -89,7 +89,7 @@ export function MyCompetitionCard({
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             </div>
-            <div className="p-4 flex items-center justify-between gap-2">
+            <div className="px-4 flex items-center justify-between gap-2">
                 <h3 className="font-semibold text-base text-gray-900 truncate" title={name}>
                     <Link href={`/dashboard/competition?id=${id}`} className="after:absolute after:inset-0">
                         {name}
