@@ -20,10 +20,12 @@ export async function getActiveCompetition() {
         .select({
             id: competitions.id,
             name: organizations.name,
+            societyName: competitions.societyName,
             tagline: competitions.tagline,
             category: competitions.category,
             hashtags: competitions.hashtags,
             bannerId: competitions.bannerId,
+            posterId: competitions.posterId,
             startDate: competitions.startDate,
             endDate: competitions.endDate,
             registrationDeadline: competitions.registrationDeadline,

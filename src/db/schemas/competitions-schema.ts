@@ -11,10 +11,13 @@ export const competitions = pgTable(
             .notNull()
             .references(() => organizations.id, { onDelete: "cascade" }),
         tagline: text("tagline"),
+        societyName: text("society_name"),
         description: text("description"),
         category: text("category"),
         hashtags: text("hashtags").array(),
         bannerId: uuid("banner_id").references(() => files.id),
+        posterId: uuid("poster_id").references(() => files.id), // Card/Thumbnail Image
+        logoId: uuid("logo_id").references(() => files.id), // Competition Logo
         startDate: timestamp("start_date"),
         endDate: timestamp("end_date"),
         registrationDeadline: timestamp("registration_deadline"),

@@ -12,9 +12,16 @@ export async function updateCompetitionAction(values: unknown) {
     const validatedFields = createCompetitionSchema.safeParse(values);
 
     if (!validatedFields.success) {
-        console.log("Validation failed:", validatedFields.error); // Debug log
+        const fieldErrors = validatedFields.error.flatten().fieldErrors;
+        const errorMessages = Object.entries(fieldErrors)
+            .map(([field, errors]) => `${field}: ${errors?.join(", ")}`)
+            .join("; ");
+
+        console.error("Validation errors:", validatedFields.error.format());
+
         return {
-            error: "Invalid fields!",
+            error: `Invalid fields: ${errorMessages}`,
+            fieldErrors: fieldErrors,
         };
     }
 

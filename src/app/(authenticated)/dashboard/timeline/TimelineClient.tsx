@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Calendar, Loader2 } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import CreateEventModal from "~/components/dashboard/modals/modals/CreateEventModal";
-import { Dialog } from "~/components/ui/dialog";
-import { deleteEventAction } from "~/data-access/competitions/actions/competition-events";
 import { format } from "date-fns";
-import { toast } from "sonner";
-import { TimelineCard } from "~/components/timeline/TimelineCard";
-import { CreateEventSchema } from "~/lib/schemas/timeline.schema";
+import { Calendar, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useModal } from "~/components/dashboard/modals/modal-provider";
+import type { CreateEventModalData } from "~/components/dashboard/modals/modals/CreateEventModal";
+import { TimelineCard } from "~/components/timeline/TimelineCard";
+import { Button } from "~/components/ui/button";
+import { deleteEventAction } from "~/data-access/competitions/actions/competition-events";
+import { CreateEventSchema } from "~/lib/schemas/timeline.schema";
 
 // Types corresponding to DB logic
 interface Event {
@@ -21,19 +21,16 @@ interface Event {
     endDate: string | Date | null;
     description: string | null;
     isSystem: boolean;
-    // ... other fields
+    form?: {
+        name: string;
+        id: string;
+    };
 }
 
 interface Round {
     id: string;
     name: string;
     isSystem: boolean;
-}
-
-interface ModalState {
-    isOpen: boolean;
-    eventId?: string;
-    initialData?: CreateEventSchema;
 }
 
 interface TimelineClientProps {
@@ -43,19 +40,41 @@ interface TimelineClientProps {
 }
 
 export function TimelineClient({ events, currentRound, competition }: TimelineClientProps) {
-    const [modalState, setModalState] = useState<ModalState>({ isOpen: false });
     const [isDeleting, setIsDeleting] = useState(false);
+    const { openModal } = useModal();
     const router = useRouter();
 
     const isSystemRound = currentRound?.isSystem;
 
+    const openEventModal = (modalData: CreateEventModalData) => {
+        openModal("createEvent", {
+            ...modalData,
+            onSuccess: () => {
+                modalData.onSuccess?.();
+                router.refresh();
+            },
+            isSystemEvent: currentRound?.isSystem || false,
+        });
+    };
+
     const handleCreateClick = () => {
-        setModalState({ isOpen: true, eventId: undefined, initialData: undefined });
+        if (!currentRound) {
+            return;
+        }
+
+        openEventModal({
+            roundId: currentRound.id,
+        });
     };
 
     const handleEditEvent = (event: Event) => {
-        const initialData: any = {
+        if (!currentRound) {
+            return;
+        }
+
+        const initialData: CreateEventSchema = {
             name: event.name,
+            // @ts-ignore
             eventTypeSelect: event.type,
             description: event.description || "",
             startDate: event.startDate ? new Date(event.startDate) : undefined,
@@ -66,6 +85,7 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
             addToTimeline: event.addToTimeline ?? true,
             // @ts-ignore
             resources: event.resources || [],
+            connectFormId: event.form?.id,
         };
 
         const isStandardType = ["Workshop", "Submission", "Physical Event", "Online Event"].includes(event.type);
@@ -74,8 +94,8 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
             initialData.eventTypeCustom = event.type;
         }
 
-        setModalState({
-            isOpen: true,
+        openEventModal({
+            roundId: currentRound.id,
             eventId: event.id,
             initialData,
         });
@@ -162,6 +182,7 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
                                     addToTimeline: event.addToTimeline,
                                     // @ts-ignore
                                     resources: event.resources,
+                                    form: event.form,
                                 }}
                                 onEdit={() => handleEditEvent(event)}
                                 onDelete={!event.isSystem ? () => handleDeleteEvent(event.id) : undefined}
@@ -170,29 +191,6 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
                     ))}
                 </div>
             </div>
-
-            <Dialog
-                open={modalState.isOpen}
-                onOpenChange={(open) => {
-                    if (!open) setModalState(prev => ({ ...prev, isOpen: false }));
-                }}
-            >
-                {modalState.isOpen && currentRound && (
-                    <CreateEventModal
-                        closeModal={() => {
-                            setModalState(prev => ({ ...prev, isOpen: false }));
-                        }}
-                        data={{
-                            roundId: currentRound.id,
-                            eventId: modalState.eventId,
-                            initialData: modalState.initialData,
-                            onSuccess: () => {
-                                router.refresh();
-                            }
-                        }}
-                    />
-                )}
-            </Dialog>
         </div>
     );
 }

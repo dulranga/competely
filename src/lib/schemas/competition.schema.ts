@@ -1,13 +1,17 @@
-import { array, date, object, string, uuid, type infer as zInfer } from "zod";
+import { array, date, object, string, uuid, type infer as zInfer, enum as enumType } from "zod";
 
 export const competitionCategoryOptions = ["Open", "University", "School"] as const;
+export type CompetitionCategoryOptionsType = (typeof competitionCategoryOptions)[number];
 
 export const createCompetitionSchema = object({
     name: string().min(3, "Competition name must be at least 3 characters"),
+    societyName: string().optional(),
     tagline: string().max(200, "Tagline must be less than 200 characters").optional(),
-    category: string().min(1, "Please select or enter a category"),
-    hashtags: array(string()).optional(),
+
     bannerId: uuid("Invalid banner ID").optional().nullable(),
+    hashtags: array(string()).optional(),
+    category: enumType(competitionCategoryOptions, { error: "Please select a category" }),
+    posterId: uuid("Invalid banner ID").optional().nullable(),
     startDate: date({ error: "Start date is required" }),
     endDate: date({ error: "End date is required" }),
     registrationDeadline: date({ error: "Registration deadline is required" }),

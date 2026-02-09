@@ -10,16 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "~/components/ui/alert-dialog";
+import { useModal } from "~/components/dashboard/modals/modal-provider";
 
 import { Round } from "./RoundSidebar"; // Import Round interface
 
@@ -32,9 +23,9 @@ interface RoundItemProps {
 }
 
 export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onRename, onDelete }) => {
+    const { openModal } = useModal();
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(round.name);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,7 +61,6 @@ export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onR
             console.error("Failed to delete round", error);
         } finally {
             setIsSubmitting(false);
-            setIsDeleting(false);
         }
     };
 
@@ -125,10 +115,11 @@ export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onR
                 <Button
                     variant="ghost"
                     onClick={onSelect}
-                    className={`flex-1 justify-start h-11 rounded-xl border transition-all duration-200 active:scale-[0.98] px-4 font-bold text-xs truncate shadow-sm ${isSelected
+                    className={`flex-1 justify-start h-11 rounded-xl border transition-all duration-200 active:scale-[0.98] px-4 font-bold text-xs truncate shadow-sm ${
+                        isSelected
                             ? "bg-[#0c0803] text-white border-[#0c0803] hover:bg-[#0c0803]/90 hover:text-white"
                             : "bg-white border-[#e8e2de] text-[#0c0803]/80 hover:text-[#0c0803] hover:bg-white hover:border-[#0c0803]/20 hover:shadow-md"
-                        }`}
+                    }`}
                 >
                     {round.name}
                 </Button>
@@ -150,7 +141,15 @@ export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onR
                                 Rename
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                                onClick={() => setIsDeleting(true)}
+                                onClick={() =>
+                                    openModal("confirm", {
+                                        title: "Delete Round",
+                                        description: `Are you sure you want to delete "${round.name}"? This action cannot be undone and will delete all events associated with this round.`,
+                                        variant: "destructive",
+                                        confirmLabel: "Delete Round",
+                                        onConfirm: handleDelete,
+                                    })
+                                }
                                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
                             >
                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
@@ -160,31 +159,6 @@ export const RoundItem: FC<RoundItemProps> = ({ round, isSelected, onSelect, onR
                     </DropdownMenu>
                 )}
             </div>
-
-            <AlertDialog open={isDeleting} onOpenChange={setIsDeleting}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Round?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to delete <span className="font-bold text-black">{round.name}</span>?
-                            This action cannot be undone and will delete all events associated with this round.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleDelete();
-                            }}
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Deleting..." : "Delete Round"}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 };

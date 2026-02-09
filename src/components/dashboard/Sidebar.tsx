@@ -132,13 +132,13 @@ export const sidebarItems = [
         title: "Timeline",
         href: "/dashboard/timeline",
         icon: Clock,
-        secondary: RoundSidebar,
+        secondary: () => <RoundSidebar getRedirectUrl={(roundId) => `/dashboard/timeline?roundId=${roundId}`} />,
     },
     {
         title: "Analytics",
         href: "/dashboard/analytics",
         icon: BarChart3,
-        secondary: RoundSidebar,
+        secondary: () => <RoundSidebar getRedirectUrl={(roundId) => `/dashboard/analytics?roundId=${roundId}`} />,
     },
     {
         title: "Form Builder",

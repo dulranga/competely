@@ -15,25 +15,10 @@ export async function updateCompetitionMainInfo(competitionId: string, data: Mai
         await tx
             .update(competitions)
             .set({
+                tagline: data.tagline,
                 description: data.description,
-                bannerId: data.bannerId,
-                // logoId is not in competition schema directly?
-                // Checking schema: competitions table has `bannerId`.
-                // It does NOT have `logoId`.
-                // Wait, `logoId` usually belongs to Organization? Or is it for competition branding?
-                // Let's check `CreateCompetitionSchema` or `competitions` table.
-                // `competitions` table: id, organizationId, tagline, description, category, hashtags, bannerId... NO logoId.
-                // `organizations` table has logo?
-                // Let's assume for now we only update what's in `competitions`.
-                // If logoId is needed, we might need to update Organization or add it to competition.
-                // For this task, I will omit logoId if it's not in schema, or check if it should be in Organization.
-                // `updateCompetition.ts` (existing) updates `organizations` name.
-                // Let's check `updateCompetition.ts` again.
-                // It updates `organizations` name. It updates `competitions` bannerId.
-                // It does NOT seem to handle logoId.
-                // I will skip logoId for now to avoid breaking changes, or better, if it IS in schema (I might have missed it), I use it.
-                // I viewed `competitions-schema.ts` in step 32. It has `bannerId`. NO `logoId`.
-                // I will ignore logoId for now.
+                bannerId: data.bannerId || null,
+                logoId: data.logoId || null,
             })
             .where(eq(competitions.id, competitionId));
 

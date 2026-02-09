@@ -29,6 +29,7 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
         resolver: zodResolver(mainInfoSchema),
         defaultValues: {
             // Merge defaults with initialData
+            tagline: initialData.tagline || "",
             description: initialData.description || "",
             resources: initialData.resources || [],
             socials: initialData.socials.length > 0 ? initialData.socials : [{ platform: "website", url: "" }],
@@ -46,13 +47,45 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
         },
     });
 
+    // Subscribe to errors for debugging
+    const { errors } = form.formState;
+
     const onSave = async () => {
         const values = form.getValues();
         try {
             await updateMainInfoAction(competitionId, values);
             toast.success("Main information updated successfully!");
-        } catch (e) {
-            toast.error("Failed to save main information");
+        } catch (e: any) {
+            console.error("Save Error:", e);
+            toast.error(`Server Error: ${e.message || "Check console"}`);
+        }
+    };
+
+    const handleSaveClick = async () => {
+        const isValid = await form.trigger();
+        if (isValid) {
+            setIsConfirmOpen(true);
+        } else {
+            console.log("Validation Errors:", errors);
+            // Try to show the first error field name
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstError = errors[firstErrorKey as keyof typeof errors];
+            // Handle array/nested errors (e.g. resources[0].message won't exist directly on resources array validation result which might be an array itself)
+            let errorMessage = "Invalid value";
+            if (firstError && typeof firstError === 'object' && 'message' in firstError && typeof firstError.message === 'string') {
+                errorMessage = firstError.message;
+            } else if (Array.isArray(firstError)) {
+                // It's an array error (like resources specific items)
+                // Find the first item with an error
+                const firstItemError = firstError.find(e => e);
+                if (firstItemError) {
+                    // recurse or just take first key
+                    const nestedKey = Object.keys(firstItemError)[0];
+                    errorMessage = `Item ${nestedKey}: ${firstItemError[nestedKey]?.message || "Invalid"}`;
+                }
+            }
+
+            toast.error(`Validation Failed: ${firstErrorKey} - ${errorMessage}`);
         }
     };
 
@@ -74,7 +107,7 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
                         </div>
                     </div>
                     <Button
-                        onClick={() => setIsConfirmOpen(true)}
+                        onClick={handleSaveClick}
                         className="h-10 rounded-xl font-bold bg-primary text-primary-foreground"
                     >
                         Save Changes

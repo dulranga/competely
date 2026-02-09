@@ -1,6 +1,7 @@
 "use server";
 
 import { toggleBookmark, toggleRegistrationStatus } from "~/data-access/delegate/bookmark";
+
 import { revalidatePath } from "next/cache";
 
 /**
@@ -10,11 +11,11 @@ import { revalidatePath } from "next/cache";
 export async function toggleBookmarkAction(competitionId: string) {
     try {
         const newStatus = await toggleBookmark(competitionId);
-        
+
         // Revalidate relevant pages
         revalidatePath("/bookmarks");
         revalidatePath("/discover");
-        
+
         return { success: true, isBookmarked: newStatus };
     } catch (error) {
         console.error("Failed to toggle bookmark:", error);
@@ -29,11 +30,11 @@ export async function toggleBookmarkAction(competitionId: string) {
 export async function toggleRegistrationAction(competitionId: string) {
     try {
         const newStatus = await toggleRegistrationStatus(competitionId);
-        
+
         // Revalidate relevant pages
         revalidatePath("/bookmarks");
         revalidatePath("/discover");
-        
+
         return { success: true, isRegistered: newStatus };
     } catch (error) {
         console.error("Failed to toggle registration:", error);

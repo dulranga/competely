@@ -102,6 +102,14 @@ export const competitionsRelations = relations(competitions, ({ one, many }) => 
         fields: [competitions.bannerId],
         references: [files.id],
     }),
+    poster: one(files, {
+        fields: [competitions.posterId],
+        references: [files.id],
+    }),
+    logo: one(files, {
+        fields: [competitions.logoId],
+        references: [files.id],
+    }),
     prizes: many(competitionPrizes),
     resources: many(competitionResources),
     socialLinks: many(competitionSocialLinks),
@@ -143,6 +151,10 @@ export const competitionContactsRelations = relations(competitionContacts, ({ on
         fields: [competitionContacts.competitionId],
         references: [competitions.id],
     }),
+    image: one(files, {
+        fields: [competitionContacts.imageId],
+        references: [files.id],
+    }),
 }));
 
 export const competitionPublishOptionsRelations = relations(competitionPublishOptions, ({ one }) => ({
@@ -165,6 +177,10 @@ export const competitionEventsRelations = relations(competitionEvents, ({ one, m
     round: one(competitionRounds, {
         fields: [competitionEvents.roundId],
         references: [competitionRounds.id],
+    }),
+    form: one(forms, {
+        fields: [competitionEvents.formId],
+        references: [forms.id],
     }),
     resources: many(competitionEventResources),
 }));

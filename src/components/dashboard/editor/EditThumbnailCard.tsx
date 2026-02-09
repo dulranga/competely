@@ -2,10 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trophy } from "lucide-react";
-import { type FC, useState, useEffect } from "react";
+import { type FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { string, type infer as zInfer } from "zod";
+import { string } from "zod";
 import { updateCompetitionAction } from "~/app/(authenticated)/dashboard/editor/actions";
 import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
@@ -15,23 +15,27 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { competitionCategoryOptions, createCompetitionSchema } from "~/lib/schemas/competition.schema";
+import {
+    competitionCategoryOptions,
+    CompetitionCategoryOptionsType,
+    createCompetitionSchema,
+} from "~/lib/schemas/competition.schema";
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 
 const ExtendedSchema = createCompetitionSchema.extend({
     customCategory: string().optional(),
 });
 
-type ExtendedSchemaType = zInfer<typeof ExtendedSchema>;
-
 interface EditThumbnailCardProps {
     initialData?: {
         id: string;
         name: string | null;
+        societyName: string | null;
         tagline: string | null;
-        category: string | null;
+        category: CompetitionCategoryOptionsType | null;
         hashtags: string[] | null;
         bannerId: string | null;
+        posterId: string | null;
         startDate: Date | null;
         endDate: Date | null;
         registrationDeadline: Date | null;
@@ -44,14 +48,16 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     const [showCustomInput, setShowCustomInput] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const form = useForm<ExtendedSchemaType>({
+    const form = useForm({
         resolver: zodResolver(ExtendedSchema),
         defaultValues: {
             name: initialData?.name || "",
+            societyName: initialData?.societyName || "",
             tagline: initialData?.tagline || "",
-            category: initialData?.category || "Open",
-            hashtags: [], // Will be set properly in useEffect
+            category: (initialData?.category as CompetitionCategoryOptionsType) || "Open",
+            hashtags: initialData?.hashtags || [],
             bannerId: initialData?.bannerId || null,
+            posterId: initialData?.posterId || null,
             customCategory: "",
             startDate: initialData?.startDate || new Date(),
             endDate: initialData?.endDate || new Date(),
@@ -86,31 +92,28 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
         }
     }, [initialData, form]);
 
-    const category = form.watch("category");
-
-    const onSave = async (formData?: unknown) => {
+    const onSave = async () => {
         setIsSubmitting(true);
-        console.log("onSave called with formData:", formData); // Debug log
-        
-        // Use formData if provided by form submission, otherwise get current values
-        const values = (formData as ExtendedSchemaType) || form.getValues();
-        console.log("Form values being saved:", values); // Debug log
-        
+        const values = form.getValues();
+        console.log("Submitting values:", values);
+
         // Trigger form validation
         const isValid = await form.trigger();
         console.log("Form validation result:", isValid); // Debug log
-        
+
         if (!isValid) {
             setIsSubmitting(false);
             toast.error("Please fix form errors before saving");
             return;
         }
-        
         const result = await updateCompetitionAction(values);
         setIsSubmitting(false);
 
         if (result.error) {
-            console.log("Save error:", result.error); // Debug log
+            console.error("Save error:", result.error);
+            if ("fieldErrors" in result) {
+                console.error("Field errors:", result.fieldErrors);
+            }
             toast.error(result.error);
         } else {
             console.log("Save success:", result); // Debug log
@@ -158,6 +161,14 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                             </Form.Item>
 
                             <Form.Item
+                                label="Society Name"
+                                name="societyName"
+                                helperText="The name of the society organising the competition."
+                            >
+                                <Input placeholder="e.g. Tec Dev Club" />
+                            </Form.Item>
+
+                            <Form.Item
                                 label="Tagline"
                                 name="tagline"
                                 helperText="A catchy one-liner shown on discovery cards (max 150 characters)."
@@ -170,10 +181,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 name="hashtags"
                                 helperText="Add keywords to help delegates find your competition. Press Enter or comma to add each keyword."
                             >
-                                <TagsInput
-                                    placeholder="e.g. AI, machine learning, innovation"
-                                    maxTags={10}
-                                />
+                                <TagsInput placeholder="e.g. AI, machine learning, innovation" maxTags={10} />
                             </Form.Item>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,8 +196,12 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                             helperText="Helps delegates find your competition in their niche."
                                         >
                                             <div className="space-y-3">
-                                                <Select 
-                                                    value={competitionCategoryOptions.includes(field.value as any) ? field.value : "custom"}
+                                                <Select
+                                                    value={
+                                                        competitionCategoryOptions.includes(field.value as any)
+                                                            ? field.value
+                                                            : "custom"
+                                                    }
                                                     onValueChange={(value) => {
                                                         if (value === "custom") {
                                                             setShowCustomInput(true);
@@ -212,9 +224,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                                                 {cat}
                                                             </SelectItem>
                                                         ))}
-                                                        <SelectItem value="custom">
-                                                            Specify custom category
-                                                        </SelectItem>
+                                                        <SelectItem value="custom">Specify custom category</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 {showCustomInput && (
@@ -242,8 +252,6 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 </Form.Item>
                             </div>
 
-
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Form.Item
                                     label="Start Date"
@@ -261,11 +269,11 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
 
                         <div className="lg:sticky lg:top-0">
                             <Controller
-                                name="bannerId"
+                                name="posterId"
                                 control={form.control}
                                 render={({ field, ...props }) => (
                                     <Form.CustomController
-                                        label="Banner Image"
+                                        label="Card Image (Poster)"
                                         field={field}
                                         {...props}
                                         helperText="Recommended: 16:9 ratio. High quality images help attract more delegates."
