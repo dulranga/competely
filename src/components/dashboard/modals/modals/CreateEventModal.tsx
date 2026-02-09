@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
-import { Calendar, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Calendar, ExternalLink, Loader2, Plus, RefreshCcw, Trash2 } from "lucide-react";
 import { type FC, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -40,6 +40,8 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
 
     const isSystemEvent = data.isSystemEvent;
 
+    const queryClient = useQueryClient();
+
     const openInNewTab = (path: string) => {
         const newWindow = window.open(path, "_blank", "noopener,noreferrer");
         newWindow?.focus();
@@ -75,7 +77,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
         name: "resources",
     });
 
-    const { data: forms = [] } = useQuery({
+    const { data: forms = [], refetch } = useQuery({
         queryKey: ["availableForms", userSession?.session.activeOrganizationId],
         queryFn: async () => {
             if (!userSession?.session.activeOrganizationId) return [];
@@ -113,6 +115,8 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                 await createEventAction(payload as any);
                 toast.success("Event created successfully!");
             }
+
+            await queryClient.invalidateQueries({ queryKey: ["timeline", "competition"] });
 
             data?.onSuccess?.();
             closeModal();
@@ -233,9 +237,18 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                     ))}
                                                     <SelectSeparator />
                                                     <div className="px-2 py-2 space-y-2">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                                            Quick actions
-                                                        </p>
+                                                        <div className="flex items-center gap-1">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                                                Quick actions
+                                                            </p>
+                                                            <Button
+                                                                onClick={() => refetch()}
+                                                                size={"xs"}
+                                                                variant={"outline"}
+                                                            >
+                                                                <RefreshCcw /> Refresh
+                                                            </Button>
+                                                        </div>
                                                         <Button
                                                             type="button"
                                                             variant="ghost"
@@ -315,7 +328,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             className="flex gap-3 items-start bg-white p-3 rounded-lg border border-border/40 shadow-sm relative group"
                                         >
                                             <div className="flex flex-col gap-3 flex-1">
-                                                <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex items-center gap-2">
                                                     <Input
                                                         {...form.register(`resources.${index}.label` as const)}
                                                         placeholder="Label"
@@ -339,8 +352,16 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                             </Select>
                                                         )}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => remove(index)}
+                                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 shrink-0"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
                                                 </div>
-
                                                 <div className="w-full">
                                                     {form.watch(`resources.${index}.type`) === "url" ? (
                                                         <Input
@@ -353,9 +374,9 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                             name={`resources.${index}.fileId` as const}
                                                             control={form.control}
                                                             render={({ field: fileField }) => (
-                                                                <div className="h-70">
+                                                                <div className="min-h-70">
                                                                     <FileUpload<{ id: string }>
-                                                                        endpoint="/api/upload"
+                                                                        endpoint="/api/upload?type=competition_guidelines"
                                                                         onChange={(files) =>
                                                                             fileField.onChange(files[0]?.response?.id)
                                                                         }
@@ -368,15 +389,6 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                                     )}
                                                 </div>
                                             </div>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => remove(index)}
-                                                className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 shrink-0"
-                                            >
-                                                <Trash2 size={16} />
-                                            </Button>
                                         </div>
                                     ))}
                                 </div>

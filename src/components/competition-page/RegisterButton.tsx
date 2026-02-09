@@ -42,6 +42,7 @@ export function RegisterButton({
         if (registrationDetails?.form) {
             openModal("registrationForm", {
                 competitionId,
+                formId: registrationDetails.form.id,
                 formName: registrationDetails.form.name,
                 formDescription: registrationDetails.form.description || undefined,
                 fields: registrationDetails.form.fields as any[],

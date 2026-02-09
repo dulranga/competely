@@ -1,16 +1,16 @@
 "use client";
 
+import { format } from "date-fns";
+import { Calendar, Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Plus, Calendar, Loader2 } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { toast } from "sonner";
 import { useModal } from "~/components/dashboard/modals/modal-provider";
 import type { CreateEventModalData } from "~/components/dashboard/modals/modals/CreateEventModal";
-import { deleteEventAction } from "~/data-access/competitions/actions/competition-events";
-import { format } from "date-fns";
-import { toast } from "sonner";
 import { TimelineCard } from "~/components/timeline/TimelineCard";
+import { Button } from "~/components/ui/button";
+import { deleteEventAction } from "~/data-access/competitions/actions/competition-events";
 import { CreateEventSchema } from "~/lib/schemas/timeline.schema";
-import { useRouter } from "next/navigation";
 
 // Types corresponding to DB logic
 interface Event {
@@ -85,6 +85,7 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
             addToTimeline: event.addToTimeline ?? true,
             // @ts-ignore
             resources: event.resources || [],
+            connectFormId: event.form?.id,
         };
 
         const isStandardType = ["Workshop", "Submission", "Physical Event", "Online Event"].includes(event.type);
