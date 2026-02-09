@@ -96,7 +96,7 @@ export default async function CodeFest2026(props: { params: Params }) {
         {/* Bottom Section: Countdown + RegistrationCard Side-by-Side */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-8">
-            <CountdownSection />
+            <CountdownSection registrationDeadline={data.registrationDeadline} />
           </div>
           <div className="lg:col-span-4">
             <RegistrationCard
