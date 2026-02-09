@@ -3,6 +3,10 @@ import "server-only";
 
 import { and, eq, or } from "drizzle-orm";
 import db from "~/db/client";
+import { eq, and } from "drizzle-orm";
+import { bookmarks } from "~/db/schema";
+import { auth } from "~/lib/auth";
+import { headers } from "next/headers";
 import { competitionEvents, competitionRounds, formFields, forms } from "~/db/schema";
 
 export async function getPublicCompetitionDetails(competitionId: string) {
@@ -65,7 +69,33 @@ export async function getPublicCompetitionDetails(competitionId: string) {
         },
     });
 
-    return competition;
+    if (!competition) {
+        return undefined;
+    }
+
+    // Check bookmark status for authenticated users
+    let isBookmarked = false;
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+        if (session?.user?.id) {
+            const bookmark = await db.query.bookmarks.findFirst({
+                where: and(
+                    eq(bookmarks.userId, session.user.id),
+                    eq(bookmarks.competitionId, competitionId)
+                ),
+            });
+            isBookmarked = bookmark?.isBookmarked ?? false;
+        }
+    } catch {
+        // User not authenticated - isBookmarked stays false
+    }
+
+    return {
+        ...competition,
+        isBookmarked,
+    };
 }
 
 export async function getPublicCompetitionRegistrationDetails(competitionId: string) {

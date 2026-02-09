@@ -14,11 +14,9 @@ import {
 type Params = Promise<{ competitionId: string }>;
 
 export default async function CodeFest2026(props: { params: Params }) {
-    const params = await props.params;
+   const params = await props.params;
     const data = await getPublicCompetitionDetails(params.competitionId);
-    const form = await getPublicCompetitionRegistrationDetails(params.competitionId);
-    console.log(form);
-
+  
     if (!data) {
         return <div>Competition not found</div>;
     }
@@ -28,15 +26,17 @@ export default async function CodeFest2026(props: { params: Params }) {
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
-            <HeroSection
-                bannerUrl={bannerUrl}
-                logoUrl={logoUrl}
-                organization={data.organization}
-                societyName={data.societyName}
-                startDate={data.startDate}
-                endDate={data.endDate}
-            />
-
+             <HeroSection
+        bannerUrl={bannerUrl}
+        logoUrl={logoUrl}
+        organization={data.organization}
+        societyName={data.societyName}
+        startDate={data.startDate}
+        endDate={data.endDate}
+        competitionId={params.competitionId}
+        isBookmarked={data.isBookmarked}
+      /> 
+ 
             <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
                 {/* Top Section: Info + InfoCard */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
@@ -44,10 +44,10 @@ export default async function CodeFest2026(props: { params: Params }) {
                     <div className="lg:col-span-8 space-y-12">
                         <div>
                             <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">
-                                {data.organization?.name || "HACKEXTREME"}
+                                {data.organization?.name}
                             </h1>
                             <p className="text-xl text-muted-foreground font-medium mb-8">
-                                {data.tagline || "Compile your dreams into reality."}
+                                {data.tagline}
                             </p>
 
                             <div className="prose prose-lg text-muted-foreground space-y-6 max-w-none">

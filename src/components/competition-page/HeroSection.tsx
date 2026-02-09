@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { StatusBadge } from "~/components/StatusBadge"
+import { BookmarkButton } from "~/components/BookmarkButton"
 
 interface HeroSectionProps {
     bannerUrl?: string | null;
@@ -9,12 +10,14 @@ interface HeroSectionProps {
     societyName?: string | null;
     startDate?: Date | null;
     endDate?: Date | null;
+    competitionId?: string;
+    isBookmarked?: boolean;
     organization?: {
         name: string;
     } | null;
 }
 
-export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDate, organization }: HeroSectionProps) {
+export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDate, competitionId, isBookmarked, organization }: HeroSectionProps) {
     // Default fallback image if no banner is provided
     const bgImage = bannerUrl ?? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
 
@@ -34,8 +37,14 @@ export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDat
                 />
             </div>
 
-            {/* Status Badge */}
-            <div className="absolute top-4 right-4 md:top-10 md:right-10 z-20">
+            {/* Status Badge & Bookmark Button */}
+            <div className="absolute top-4 right-4 md:top-10 md:right-10 z-20 flex items-center gap-3">
+                {competitionId && (
+                    <BookmarkButton
+                        competitionId={competitionId}
+                        initialIsBookmarked={isBookmarked}
+                    />
+                )}
                 <StatusBadge startDate={startDate} endDate={endDate} />
             </div>
 
