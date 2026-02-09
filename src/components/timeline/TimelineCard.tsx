@@ -40,6 +40,10 @@ export interface TimelineCardProps {
         description?: string | null;
         notificationEnabled?: boolean;
         addToTimeline?: boolean;
+        form?: {
+            name: string;
+            id: string;
+        };
         resources?: TimelineResource[];
     };
     onEdit?: () => void;
@@ -89,6 +93,11 @@ export function TimelineCard({ variant, data, onEdit, onDelete, className }: Tim
                             {startDate && (
                                 <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
                                     {format(startDate, "h:mm a")}
+                                </span>
+                            )}
+                            {data.form && (
+                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
+                                    Form: {data.form.name}
                                 </span>
                             )}
                         </div>

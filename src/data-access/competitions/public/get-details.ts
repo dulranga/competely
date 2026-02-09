@@ -1,4 +1,6 @@
+import { and, eq } from "drizzle-orm";
 import db from "~/db/client";
+import { competitionEvents, competitionRounds, competitions, forms } from "~/db/schema";
 
 export async function getPublicCompetitionDetails(competitionId: string) {
     // Validate UUID format to prevent database errors
@@ -18,15 +20,15 @@ export async function getPublicCompetitionDetails(competitionId: string) {
             resources: {
                 with: {
                     file: true,
-                }
+                },
             },
             socialLinks: true,
             contacts: {
                 with: {
-                    // Assuming we might want image if it's a file relation, 
+                    // Assuming we might want image if it's a file relation,
                     // but schema says `imageId` references files.
                     // Let's check if relations.ts defined `image` relation for contacts?
-                    // Re-checking relations.ts from memory/logs... 
+                    // Re-checking relations.ts from memory/logs...
                     // competitionContactsRelations: competition: one(competitions).
                     // It didn't seem to have `image` relation explicitly defined in the snippet I saw?
                     // Wait, `competitionContacts` table has `imageId` referencing `files.id`.
@@ -34,14 +36,14 @@ export async function getPublicCompetitionDetails(competitionId: string) {
                     // export const competitionContactsRelations = relations(competitionContacts, ({ one }) => ({
                     //     competition: one(competitions...)
                     // }));
-                    // It MISSES the `image` relation to files! 
+                    // It MISSES the `image` relation to files!
                     // I should probably fix relations.ts first if I want to fetch the image URL easily.
-                    // Or I can just return the ID for now. 
+                    // Or I can just return the ID for now.
                     // Let's stick to what's defined. If relations are missing, I can't fetch `image`.
-                    // I'll skip fetching nested image for contacts for now to avoid errors, 
+                    // I'll skip fetching nested image for contacts for now to avoid errors,
                     // or I'll add the relation if I can.
                     // User said "one step at a time". I'll stick to what exists.
-                }
+                },
             },
             rounds: {
                 with: {
@@ -49,16 +51,33 @@ export async function getPublicCompetitionDetails(competitionId: string) {
                         with: {
                             resources: {
                                 with: {
-                                    file: true
-                                }
-                            }
-                        }
-                    }
-                }
+                                    file: true,
+                                },
+                            },
+                        },
+                    },
+                },
             },
             publishOptions: true,
         },
     });
 
     return competition;
+}
+
+export async function getPublicCompetitionRegistrationDetails(competitionId: string) {
+    const form = await db
+        .select()
+        .from(forms)
+        .innerJoin(competitionRounds, eq(competitionRounds.competitionId, competitions.id))
+        .innerJoin(competitionEvents, eq(competitionEvents.roundId, competitionRounds.id))
+        .where(
+            and(
+                eq(competitions.id, competitionId),
+                eq(competitionEvents.type, "registration"),
+                eq(forms.id, competitionEvents.formId),
+            ),
+        );
+
+    console.log(forms);
 }

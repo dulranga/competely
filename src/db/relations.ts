@@ -174,6 +174,10 @@ export const competitionEventsRelations = relations(competitionEvents, ({ one, m
         fields: [competitionEvents.roundId],
         references: [competitionRounds.id],
     }),
+    form: one(forms, {
+        fields: [competitionEvents.formId],
+        references: [forms.id],
+    }),
     resources: many(competitionEventResources),
 }));
 

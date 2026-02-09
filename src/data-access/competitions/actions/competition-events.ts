@@ -12,6 +12,7 @@ import {
     UpdateEventInput,
 } from "~/data-access/competitions/timeline/events";
 import { getCompetitionRound } from "~/data-access/competitions/timeline/rounds";
+import logger from "~/lib/logger";
 
 /**
  * Fetches events for a given round.
@@ -51,47 +52,57 @@ export async function createEventAction(data: CreateEventInput) {
  * Updates an existing event.
  */
 export async function updateEventAction(eventId: string, data: UpdateEventInput) {
-    // Context check
-    const competition = await getActiveCompetition();
-    if (!competition) {
-        throw new Error("No active competition found.");
-    }
+    try {
+        // Context check
+        const competition = await getActiveCompetition();
+        if (!competition) {
+            throw new Error("No active competition found.");
+        }
 
-    const existingEvent = await getCompetitionEvent(eventId);
-    if (!existingEvent) {
-        throw new Error("Event not found.");
-    }
+        const existingEvent = await getCompetitionEvent(eventId);
+        if (!existingEvent) {
+            throw new Error("Event not found.");
+        }
 
-    if (existingEvent.isSystem) {
-        // For system events (Registration), we ignore date updates and only allow description/resources/type updates.
-        // Actually, type might also be fixed? Let's assume just description/resources are safe.
-        // We override the input dates with existing dates to be safe, or just let it pass if we trust frontend.
-        // Let's safe-guard it.
-        data.startDate = existingEvent.startDate;
-        data.endDate = existingEvent.endDate;
-    }
+        if (existingEvent.isSystem) {
+            // For system events (Registration), we ignore date updates and only allow description/resources/type updates.
+            // Actually, type might also be fixed? Let's assume just description/resources are safe.
+            // We override the input dates with existing dates to be safe, or just let it pass if we trust frontend.
+            // Let's safe-guard it.
+            data.startDate = existingEvent.startDate;
+            data.endDate = existingEvent.endDate;
+        }
 
-    const updatedEvent = await updateCompetitionEvent(eventId, data);
-    revalidatePath("/dashboard/timeline");
-    return updatedEvent;
+        const updatedEvent = await updateCompetitionEvent(eventId, data);
+        revalidatePath("/dashboard/timeline");
+        return updatedEvent;
+    } catch (error) {
+        logger.error("Error updating event:", error);
+        throw new Error("Failed to update event.");
+    }
 }
 
 /**
  * Deletes an event.
  */
 export async function deleteEventAction(eventId: string) {
-    // Context check
-    const competition = await getActiveCompetition();
-    if (!competition) {
-        throw new Error("No active competition found.");
-    }
+    try {
+        // Context check
+        const competition = await getActiveCompetition();
+        if (!competition) {
+            throw new Error("No active competition found.");
+        }
 
-    const existingEvent = await getCompetitionEvent(eventId);
-    if (existingEvent?.isSystem) {
-        throw new Error("Cannot delete a system event.");
-    }
+        const existingEvent = await getCompetitionEvent(eventId);
+        if (existingEvent?.isSystem) {
+            throw new Error("Cannot delete a system event.");
+        }
 
-    const deletedEvent = await deleteCompetitionEvent(eventId);
-    revalidatePath("/dashboard/timeline");
-    return deletedEvent;
+        const deletedEvent = await deleteCompetitionEvent(eventId);
+        revalidatePath("/dashboard/timeline");
+        return deletedEvent;
+    } catch (error) {
+        logger.error("Error deleting event:", error);
+        throw new Error("Failed to delete event.");
+    }
 }

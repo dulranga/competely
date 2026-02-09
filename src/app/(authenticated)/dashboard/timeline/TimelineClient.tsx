@@ -21,7 +21,10 @@ interface Event {
     endDate: string | Date | null;
     description: string | null;
     isSystem: boolean;
-    // ... other fields
+    form?: {
+        name: string;
+        id: string;
+    };
 }
 
 interface Round {
@@ -178,6 +181,7 @@ export function TimelineClient({ events, currentRound, competition }: TimelineCl
                                     addToTimeline: event.addToTimeline,
                                     // @ts-ignore
                                     resources: event.resources,
+                                    form: event.form,
                                 }}
                                 onEdit={() => handleEditEvent(event)}
                                 onDelete={!event.isSystem ? () => handleDeleteEvent(event.id) : undefined}

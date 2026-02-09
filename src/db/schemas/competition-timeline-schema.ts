@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { boolean, check, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { competitions } from "./competitions-schema";
 import { files } from "./files-schema";
+import { forms } from "./forms-schema";
 
 // 1. Competition Rounds
 export const competitionRounds = pgTable(
@@ -40,6 +41,7 @@ export const competitionEvents = pgTable(
         addToTimeline: boolean("add_to_timeline").default(true).notNull(),
         isSystem: boolean("is_system").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
+        formId: uuid("form_id").references(() => forms.id),
         updatedAt: timestamp("updated_at")
             .defaultNow()
             .$onUpdate(() => new Date())
