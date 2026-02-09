@@ -29,3 +29,20 @@ export async function updateMainInfoAction(competitionId: string, data: MainInfo
         throw error;
     }
 }
+
+import { updateCompetitionContacts, type ContactInput } from "~/data-access/competitions/updateCompetitionContacts";
+
+export async function updateContactsAction(competitionId: string, contacts: ContactInput[]) {
+    const user = await getUser();
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        await updateCompetitionContacts(competitionId, contacts);
+        return { success: true };
+    } catch (error: any) {
+        console.error("Server Action Failed: updateContactsAction", error);
+        throw error;
+    }
+}

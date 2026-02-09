@@ -151,6 +151,10 @@ export const competitionContactsRelations = relations(competitionContacts, ({ on
         fields: [competitionContacts.competitionId],
         references: [competitions.id],
     }),
+    image: one(files, {
+        fields: [competitionContacts.imageId],
+        references: [files.id],
+    }),
 }));
 
 export const competitionPublishOptionsRelations = relations(competitionPublishOptions, ({ one }) => ({

@@ -6,6 +6,7 @@ import { useState, type FC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { updateContactsAction } from "~/app/(authenticated)/dashboard/competition/actions";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import Form from "~/components/form/Form";
 import { Button } from "~/components/ui/button";
@@ -13,34 +14,71 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { ConfirmSaveDialog } from "../ConfirmSaveDialog";
 
-// Local schema for UI demonstration
 const contactSchema = z.object({
     contacts: z.array(
         z.object({
             name: z.string().min(1, "Name is required"),
             role: z.string().min(1, "Role is required"),
             phone: z.string().optional(),
-            email: z.string().email("Invalid email").optional().or(z.literal("")),
+            email: z.string().email("Invalid email").or(z.literal("")),
             imageId: z.string().optional().nullable(),
+            imageUrl: z.string().optional().nullable(), // For display
         })
     ),
 });
 
 type ContactSchema = z.infer<typeof contactSchema>;
 
-export const ContactInformationSection: FC = () => {
+interface ContactInformationSectionProps {
+    competitionId: string;
+    initialData: ContactSchema["contacts"];
+}
+
+// Adapter to handle the mismatch between Form.Item (expects string value) and FileUpload (returns array)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SingleFileUpload = ({ onChange, value, defaultFile, ...props }: any) => {
+    return (
+        <FileUpload
+            {...props}
+            defaultFile={defaultFile}
+            onChange={(files: any[]) => {
+                const file = files?.[0];
+                const fileId = file?.response?.id;
+                const fileUrl = file?.url;
+
+                // Pass the string ID (or simple null) to the form
+                onChange(fileId || null);
+
+                // We might need to bubble up the URL for optimistic UI updates if the parent needs it,
+                // but Form.Item only expects the value. 
+                // However, since we are inside Form.Item, we can't easily set a sibling field (imageUrl) from here 
+                // without access to the form context or a custom handler.
+                // 
+                // In this specific case, the original code tried to set `imageUrl` as well.
+                // To support that, we can pass a custom onFileSelect prop or rely on the form re-rendering 
+                // if we were using useWatch, but simpler is to likely just let the ID save.
+                // The UI might not update the preview immediately if we don't handle imageUrl, 
+                // but `FileUpload` itself handles its own internal preview state for the *newly* selected file.
+                // For *existing* files, we pass `defaultFile`.
+            }}
+        />
+    );
+};
+
+export const ContactInformationSection: FC<ContactInformationSectionProps> = ({ competitionId, initialData }) => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     const form = useForm<ContactSchema>({
         resolver: zodResolver(contactSchema),
         defaultValues: {
-            contacts: [
+            contacts: initialData.length > 0 ? initialData : [
                 {
                     name: "",
                     role: "",
                     phone: "",
                     email: "",
                     imageId: null,
+                    imageUrl: null,
                 },
             ],
         },
@@ -51,8 +89,21 @@ export const ContactInformationSection: FC = () => {
         name: "contacts",
     });
 
-    const onSave = () => {
-        toast.success("Contact information updated successfully!");
+    const onSave = async () => {
+        const values = form.getValues();
+        try {
+            await updateContactsAction(competitionId, values.contacts.map(c => ({
+                name: c.name,
+                role: c.role,
+                phone: c.phone,
+                email: c.email,
+                imageId: c.imageId,
+            })));
+            toast.success("Contact information updated successfully!");
+        } catch (error: any) {
+            console.error("Save Error:", error);
+            toast.error(`Failed to save contacts: ${error.message || "Unknown error"}`);
+        }
     };
 
     return (
@@ -101,11 +152,9 @@ export const ContactInformationSection: FC = () => {
                                     </div>
                                     <div className="mb-6">
                                         <Form.Item name={`contacts.${index}.imageId`} label="Profile Photo" className="w-full">
-                                            <FileUpload<{ id: string }>
+                                            <SingleFileUpload
                                                 endpoint="/api/upload?type=competition_banner"
-                                                onChange={(files) => {
-                                                    form.setValue(`contacts.${index}.imageId`, files[0]?.response?.id);
-                                                }}
+                                                defaultFile={fields[index].imageUrl ? { url: fields[index].imageUrl!, name: "Profile" } : undefined}
                                                 maxFiles={1}
                                                 className="w-full bg-background"
                                             />
@@ -133,7 +182,7 @@ export const ContactInformationSection: FC = () => {
 
                         <button
                             type="button"
-                            onClick={() => append({ name: "", role: "", phone: "", email: "", imageId: null })}
+                            onClick={() => append({ name: "", role: "", phone: "", email: "", imageId: null, imageUrl: null })}
                             className="flex flex-col items-center justify-center gap-4 border-2 border-dashed border-border/60 rounded-xl p-6 h-full min-h-[400px] hover:bg-muted/50 transition-colors"
                         >
                             <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">

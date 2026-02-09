@@ -112,7 +112,14 @@ export default async function CodeFest2026(props: { params: Params }) {
 
       <PrizesSection prizes={data.prizes} />
 
-      <ContactUsSection />
+      <ContactUsSection contacts={data.contacts?.map(c => ({
+        id: c.id,
+        name: c.name,
+        role: c.role,
+        email: c.email,
+        phone: c.phone,
+        imageUrl: c.imageId ? `/api/upload?file_id=${c.imageId}` : null,
+      })) || []} />
     </div>
   );
 }
