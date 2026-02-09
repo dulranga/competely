@@ -1,6 +1,9 @@
-import { and, eq } from "drizzle-orm";
+"use server";
+import "server-only";
+
+import { and, eq, or } from "drizzle-orm";
 import db from "~/db/client";
-import { competitionEvents, competitionRounds, competitions, forms } from "~/db/schema";
+import { competitionEvents, competitionRounds, formFields, forms } from "~/db/schema";
 
 export async function getPublicCompetitionDetails(competitionId: string) {
     // Validate UUID format to prevent database errors
@@ -66,18 +69,39 @@ export async function getPublicCompetitionDetails(competitionId: string) {
 }
 
 export async function getPublicCompetitionRegistrationDetails(competitionId: string) {
-    const form = await db
-        .select()
-        .from(forms)
-        .innerJoin(competitionRounds, eq(competitionRounds.competitionId, competitions.id))
-        .innerJoin(competitionEvents, eq(competitionEvents.roundId, competitionRounds.id))
+    const rows = await db
+        .select({
+            event: competitionEvents,
+            form: forms,
+        })
+        .from(competitionEvents)
+        .innerJoin(competitionRounds, eq(competitionEvents.roundId, competitionRounds.id))
+        .leftJoin(forms, eq(competitionEvents.formId, forms.id))
         .where(
             and(
-                eq(competitions.id, competitionId),
-                eq(competitionEvents.type, "registration"),
-                eq(forms.id, competitionEvents.formId),
+                eq(competitionRounds.competitionId, competitionId),
+                or(eq(competitionEvents.type, "Registration"), eq(competitionEvents.type, "registration")),
+                eq(competitionEvents.isSystem, true),
             ),
-        );
+        )
+        .limit(1);
 
-    console.log(forms);
+    const row = rows[0];
+    if (!row) return { event: null, form: null };
+
+    if (!row.form) return { event: row.event, form: null };
+
+    const fields = await db
+        .select()
+        .from(formFields)
+        .where(eq(formFields.formId, row.form.id))
+        .orderBy(formFields.order);
+
+    return {
+        event: row.event,
+        form: {
+            ...row.form,
+            fields,
+        },
+    };
 }

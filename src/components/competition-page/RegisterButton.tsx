@@ -1,12 +1,15 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
+import { getPublicCompetitionRegistrationDetails } from "~/data-access/competitions/public/get-details";
 import { registerToCompetitionAction } from "~/data-access/delegate/actions";
 import { authClient } from "~/lib/auth-client";
+import { useModal } from "../dashboard/modals/modal-provider";
 
 export function RegisterButton({
     competitionId,
@@ -22,11 +25,27 @@ export function RegisterButton({
     const [isPending, setIsPending] = useState(false);
     const router = useRouter();
     const { data: session } = authClient.useSession();
+    const { openModal } = useModal();
+
+    const { data: registrationDetails } = useQuery({
+        queryKey: ["competition-registration-details", competitionId],
+        queryFn: () => getPublicCompetitionRegistrationDetails(competitionId),
+    });
 
     const handleRegister = async () => {
         if (!session) {
             const callbackURL = encodeURIComponent(window.location.href);
             router.push(`/login?callbackURL=${callbackURL}`);
+            return;
+        }
+
+        if (registrationDetails?.form) {
+            openModal("registrationForm", {
+                competitionId,
+                formName: registrationDetails.form.name,
+                formDescription: registrationDetails.form.description || undefined,
+                fields: registrationDetails.form.fields as any[],
+            });
             return;
         }
 

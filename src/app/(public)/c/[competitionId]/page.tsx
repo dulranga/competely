@@ -1,14 +1,11 @@
+import { ContactUsSection } from "~/components/competition-page/ContactUsSection";
+import { CountdownSection } from "~/components/competition-page/CountdownSection";
 import { HeroSection } from "~/components/competition-page/HeroSection";
 import { InfoCard } from "~/components/competition-page/InfoCard";
-import { RegistrationCard } from "~/components/competition-page/RegistrationCard";
-import { CountdownSection } from "~/components/competition-page/CountdownSection";
-import { TimelineSection } from "~/components/competition-page/TimelineSection";
 import { PrizesSection } from "~/components/competition-page/PrizesSection";
-import { ContactUsSection } from "~/components/competition-page/ContactUsSection";
 import { RegisterButton } from "~/components/competition-page/RegisterButton";
-import { Button } from "~/components/ui/button";
-import { ArrowRight } from "lucide-react";
-
+import { RegistrationCard } from "~/components/competition-page/RegistrationCard";
+import { TimelineSection } from "~/components/competition-page/TimelineSection";
 import {
     getPublicCompetitionDetails,
     getPublicCompetitionRegistrationDetails,
