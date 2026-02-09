@@ -74,7 +74,7 @@ export default async function CodeFest2026(props: { params: Params }) {
 
           {/* Sidebar Column (Top) */}
           <div className="lg:col-span-4 space-y-8">
-            <InfoCard />
+            <InfoCard socialLinks={data.socialLinks} />
           </div>
         </div>
 
