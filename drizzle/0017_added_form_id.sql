@@ -1,2 +1,0 @@
-ALTER TABLE "competition_events" ADD COLUMN "form_id" uuid;--> statement-breakpoint
-ALTER TABLE "competition_events" ADD CONSTRAINT "competition_events_form_id_forms_id_fk" FOREIGN KEY ("form_id") REFERENCES "public"."forms"("id") ON DELETE no action ON UPDATE no action;
