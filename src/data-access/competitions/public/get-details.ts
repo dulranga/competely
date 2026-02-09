@@ -3,7 +3,6 @@ import "server-only";
 
 import { and, eq, or } from "drizzle-orm";
 import db from "~/db/client";
-import { eq, and } from "drizzle-orm";
 import { bookmarks } from "~/db/schema";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
