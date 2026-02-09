@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Clock, Download, FileText, Loader2, RefreshCcw, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getFormFieldsAction, getPaginatedFormResponsesAction } from "~/app/(authenticated)/dashboard/forms/actions";
+import { getFormSubmissionsCSVByEventId } from "~/data-access/exports/form-submissions";
+import ActionDownloadButton from "~/components/ActionDownloadButton";
 import FormResponsesTable from "~/components/dashboard/FormResponsesTable";
+import DownloadButton from "~/components/DownloadButton";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
@@ -173,12 +176,14 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                         >
                             <RefreshCcw size={16} className={cn(isResponsesLoading && "animate-spin")} />
                         </Button>
-                        <Button
+                        <ActionDownloadButton
+                            action={async () => getFormSubmissionsCSVByEventId(selectedEventId!)}
+                            fileName={`${selectedEvent?.name}_submissions.csv`}
                             variant="outline"
-                            className="h-10 px-5 rounded-xl border-[#e8e2de] text-[10px] font-black uppercase tracking-widest hover:border-primary hover:text-primary transition-all active:scale-95"
+                            className="rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95"
                         >
                             <Download size={14} className="mr-2" /> Export CSV
-                        </Button>
+                        </ActionDownloadButton>
                     </div>
                 </div>
 
