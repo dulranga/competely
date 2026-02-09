@@ -6,8 +6,6 @@ import { TimelineSection } from "~/components/competition-page/TimelineSection";
 import { PrizesSection } from "~/components/competition-page/PrizesSection";
 import { ContactUsSection } from "~/components/competition-page/ContactUsSection";
 import { RegisterButton } from "~/components/competition-page/RegisterButton";
-import { Button } from "~/components/ui/button";
-import { ArrowRight } from "lucide-react";
 
 import { getPublicCompetitionDetails } from "~/data-access/competitions/public/get-details";
 
@@ -32,6 +30,8 @@ export default async function CodeFest2026(props: { params: Params }) {
         logoUrl={logoUrl}
         organization={data.organization}
         societyName={data.societyName}
+        startDate={data.startDate}
+        endDate={data.endDate}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
@@ -71,9 +71,11 @@ export default async function CodeFest2026(props: { params: Params }) {
             </div>
 
             <div className="mt-10">
-              <Button className="font-bold text-xl px-8 py-6" size="lg">
-                Register Now <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <RegisterButton
+                competitionId={params.competitionId}
+                registrationDeadline={data.registrationDeadline}
+                className="font-bold text-xl px-8 py-6"
+              />
             </div>
           </div>
 
@@ -101,6 +103,7 @@ export default async function CodeFest2026(props: { params: Params }) {
           <div className="lg:col-span-4">
             <RegistrationCard
               competitionId={params.competitionId}
+              registrationDeadline={data.registrationDeadline}
               resources={data.resources.map(r => ({
                 id: r.id,
                 label: r.label,

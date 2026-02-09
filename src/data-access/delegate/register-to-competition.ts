@@ -25,6 +25,15 @@ export async function registerToCompetitionDAL(competitionId: string) {
         throw new Error("Competition not found.");
     }
 
+    // 2. Server-side deadline validation (SECURITY: blocks hackers)
+    if (competition.registrationDeadline) {
+        const deadline = new Date(competition.registrationDeadline);
+        const now = new Date();
+        if (now > deadline) {
+            throw new Error("Registration deadline has passed. You can no longer register for this competition.");
+        }
+    }
+
     const organizationId = competition.organizationId;
 
     // 2. Add user to the organization as a delegate if they aren't already a member
