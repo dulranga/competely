@@ -1,13 +1,16 @@
 "use client";
 
-import { FileText, Loader2, Link as LinkIcon, XCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FileText, Link as LinkIcon, Loader2, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
+import { getPublicCompetitionRegistrationDetails } from "~/data-access/competitions/public/get-details";
 import { registerToCompetitionAction } from "~/data-access/delegate/actions";
 import { authClient } from "~/lib/auth-client";
+import { useModal } from "../dashboard/modals/modal-provider";
 
 type Resource = {
     id: string;
@@ -32,11 +35,15 @@ export function RegistrationCard({
     registrationDeadline?: Date | null;
 }) {
     const [isPending, setIsPending] = useState(false);
-    const [isRegistrationClosed, setIsRegistrationClosed] = useState(() =>
-        checkDeadlinePassed(registrationDeadline)
-    );
+    const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
     const router = useRouter();
     const { data: session } = authClient.useSession();
+    const { openModal } = useModal();
+
+    const { data: registrationDetails } = useQuery({
+        queryKey: ["competition-registration-details", competitionId],
+        queryFn: () => getPublicCompetitionRegistrationDetails(competitionId),
+    });
 
     // Auto-check deadline every second (UX: updates UI even without refresh)
     useEffect(() => {
@@ -60,6 +67,17 @@ export function RegistrationCard({
         if (!session) {
             const callbackURL = encodeURIComponent(window.location.href);
             router.push(`/login?callbackURL=${callbackURL}`);
+            return;
+        }
+
+        if (registrationDetails?.form) {
+            openModal("registrationForm", {
+                competitionId,
+                formId: registrationDetails.form.id,
+                formName: registrationDetails.form.name,
+                formDescription: registrationDetails.form.description || undefined,
+                fields: registrationDetails.form.fields as any[],
+            });
             return;
         }
 
@@ -105,15 +123,13 @@ export function RegistrationCard({
                     </Button>
 
                     {resources.map((resource) => (
-                        <Button
-                            key={resource.id}
-                            variant="outline"
-                            className="w-full font-bold"
-                            size="lg"
-                            asChild
-                        >
+                        <Button key={resource.id} variant="outline" className="w-full font-bold" size="lg" asChild>
                             <a
-                                href={resource.type === "url" ? (resource.url || "#") : `/api/upload?file_id=${resource.file?.id}&download=true`}
+                                href={
+                                    resource.type === "url"
+                                        ? resource.url || "#"
+                                        : `/api/upload?file_id=${resource.file?.id}&download=true`
+                                }
                                 target={resource.type === "url" ? "_blank" : undefined}
                                 rel={resource.type === "url" ? "noopener noreferrer" : undefined}
                             >
@@ -122,7 +138,8 @@ export function RegistrationCard({
                                 ) : (
                                     <FileText className="w-4 h-4 mr-2" />
                                 )}
-                                {resource.label || (resource.type === "document" ? resource.file?.fileName : "Resource")}
+                                {resource.label ||
+                                    (resource.type === "document" ? resource.file?.fileName : "Resource")}
                             </a>
                         </Button>
                     ))}

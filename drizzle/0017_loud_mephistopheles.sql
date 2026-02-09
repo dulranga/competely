@@ -1,1 +1,0 @@
-ALTER TABLE "competitions" ADD COLUMN "society_name" text;

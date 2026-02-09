@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { fetchEventsAction } from "~/data-access/competitions/actions/competition-events";
 import { fetchRoundsAction, fetchCompetitionAction } from "~/data-access/competitions/actions/competition-rounds";
 import { TimelineClient } from "./TimelineClient";
@@ -31,6 +31,7 @@ type Competition = Awaited<ReturnType<typeof fetchCompetitionAction>>;
 const TimelinePage = () => {
     const searchParams = useSearchParams();
     const roundIdParam = searchParams.get("roundId");
+    const router = useRouter();
 
     const {
         data: competition,
@@ -55,7 +56,7 @@ const TimelinePage = () => {
             return null;
         }
         if (!roundIdParam) {
-            return rounds[0];
+            return (router.push(`/dashboard/timeline?roundId=${rounds[0].id}`), rounds[0]);
         }
         return rounds.find((round) => round.id === roundIdParam) ?? rounds[0];
     }, [rounds, roundIdParam]);

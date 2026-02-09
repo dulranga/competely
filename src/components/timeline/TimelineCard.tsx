@@ -14,7 +14,7 @@ import {
     Trash2,
     X,
 } from "lucide-react";
-import { cn } from "~/lib/utils";
+import { cn, getFileUrlById } from "~/lib/utils";
 
 export type TimelineVariant = "event" | "delegate" | "home" | "calendar";
 
@@ -40,6 +40,10 @@ export interface TimelineCardProps {
         description?: string | null;
         notificationEnabled?: boolean;
         addToTimeline?: boolean;
+        form?: {
+            name: string;
+            id: string;
+        };
         resources?: TimelineResource[];
     };
     onEdit?: () => void;
@@ -91,6 +95,11 @@ export function TimelineCard({ variant, data, onEdit, onDelete, className }: Tim
                                     {format(startDate, "h:mm a")}
                                 </span>
                             )}
+                            {data.form && (
+                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
+                                    Form: {data.form.name}
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -135,22 +144,25 @@ export function TimelineCard({ variant, data, onEdit, onDelete, className }: Tim
                     {/* Resources */}
                     {resources && resources.length > 0 && (
                         <div className="flex flex-wrap gap-4 text-sm font-medium text-gray-700 underline underline-offset-2">
-                            {resources.map((res) => (
-                                <a
-                                    key={res.id}
-                                    href={res.url || "#"}
-                                    className="flex items-center gap-1 hover:text-black transition-colors"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    {res.type === "url" ? (
-                                        <LinkIcon className="w-4 h-4" />
-                                    ) : (
-                                        <FileText className="w-4 h-4" />
-                                    )}
-                                    {res.label}
-                                </a>
-                            ))}
+                            {resources.map((res) => {
+                                const url = res.type === "document" ? getFileUrlById(res.fileId || "") : res.url;
+                                return (
+                                    <a
+                                        key={res.id}
+                                        href={url || "#"}
+                                        className="flex items-center gap-1 hover:text-black transition-colors"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        {res.type === "url" ? (
+                                            <LinkIcon className="w-4 h-4" />
+                                        ) : (
+                                            <FileText className="w-4 h-4" />
+                                        )}
+                                        {res.label}
+                                    </a>
+                                );
+                            })}
                         </div>
                     )}
 

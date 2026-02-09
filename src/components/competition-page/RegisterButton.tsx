@@ -1,12 +1,15 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Loader2, XCircle } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
+import { getPublicCompetitionRegistrationDetails } from "~/data-access/competitions/public/get-details";
 import { registerToCompetitionAction } from "~/data-access/delegate/actions";
 import { authClient } from "~/lib/auth-client";
+import { useModal } from "../dashboard/modals/modal-provider";
 
 function checkDeadlinePassed(deadline: Date | null | undefined): boolean {
     if (!deadline) return false;
@@ -27,11 +30,15 @@ export function RegisterButton({
     registrationDeadline?: Date | null;
 }) {
     const [isPending, setIsPending] = useState(false);
-    const [isRegistrationClosed, setIsRegistrationClosed] = useState(() =>
-        checkDeadlinePassed(registrationDeadline)
-    );
+    const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
     const router = useRouter();
     const { data: session } = authClient.useSession();
+    const { openModal } = useModal();
+
+    const { data: registrationDetails } = useQuery({
+        queryKey: ["competition-registration-details", competitionId],
+        queryFn: () => getPublicCompetitionRegistrationDetails(competitionId),
+    });
 
     // Auto-check deadline every second (UX: updates UI even without refresh)
     useEffect(() => {
@@ -55,6 +62,17 @@ export function RegisterButton({
         if (!session) {
             const callbackURL = encodeURIComponent(window.location.href);
             router.push(`/login?callbackURL=${callbackURL}`);
+            return;
+        }
+
+        if (registrationDetails?.form) {
+            openModal("registrationForm", {
+                competitionId,
+                formId: registrationDetails.form.id,
+                formName: registrationDetails.form.name,
+                formDescription: registrationDetails.form.description || undefined,
+                fields: registrationDetails.form.fields as any[],
+            });
             return;
         }
 

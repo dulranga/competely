@@ -39,6 +39,7 @@ export interface UpdateEventInput {
     addToTimeline?: boolean;
     notificationEnabled?: boolean;
     location?: string | null;
+    connectFormId?: string | null; // For linking a form to the event, if applicable
 }
 
 /**
@@ -49,6 +50,9 @@ export async function getEventsByRound(roundId: string) {
         where: eq(competitionEvents.roundId, roundId),
         with: {
             resources: true,
+            form: {
+                columns: { name: true, id: true },
+            },
         },
     });
 }
@@ -120,6 +124,7 @@ export async function updateCompetitionEvent(eventId: string, data: UpdateEventI
                 addToTimeline: data.addToTimeline,
                 notificationEnabled: data.notificationEnabled,
                 location: data.location,
+                formId: data.connectFormId,
             })
             .where(eq(competitionEvents.id, eventId))
             .returning();

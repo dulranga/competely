@@ -4,7 +4,7 @@ import { FC, use } from "react";
 import FormBuilder from "~/components/dashboard/FormBuilder";
 import { saveFormAction, deleteFormAction, getFormByIdAction } from "../actions";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 
 interface EditFormPageProps {
@@ -13,6 +13,7 @@ interface EditFormPageProps {
 
 const EditFormPage: FC<EditFormPageProps> = ({ params }) => {
     const { id } = use(params);
+    const queryClient = useQueryClient();
 
     const {
         data: form,
@@ -66,6 +67,7 @@ const EditFormPage: FC<EditFormPageProps> = ({ params }) => {
                 }}
                 onSave={async (data) => {
                     saveFormAction(data);
+                    queryClient.invalidateQueries({ queryKey: ["forms"] });
                 }}
                 onDelete={deleteFormAction}
             />

@@ -21,7 +21,10 @@ export interface Round {
     isSystem: boolean;
 }
 
-const RoundSidebar: FC = () => {
+type RoundSidebarProps = {
+    getRedirectUrl: (roundId: string) => string;
+};
+const RoundSidebar: FC<RoundSidebarProps> = ({ getRedirectUrl }) => {
     const queryClient = useQueryClient();
     const [isCreatingInput, setIsCreatingInput] = useState(false);
     const [newRoundName, setNewRoundName] = useState("");
@@ -124,7 +127,7 @@ const RoundSidebar: FC = () => {
     };
 
     const handleSelectRound = (roundId: string) => {
-        router.push(`/dashboard/timeline?roundId=${roundId}`);
+        router.push(getRedirectUrl(roundId));
     };
 
     if (isLoading) {

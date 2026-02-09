@@ -108,13 +108,6 @@ const FormResponsesTable: FC<FormResponsesTableProps> = ({ fields, responses, to
                 <div className="text-sm font-bold text-foreground/40 uppercase tracking-widest">
                     {total} Responses Found
                 </div>
-                {/* TODO: Implement CSV Export */}
-                <Button
-                    variant="outline"
-                    className="h-10 px-5 rounded-xl border-border/60 text-xs font-black uppercase tracking-widest hover:border-primary hover:text-primary"
-                >
-                    <Download size={14} className="mr-2" /> Export CSV
-                </Button>
             </div>
 
             <div className="rounded-xl bg-white border border-border/60 shadow-sm overflow-hidden">

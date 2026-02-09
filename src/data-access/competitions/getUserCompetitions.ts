@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, inArray } from "drizzle-orm";
 import db from "~/db/client";
 import { competitions, members, organizations, files } from "~/db/schema";
 import { getUserSession } from "../getCurrentUser";
@@ -19,13 +19,22 @@ export async function getUserCompetitions() {
             id: competitions.id,
             name: organizations.name,
             role: members.role,
-            bannerId: files.id, // In a real app, you might map this to a URL
+            posterId: files.id,
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
         .innerJoin(members, and(eq(members.organizationId, organizations.id), eq(members.userId, session.user.id)))
-        .leftJoin(files, eq(competitions.bannerId, files.id))
+        .leftJoin(files, eq(competitions.posterId, files.id))
+        .where(
+            and(
+                eq(members.userId, session.user.id),
+                inArray(members.role, ["owner", "oc_member"]),
+                // eq(competitions.status, "published"),
+            ),
+        )
         .orderBy(desc(competitions.createdAt));
+
+    console.log(results);
 
     return results;
 }
