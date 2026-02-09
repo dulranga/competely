@@ -25,7 +25,7 @@ interface Competition {
     id: string;
     name: string;
     role: string;
-    bannerId: string | null;
+    posterId: string | null;
 }
 
 interface CreatePageContentProps {
@@ -58,7 +58,6 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-
             <main className="flex-1 max-w-[1500px] mx-auto w-full px-4 md:px-8 py-8 space-y-10">
                 {/* Top Action Bar */}
                 <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
@@ -137,7 +136,7 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                                     id={comp.id}
                                     name={comp.name}
                                     role={comp.role as CompetitionRole}
-                                    imageUrl={comp.bannerId ? getFileUrlById(comp.bannerId) : getRandomAvatar(comp.id)}
+                                    imageUrl={comp.posterId ? getFileUrlById(comp.posterId) : getRandomAvatar(comp.id)}
                                     variant={viewMode}
                                 />
                             ))}
@@ -183,9 +182,7 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                 <DialogContent className="sm:max-w-[425px] rounded-3xl p-8">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-black text-[#1a1b25]">Join OC Panel</DialogTitle>
-                        <DialogDescription>
-                            Enter your details to join the Organizing Committee.
-                        </DialogDescription>
+                        <DialogDescription>Enter your details to join the Organizing Committee.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-6 py-4">
                         <form action={handleJoin} id="join-form">

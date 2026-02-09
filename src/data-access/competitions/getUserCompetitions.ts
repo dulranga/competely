@@ -19,12 +19,12 @@ export async function getUserCompetitions() {
             id: competitions.id,
             name: organizations.name,
             role: members.role,
-            bannerId: files.id,
+            posterId: files.id,
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
         .innerJoin(members, and(eq(members.organizationId, organizations.id), eq(members.userId, session.user.id)))
-        .leftJoin(files, eq(competitions.bannerId, files.id))
+        .leftJoin(files, eq(competitions.posterId, files.id))
         .where(
             and(
                 eq(members.userId, session.user.id),
@@ -33,6 +33,8 @@ export async function getUserCompetitions() {
             ),
         )
         .orderBy(desc(competitions.createdAt));
+
+    console.log(results);
 
     return results;
 }

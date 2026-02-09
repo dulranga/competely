@@ -20,10 +20,7 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
 
     // 2. Update the organization name if provided
     if (data.name) {
-        await db
-            .update(organizations)
-            .set({ name: data.name })
-            .where(eq(organizations.id, competition.organizationId));
+        await db.update(organizations).set({ name: data.name }).where(eq(organizations.id, competition.organizationId));
     }
 
     // 3. Update the competition details
