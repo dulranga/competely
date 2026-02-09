@@ -5,10 +5,12 @@ import { ContactInformationSection } from "~/components/dashboard/editor/contact
 import { getActiveCompetition } from "~/data-access/competitions/getActiveCompetition";
 
 import { getCompetitionMainInfo } from "~/data-access/competitions/getCompetitionMainInfo";
+import { getCompetitionContacts } from "~/data-access/competitions/getCompetitionContacts";
 
 const EditorPage: FC = async () => {
     const competition = await getActiveCompetition();
     const mainInfo = await getCompetitionMainInfo(competition!.id);
+    const contacts = await getCompetitionContacts(competition!.id);
     console.log("DEBUG COMPETITION:", JSON.stringify(competition, null, 2));
 
 
@@ -24,7 +26,7 @@ const EditorPage: FC = async () => {
                 <div className="grid gap-8">
                     <EditThumbnailCard initialData={competition} />
                     <MainInformationSection competitionId={competition!.id} initialData={mainInfo} />
-                    <ContactInformationSection />
+                    <ContactInformationSection competitionId={competition!.id} initialData={contacts} />
                 </div>
             </div>
         </div>
