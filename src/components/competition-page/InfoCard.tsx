@@ -11,9 +11,25 @@ interface SocialLink {
 
 interface InfoCardProps {
     socialLinks?: SocialLink[];
+    registrationDeadline?: Date | null;
 }
 
-export function InfoCard({ socialLinks = [] }: InfoCardProps) {
+function formatRegistrationDeadline(date: Date | null | undefined): string {
+    if (!date) return "TBA";
+    const dateStr = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+    const timeStr = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+    return `${dateStr} - ${timeStr}`;
+}
+
+export function InfoCard({ socialLinks = [], registrationDeadline }: InfoCardProps) {
     return (
         <Card className="rounded-3xl border-border shadow-sm p-8">
             <h3 className="text-xl font-bold flex items-center gap-3 mb-6">
@@ -42,7 +58,7 @@ export function InfoCard({ socialLinks = [] }: InfoCardProps) {
                 <div className="flex items-start gap-4">
                     <Clock className="w-5 h-5 text-gray-700 mt-1" />
                     <div>
-                        <span className="text-gray-900 font-semibold block">Registration Deadline - 2026/01/29 - 11.59 PM</span>
+                        <span className="text-gray-900 font-semibold block">Registration Deadline - {formatRegistrationDeadline(registrationDeadline)}</span>
                     </div>
                 </div>
 
