@@ -1,12 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Clock, FileText, Loader2, Users } from "lucide-react";
+import { Clock, Download, FileText, Loader2, RefreshCcw, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getFormFieldsAction, getPaginatedFormResponsesAction } from "~/app/(authenticated)/dashboard/forms/actions";
 import FormResponsesTable from "~/components/dashboard/FormResponsesTable";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { cn } from "~/lib/utils";
 
 interface Event {
     id: string;
@@ -54,7 +56,11 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
         enabled: Boolean(selectedEvent?.form?.id),
     });
 
-    const { data: responsesData, isLoading: isResponsesLoading } = useQuery({
+    const {
+        data: responsesData,
+        isLoading: isResponsesLoading,
+        refetch: refetchResponses,
+    } = useQuery({
         queryKey: ["form-responses", selectedEvent?.form?.id, page],
         queryFn: () => getPaginatedFormResponsesAction(selectedEvent!.form!.id, page, limit),
         enabled: Boolean(selectedEvent?.form?.id),
@@ -155,8 +161,25 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
             </div>
 
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <h2 className="text-3xl font-black uppercase tracking-tight text-[#0c0803]">Submissions</h2>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            disabled={isResponsesLoading}
+                            onClick={() => refetchResponses()}
+                            className="h-10 w-10 rounded-xl border-[#e8e2de] hover:border-primary hover:text-primary transition-all active:scale-95"
+                        >
+                            <RefreshCcw size={16} className={cn(isResponsesLoading && "animate-spin")} />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-10 px-5 rounded-xl border-[#e8e2de] text-[10px] font-black uppercase tracking-widest hover:border-primary hover:text-primary transition-all active:scale-95"
+                        >
+                            <Download size={14} className="mr-2" /> Export CSV
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="overflow-hidden">

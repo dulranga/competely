@@ -79,6 +79,8 @@ export async function saveFormAction(data: {
         });
     }
 
+    console.log(data.fields);
+
     await setFormFields(formId, data.fields);
 
     redirect("/dashboard/forms");

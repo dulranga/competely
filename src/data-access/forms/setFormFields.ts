@@ -1,27 +1,56 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+import { eq, and, notInArray } from "drizzle-orm";
 import db from "~/db/client";
 import { formFields } from "~/db/schema";
+import { FormFieldType } from "~/consts/forms";
 
-export async function setFormFields(formId: string, fields: any[]) {
-    // Standard approach: delete old and insert new or use a transaction with sync logic
-    // For simplicity in a builder, we can delete all existing fields for this form and re-insert them
-    // This ensures order and composition are perfectly synced with the frontend state
+export interface FormFieldInput {
+    id?: string;
+    name: string;
+    type: FormFieldType;
+    required: boolean;
+    config: Record<string, any>;
+}
+
+export async function setFormFields(formId: string, fields: FormFieldInput[]) {
+    // We use a transaction to ensure all fields are updated/inserted consistently
+    // We update existing fields instead of deleting them to preserve form response data (cascading deletes)
     await db.transaction(async (tx) => {
-        await tx.delete(formFields).where(eq(formFields.formId, formId));
+        const activeIds: string[] = [];
 
-        if (fields.length > 0) {
-            await tx.insert(formFields).values(
-                fields.map((f, index) => ({
-                    id: f.id || crypto.randomUUID(),
+        for (const [index, f] of fields.entries()) {
+            const fieldId = f.id || crypto.randomUUID();
+            activeIds.push(fieldId);
+
+            await tx
+                .insert(formFields)
+                .values({
+                    id: fieldId,
                     formId,
                     name: f.name,
                     type: f.type,
                     required: f.required ?? false,
                     order: index,
                     config: f.config || {},
-                })),
-            );
+                })
+                .onConflictDoUpdate({
+                    target: formFields.id,
+                    set: {
+                        name: f.name,
+                        type: f.type,
+                        required: f.required ?? false,
+                        order: index,
+                        config: f.config || {},
+                    },
+                });
+        }
+
+        // Remove fields that are no longer part of the form
+        if (activeIds.length > 0) {
+            await tx.delete(formFields).where(and(eq(formFields.formId, formId), notInArray(formFields.id, activeIds)));
+        } else {
+            // If the incoming array is empty, we clear all fields for this form
+            await tx.delete(formFields).where(eq(formFields.formId, formId));
         }
     });
 }
