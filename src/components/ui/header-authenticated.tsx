@@ -9,6 +9,7 @@ import { authClient } from "~/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import UserDropdown from "~/components/user/dropdownmenu";
+import NotificationDropdown from "~/components/notifications/notification-dropdown";
 
 const navItems = [
     { name: "Home", href: "/home", icon: Home },
@@ -82,14 +83,7 @@ export function HeaderAuthenticated({ currentPath = "/", user, bookmarkCount = 0
                 {/* Actions */}
                 <div className="flex items-center gap-2">
                     {/* Notification Icon */}
-                    <Button variant="ghost" size="icon" className="relative" asChild>
-                        <Link href="/notifications">
-                            <Bell className="h-5 w-5" />
-                            <span className="sr-only">Notifications</span>
-                            {/* Notification badge */}
-                            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
-                        </Link>
-                    </Button>
+                    <NotificationDropdown />
 
                     {/* Profile Dropdown */}
                     {user && <UserDropdown user={user} />}

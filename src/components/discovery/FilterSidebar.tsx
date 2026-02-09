@@ -5,7 +5,7 @@ import { KeywordsFilter } from "./KeywordsFilter";
 import { StatusFilter } from "./StatusFilter";
 import { RegisteredSlider } from "./RegisteredSlider";
 import { CategoryFilter } from "./CategoryFilter";
-import { ModeFilter } from "./ModeFilter";
+//import { ModeFilter } from "./ModeFilter";
 import type { StatusFilters, Categories, Modes } from './types';
 
 interface FilterSidebarProps {
@@ -22,9 +22,9 @@ interface FilterSidebarProps {
     onModesChange?: (modes: Modes) => void;
 }
 
-export function FilterSidebar({ 
-    className, 
-    registeredRange, 
+export function FilterSidebar({
+    className,
+    registeredRange,
     onRegisteredRangeChange,
     keywords,
     onKeywordsChange,
@@ -37,12 +37,12 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
     return (
         <div className={cn("w-64 shrink-0 bg-white rounded-xl shadow-sm border border-border/40 p-5 space-y-7", className)}>
-            <KeywordsFilter 
+            <KeywordsFilter
                 keywords={keywords}
                 onKeywordsChange={onKeywordsChange}
             />
-            
-            <StatusFilter 
+
+            <StatusFilter
                 statusFilters={statusFilters}
                 onStatusFiltersChange={onStatusFiltersChange}
             />
@@ -57,10 +57,10 @@ export function FilterSidebar({
                 onCategoriesChange={onCategoriesChange}
             />
 
-            <ModeFilter
+            {/* <ModeFilter
                 modes={modes}
                 onModesChange={onModesChange}
-            />
+            /> */}
         </div>
     );
 }
