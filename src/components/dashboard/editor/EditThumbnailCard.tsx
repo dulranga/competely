@@ -81,10 +81,15 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     const onSave = async () => {
         setIsSubmitting(true);
         const values = form.getValues();
+        console.log("Submitting values:", values);
         const result = await updateCompetitionAction(values);
         setIsSubmitting(false);
 
         if (result.error) {
+            console.error("Save error:", result.error);
+            if ('fieldErrors' in result) {
+                console.error("Field errors:", result.fieldErrors);
+            }
             toast.error(result.error);
         } else {
             toast.success("Changes saved successfully!");
