@@ -1,7 +1,7 @@
 "use client";
 
-import { FileText, Loader2, Link as LinkIcon } from "lucide-react";
-import { useState } from "react";
+import { FileText, Loader2, Link as LinkIcon, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -17,12 +17,46 @@ type Resource = {
     file?: { id: string; fileName: string } | null;
 };
 
-export function RegistrationCard({ competitionId, resources = [] }: { competitionId: string; resources?: Resource[] }) {
+function checkDeadlinePassed(deadline: Date | null | undefined): boolean {
+    if (!deadline) return false;
+    return new Date(deadline).getTime() < new Date().getTime();
+}
+
+export function RegistrationCard({
+    competitionId,
+    resources = [],
+    registrationDeadline,
+}: {
+    competitionId: string;
+    resources?: Resource[];
+    registrationDeadline?: Date | null;
+}) {
     const [isPending, setIsPending] = useState(false);
+    const [isRegistrationClosed, setIsRegistrationClosed] = useState(() =>
+        checkDeadlinePassed(registrationDeadline)
+    );
     const router = useRouter();
     const { data: session } = authClient.useSession();
 
+    // Auto-check deadline every second (UX: updates UI even without refresh)
+    useEffect(() => {
+        if (!registrationDeadline || isRegistrationClosed) return;
+
+        const timer = setInterval(() => {
+            if (checkDeadlinePassed(registrationDeadline)) {
+                setIsRegistrationClosed(true);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [registrationDeadline, isRegistrationClosed]);
+
     const handleRegister = async () => {
+        if (isRegistrationClosed) {
+            toast.error("Registration is closed.");
+            return;
+        }
+
         if (!session) {
             const callbackURL = encodeURIComponent(window.location.href);
             router.push(`/login?callbackURL=${callbackURL}`);
@@ -48,11 +82,22 @@ export function RegistrationCard({ competitionId, resources = [] }: { competitio
         <Card className="rounded-3xl border-border shadow-sm text-center overflow-hidden">
             <CardContent className="pt-6">
                 <div className="space-y-3">
-                    <Button className="w-full font-bold" size="lg" onClick={handleRegister} disabled={isPending}>
+                    <Button
+                        className="w-full font-bold"
+                        size="lg"
+                        variant={isRegistrationClosed ? "outline" : "default"}
+                        onClick={handleRegister}
+                        disabled={isPending || isRegistrationClosed}
+                    >
                         {isPending ? (
                             <>
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                 Registering...
+                            </>
+                        ) : isRegistrationClosed ? (
+                            <>
+                                <XCircle className="w-4 h-4 mr-2" />
+                                Registration Closed
                             </>
                         ) : (
                             "Register →"
