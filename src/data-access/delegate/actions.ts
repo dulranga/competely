@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { registerToCompetitionDAL } from "./register-to-competition";
 import { getBookmarkedCompetitions } from "./bookmark";
+import { getUserSession } from "~/data-access/getCurrentUser";
+import { getNotifications } from "./notifications";
 
 /**
  * Server action to register a user to a competition.
@@ -31,5 +33,22 @@ export async function getBookmarksCountAction() {
         return bookmarks.length;
     } catch (error) {
         return 0;
+    }
+}
+
+/**
+ * Server Action to get notifications for the current user
+ */
+export async function getNotificationsAction() {
+    try {
+        const session = await getUserSession();
+        if (!session?.user) {
+            return [];
+        }
+        const notifications = await getNotifications(session.user.id);
+        return notifications;
+    } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+        return [];
     }
 }
