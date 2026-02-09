@@ -20,6 +20,7 @@ export async function getActiveCompetition() {
         .select({
             id: competitions.id,
             name: organizations.name,
+            societyName: competitions.societyName,
             tagline: competitions.tagline,
             category: competitions.category,
             posterId: competitions.posterId,

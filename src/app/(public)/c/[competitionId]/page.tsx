@@ -27,7 +27,12 @@ export default async function CodeFest2026(props: { params: Params }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <HeroSection bannerUrl={bannerUrl} logoUrl={logoUrl} organization={data.organization} />
+      <HeroSection
+        bannerUrl={bannerUrl}
+        logoUrl={logoUrl}
+        organization={data.organization}
+        societyName={data.societyName}
+      />
 
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
 

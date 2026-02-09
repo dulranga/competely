@@ -35,6 +35,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
         resolver: zodResolver(createCompetitionSchema),
         defaultValues: {
             name: "",
+            societyName: "",
             tagline: "",
             category: "tech",
             posterId: null,
@@ -82,6 +83,14 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                 helperText="The public name of your competition. Must be at least 3 characters."
                             >
                                 <Input placeholder="e.g. Innovate Hackathon 2026" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Society Name"
+                                name="societyName"
+                                helperText="The name of the society organising the competition."
+                            >
+                                <Input placeholder="e.g. Tec Dev Club" />
                             </Form.Item>
 
                             <Form.Item

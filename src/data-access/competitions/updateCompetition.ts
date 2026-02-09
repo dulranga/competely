@@ -31,6 +31,7 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
         .update(competitions)
         .set({
             tagline: data.tagline,
+            societyName: data.societyName,
             category: data.category,
             posterId: data.posterId,
             startDate: data.startDate,

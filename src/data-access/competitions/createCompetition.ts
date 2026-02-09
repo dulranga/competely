@@ -33,6 +33,7 @@ export async function createCompetition(data: CreateCompetitionSchema) {
     await db.insert(competitions).values({
         organizationId: response.id,
         tagline: data.tagline,
+        societyName: data.societyName,
         category: data.category,
         posterId: data.posterId,
         startDate: data.startDate,

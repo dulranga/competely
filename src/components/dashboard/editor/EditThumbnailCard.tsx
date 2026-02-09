@@ -27,6 +27,7 @@ interface EditThumbnailCardProps {
     initialData?: {
         id: string;
         name: string | null;
+        societyName: string | null;
         tagline: string | null;
         category: "tech" | "business" | "design" | "science" | "sports" | "arts" | "other" | null;
         posterId: string | null;
@@ -44,6 +45,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
         resolver: zodResolver(ExtendedSchema),
         defaultValues: {
             name: initialData?.name || "",
+            societyName: initialData?.societyName || "",
             tagline: initialData?.tagline || "",
             category: initialData?.category || "tech",
             posterId: initialData?.posterId || null,
@@ -63,6 +65,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             console.log("EditThumbnailCard received initialData:", initialData);
             form.reset({
                 name: initialData.name || "",
+                societyName: initialData.societyName || "",
                 tagline: initialData.tagline || "",
                 category: initialData.category || "tech",
                 posterId: initialData.posterId || null,
@@ -125,6 +128,14 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 helperText="The public name of your competition. Must be at least 3 characters."
                             >
                                 <Input placeholder="e.g. Innovate Hackathon 2026" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Society Name"
+                                name="societyName"
+                                helperText="The name of the society organising the competition."
+                            >
+                                <Input placeholder="e.g. Tec Dev Club" />
                             </Form.Item>
 
                             <Form.Item
