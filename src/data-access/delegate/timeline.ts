@@ -8,26 +8,36 @@ import {
     competitionEvents,
     competitionRounds,
     competitions,
+    members,
     organizations,
 } from "~/db/schema";
 import type { User } from "better-auth";
 
 export async function getDelegateTimeline(user: User): Promise<TimelineEventDef[]> {
-    // 1. Fetch user's bookmarks/registrations
+    // 1. Fetch user's delegate memberships
+    const delegateMemberships = await db.query.members.findMany({
+        where: and(eq(members.userId, user.id), eq(members.role, "delegate")),
+    });
+
+    const delegateOrgIds = delegateMemberships.map((m) => m.organizationId);
+
+    let registeredCompIds: string[] = [];
+    if (delegateOrgIds.length > 0) {
+        const delegateCompetitions = await db.query.competitions.findMany({
+            where: inArray(competitions.organizationId, delegateOrgIds),
+            columns: { id: true },
+        });
+        registeredCompIds = delegateCompetitions.map((c) => c.id);
+    }
+
+    // 2. Fetch user's bookmarks
     const userBookmarks = await db.query.bookmarks.findMany({
         where: eq(bookmarks.userId, user.id),
     });
 
-    if (!userBookmarks.length) {
-        return [];
-    }
-
-    const registeredCompIds = userBookmarks
-        .filter((b) => b.isRegistered)
-        .map((b) => b.competitionId);
-
+    // Bookmarked only = Bookmarked AND NOT in registeredCompIds
     const bookmarkedOnlyIds = userBookmarks
-        .filter((b) => b.isBookmarked && !b.isRegistered)
+        .filter((b) => b.isBookmarked && !registeredCompIds.includes(b.competitionId))
         .map((b) => b.competitionId);
 
     const allRelevantIds = [...registeredCompIds, ...bookmarkedOnlyIds];

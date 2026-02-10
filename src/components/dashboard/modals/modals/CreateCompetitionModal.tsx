@@ -40,7 +40,9 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
             name: "",
             societyName: "",
             tagline: "",
-            category: "tech",
+            category: "Open",
+            hashtags: [],
+            bannerId: null,
             posterId: null,
         },
     });
@@ -109,10 +111,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                 name="hashtags"
                                 helperText="Add keywords to help delegates find your competition. Press Enter or comma to add each keyword."
                             >
-                                <TagsInput
-                                    placeholder="e.g. AI, machine learning, innovation"
-                                    maxTags={10}
-                                />
+                                <TagsInput placeholder="e.g. AI, machine learning, innovation" maxTags={10} />
                             </Form.Item>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -127,7 +126,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                             helperText="Helps delegates find your competition in their niche."
                                         >
                                             <div className="space-y-3">
-                                                <Select 
+                                                <Select
                                                     onValueChange={(value) => {
                                                         if (value === "custom") {
                                                             setShowCustomInput(true);
@@ -138,8 +137,12 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                                             setShowCustomInput(false);
                                                             field.onChange(value);
                                                         }
-                                                    }} 
-                                                    defaultValue={competitionCategoryOptions.includes(field.value as any) ? field.value : "custom"}
+                                                    }}
+                                                    defaultValue={
+                                                        competitionCategoryOptions.includes(field.value as any)
+                                                            ? field.value
+                                                            : "custom"
+                                                    }
                                                 >
                                                     <SelectTrigger className="bg-input-background px-4">
                                                         <SelectValue placeholder="Select a category" />
@@ -150,9 +153,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                                                                 {cat}
                                                             </SelectItem>
                                                         ))}
-                                                        <SelectItem value="custom">
-                                                            Custom
-                                                        </SelectItem>
+                                                        <SelectItem value="custom">Custom</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 {showCustomInput && (

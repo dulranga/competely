@@ -1,12 +1,11 @@
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { Header } from "~/components/ui/header";
-import { getBookmarkedCompetitions } from "~/data-access/delegate/bookmark";
+import { getBookmarkedCompetitions, getRegistrationStatuses } from "~/data-access/delegate/bookmark";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
 export default async function BookmarksPage() {
     const bookmarkedCompetitions = await getBookmarkedCompetitions();
-    
+
     // Get registration statuses for bookmarked competitions
     const competitionIds = bookmarkedCompetitions.map((c: any) => c.id);
     const registrationStatuses = await getRegistrationStatuses(competitionIds);
@@ -21,7 +20,10 @@ export default async function BookmarksPage() {
                 {bookmarkedCompetitions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
                         {bookmarkedCompetitions.map((comp) => (
-                            <CompetitionCard key={comp.id} {...mapCompetitionToCardProps(comp, true)} />
+                            <CompetitionCard
+                                key={comp.id}
+                                {...mapCompetitionToCardProps(comp, true, registrationStatuses.get(comp.id) || false)}
+                            />
                         ))}
                     </div>
                 ) : (

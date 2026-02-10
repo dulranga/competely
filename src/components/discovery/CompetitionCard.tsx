@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
 import { toggleBookmarkAction, toggleRegistrationAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
+import { StatusBadge } from "~/components/StatusBadge";
 
 export type CompetitionStatus = "Ongoing" | "Upcoming" | "Closed" | "Registered" | "Finished";
 
@@ -23,9 +24,12 @@ interface CompetitionCardProps {
     category?: string;
     organizerName?: string;
     status?: CompetitionStatus;
+    // New props for StatusBadge
+    startDate?: Date | string | null;
+    endDate?: Date | string | null;
+    isRegistered?: boolean;
     variant?: "grid" | "list";
     isBookmarked?: boolean;
-    isRegistered?: boolean;
     onClick?: () => void;
 }
 
@@ -33,7 +37,8 @@ const statusStyles: Record<CompetitionStatus, string> = {
     Ongoing: "bg-amber-500/90 text-white hover:bg-amber-600 shadow-[0_0_12px_rgba(245,158,11,0.4)] border-amber-400/20",
     Upcoming: "bg-blue-500/90 text-white hover:bg-blue-600 shadow-[0_0_12px_rgba(59,130,246,0.4)] border-blue-400/20",
     Closed: "bg-red-500/90 text-white hover:bg-red-600 shadow-[0_0_12px_rgba(239,68,68,0.4)] border-red-400/20",
-    Registered: "bg-green-500/90 text-white hover:bg-green-600 shadow-[0_0_12px_rgba(34,197,94,0.4)] border-green-400/20",
+    Registered:
+        "bg-green-500/90 text-white hover:bg-green-600 shadow-[0_0_12px_rgba(34,197,94,0.4)] border-green-400/20",
     Finished: "bg-gray-600/90 text-white hover:bg-gray-700 border-gray-500/20",
 };
 
@@ -48,6 +53,8 @@ export function CompetitionCard({
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
+    startDate,
+    endDate,
     variant = "grid",
     isBookmarked: initialIsBookmarked = false,
     isRegistered = false,
@@ -60,7 +67,7 @@ export function CompetitionCard({
     const handleBookmarkClick = async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        
+
         if (!competitionId) {
             toast.error("Competition ID is missing");
             return;
@@ -115,50 +122,30 @@ export function CompetitionCard({
 
     const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
-            className={cn(
-                "rounded-full transition-all duration-300 active:scale-95",
-                className
-            )}
+            className={cn("rounded-full transition-all duration-300 active:scale-95", className)}
             onClick={handleBookmarkClick}
             disabled={isPending}
             type="button"
         >
             <Bookmark
-                className={cn(
-                    "transition-all",
-                    iconSize,
-                    isBookmarkedState
-                        ? "fill-current"
-                        : "hover:scale-110"
-                )}
+                className={cn("transition-all", iconSize, isBookmarkedState ? "fill-current" : "hover:scale-110")}
             />
         </button>
     );
 
     const RegisterButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
-            className={cn(
-                "rounded-full transition-all duration-300 active:scale-95",
-                className
-            )}
+            className={cn("rounded-full transition-all duration-300 active:scale-95", className)}
             onClick={handleRegistrationClick}
             disabled={isPending}
             type="button"
             title={isRegisteredState ? "Unregister" : "Register"}
         >
             {isRegisteredState ? (
-                <UserMinus
-                    className={cn(
-                        "transition-all text-red-500 hover:text-red-600",
-                        iconSize
-                    )}
-                />
+                <UserMinus className={cn("transition-all text-red-500 hover:text-red-600", iconSize)} />
             ) : (
                 <UserPlus
-                    className={cn(
-                        "transition-all text-green-500 hover:text-green-600 hover:scale-110",
-                        iconSize
-                    )}
+                    className={cn("transition-all text-green-500 hover:text-green-600 hover:scale-110", iconSize)}
                 />
             )}
         </button>
@@ -172,16 +159,18 @@ export function CompetitionCard({
             >
                 {/* Status Badge */}
                 <div className="shrink-0">
-                    <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-[10px] font-bold tracking-wide uppercase", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="rounded-full px-3 py-1 text-[10px]"
+                    />
                 </div>
 
                 {/* Main Info */}
                 <div className="flex-1 min-w-0 space-y-1 pr-6 sm:pr-0">
-                    <h3 className="text-lg font-bold text-foreground leading-tight truncate">
-                        {title}
-                    </h3>
+                    <h3 className="text-lg font-bold text-foreground leading-tight truncate">{title}</h3>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5 text-primary/70" />
@@ -208,22 +197,19 @@ export function CompetitionCard({
                         >
                             {organizerName}
                         </Button>
-                        <BookmarkButton 
+                        <BookmarkButton
                             className="p-1.5 hover:bg-gray-100"
                             iconSize={cn(
                                 "h-4 w-4",
-                                isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground",
                             )}
                         />
-                        <RegisterButton 
-                            className="p-1.5 hover:bg-gray-100"
-                            iconSize="h-4 w-4"
-                        />
+                        <RegisterButton className="p-1.5 hover:bg-gray-100" iconSize="h-4 w-4" />
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
                 </div>
             </Card>
-        )
+        );
     }
 
     return (
@@ -245,23 +231,27 @@ export function CompetitionCard({
 
                 {/* Badge (Top Left) */}
                 <div className="absolute top-5 left-5 z-10">
-                    <Badge variant="secondary" className={cn("backdrop-blur-md border rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="backdrop-blur-md rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300"
+                    />
                 </div>
 
                 {/* Action Buttons (Top Right) */}
                 <div className="absolute top-5 right-5 z-10 flex flex-col gap-2">
-                    <BookmarkButton 
+                    <BookmarkButton
                         className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/bookmark"
                         iconSize={cn(
                             "h-5 w-5",
                             isBookmarkedState
                                 ? "text-white scale-110"
-                                : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white"
+                                : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white",
                         )}
                     />
-                    <RegisterButton 
+                    <RegisterButton
                         className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/register"
                         iconSize="h-5 w-5"
                     />
@@ -278,9 +268,7 @@ export function CompetitionCard({
             {/* Content Body */}
             <CardContent className="p-6 pt-5 space-y-5">
                 {/* Description */}
-                <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">
-                    {description}
-                </p>
+                <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
 
                 {/* Metadata List */}
                 <div className="space-y-3.5">

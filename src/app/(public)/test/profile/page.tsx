@@ -1,10 +1,9 @@
+import { Code, Github, Globe, Mail, Trophy } from "lucide-react";
+import { AnimatedBackground } from "~/components/ui/animated-background";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { TechBorder } from "~/components/ui/tech-border";
-import { AnimatedBackground } from "~/components/ui/animated-background";
-import { MapPin, Trophy, Star, Award, Code, ExternalLink, Github, Globe, Mail, Target, ArrowRight } from "lucide-react";
-import { cn } from "~/lib/utils";
-import { getUserProfile } from "~/data-access/get-profile";
+import { getUserProfile } from "~/data-access/profile";
 import { ProfileClient } from "./client-page";
 
 export default async function ProfilePage() {
@@ -31,15 +30,17 @@ export default async function ProfilePage() {
                                 <div className="relative group">
                                     <div className="w-32 h-32 rounded-2xl bg-white p-1 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-300">
                                         <div className="w-full h-full rounded-xl bg-[#0c0803] flex items-center justify-center overflow-hidden relative">
-                                            {
-                                                user.image ? (
-                                                    <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <span className="text-4xl font-black text-white bg-[#0c0803] w-full h-full flex items-center justify-center">
-                                                        {user.name.charAt(0).toUpperCase()}
-                                                    </span>
-                                                )
-                                            }
+                                            {user.image ? (
+                                                <img
+                                                    src={user.image}
+                                                    alt={user.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <span className="text-4xl font-black text-white bg-[#0c0803] w-full h-full flex items-center justify-center">
+                                                    {user.name.charAt(0).toUpperCase()}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="absolute -bottom-2 -right-2 bg-[#6dd594] text-[#0c0803] text-xs font-black px-2 py-1 rounded-md border-2 border-white shadow-sm">
@@ -51,9 +52,14 @@ export default async function ProfilePage() {
                                 <div className="flex-1 pt-2 md:pt-16">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                         <div>
-                                            <h1 className="text-3xl font-black text-[#0c0803] tracking-tight">{user.name}</h1>
+                                            <h1 className="text-3xl font-black text-[#0c0803] tracking-tight">
+                                                {user.name}
+                                            </h1>
                                             <div className="flex items-center gap-3 text-[#0c0803]/60 mt-1">
-                                                <Badge variant="secondary" className="bg-[#e5ab7d]/10 text-[#e5ab7d] border-[#e5ab7d]/20">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="bg-[#e5ab7d]/10 text-[#e5ab7d] border-[#e5ab7d]/20"
+                                                >
                                                     {user.role || "Member"}
                                                 </Badge>
                                                 <div className="flex items-center gap-1 text-xs font-medium">
@@ -83,9 +89,15 @@ export default async function ProfilePage() {
                                     frontend wizard by day. Always learning, always building.
                                 </p>
                                 <div className="flex items-center gap-4">
-                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors"><Globe size={20} /></a>
-                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors"><Mail size={20} /></a>
-                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors"><Github size={20} /></a>
+                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors">
+                                        <Globe size={20} />
+                                    </a>
+                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors">
+                                        <Mail size={20} />
+                                    </a>
+                                    <a href="#" className="text-[#0c0803]/40 hover:text-[#e5ab7d] transition-colors">
+                                        <Github size={20} />
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -104,19 +116,27 @@ export default async function ProfilePage() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-[#fbf6f3] p-4 rounded-xl border border-[#e8e2de]/50">
                                     <div className="text-2xl font-black text-[#0c0803]">12</div>
-                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">Wins</div>
+                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">
+                                        Wins
+                                    </div>
                                 </div>
                                 <div className="bg-[#fbf6f3] p-4 rounded-xl border border-[#e8e2de]/50">
                                     <div className="text-2xl font-black text-[#0c0803]">Top 5%</div>
-                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">Rank</div>
+                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">
+                                        Rank
+                                    </div>
                                 </div>
                                 <div className="bg-[#fbf6f3] p-4 rounded-xl border border-[#e8e2de]/50">
                                     <div className="text-2xl font-black text-[#0c0803]">2.4 k</div>
-                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">Points</div>
+                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">
+                                        Points
+                                    </div>
                                 </div>
                                 <div className="bg-[#fbf6f3] p-4 rounded-xl border border-[#e8e2de]/50">
                                     <div className="text-2xl font-black text-[#0c0803]">48</div>
-                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">Events</div>
+                                    <div className="text-[10px] uppercase font-bold text-[#0c0803]/40 tracking-wider">
+                                        Events
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -128,11 +148,17 @@ export default async function ProfilePage() {
                                 Skills
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {["React", "TypeScript", "Node.js", "TailwindCSS", "Next.js", "GraphQL", "Rust"].map((skill) => (
-                                    <Badge key={skill} variant="outline" className="bg-transparent border-[#e8e2de] text-[#0c0803]/70 hover:border-[#e5ab7d] hover:text-[#e5ab7d] transition-colors cursor-default">
-                                        {skill}
-                                    </Badge>
-                                ))}
+                                {["React", "TypeScript", "Node.js", "TailwindCSS", "Next.js", "GraphQL", "Rust"].map(
+                                    (skill) => (
+                                        <Badge
+                                            key={skill}
+                                            variant="outline"
+                                            className="bg-transparent border-[#e8e2de] text-[#0c0803]/70 hover:border-[#e5ab7d] hover:text-[#e5ab7d] transition-colors cursor-default"
+                                        >
+                                            {skill}
+                                        </Badge>
+                                    ),
+                                )}
                             </div>
                         </div>
                     </div>

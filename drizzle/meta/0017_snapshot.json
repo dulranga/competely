@@ -729,8 +729,7 @@
                 },
                 "category": {
                     "name": "category",
-                    "type": "competition_category",
-                    "typeSchema": "public",
+                    "type": "text",
                     "primaryKey": false,
                     "notNull": false
                 },
