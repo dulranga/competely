@@ -32,6 +32,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
                 endDate={data.endDate}
                 competitionId={competitionId}
                 isBookmarked={data.isBookmarked}
+                isRegistered={data.isRegistered}
                 isPreview={isPreview}
             />
 
