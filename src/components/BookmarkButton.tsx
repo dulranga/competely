@@ -5,6 +5,8 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { cn } from "~/lib/utils";
 import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
+import { useRouter } from "next/navigation";
+import { authClient } from "~/lib/auth-client";
 
 interface BookmarkButtonProps {
     competitionId: string;
@@ -24,13 +26,24 @@ export function BookmarkButton({
     initialIsBookmarked = false,
     className,
     size = "md",
-}: BookmarkButtonProps) {
+    isPreview = false,
+}: BookmarkButtonProps & { isPreview?: boolean }) {
     const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
     const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+    const { data: session } = authClient.useSession();
 
     const handleClick = async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
+
+        if (isPreview) return;
+
+        if (!session) {
+            const callbackURL = encodeURIComponent(window.location.href);
+            router.push(`/login?callbackURL=${callbackURL}`);
+            return;
+        }
 
         if (!competitionId) {
             toast.error("Competition ID is missing");
