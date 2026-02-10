@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { toast } from "sonner";
 import { useState } from "react";
 import { cn } from "~/lib/utils";
+import AnnouncementsModal from "../delegate/announcements/AnnouncementsModal";
 
 const announcementSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -26,6 +27,7 @@ interface SendAnnouncementsProps {
 
 export default function SendAnnouncements({ roundId }: SendAnnouncementsProps) {
     const [isSending, setIsSending] = useState(false);
+    const [isPastAnnouncementsOpen, setIsPastAnnouncementsOpen] = useState(false);
 
     const {
         register,
@@ -61,6 +63,7 @@ export default function SendAnnouncements({ roundId }: SendAnnouncementsProps) {
                 <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => setIsPastAnnouncementsOpen(true)}
                     className="bg-[#0c0d16] text-white hover:bg-[#1a1b26] hover:text-white rounded-full px-4 py-2 text-xs font-bold transition-all flex items-center gap-2"
                 >
                     View Past Announcements <History size={14} className="rotate-0" />
@@ -101,6 +104,11 @@ export default function SendAnnouncements({ roundId }: SendAnnouncementsProps) {
                     </div>
                 </form>
             </CardContent>
+            <AnnouncementsModal
+                isOpen={isPastAnnouncementsOpen}
+                onClose={() => setIsPastAnnouncementsOpen(false)}
+                roundId={roundId}
+            />
         </Card>
     );
 }

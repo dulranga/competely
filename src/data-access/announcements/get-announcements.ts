@@ -6,10 +6,21 @@ import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 
 export async function getAnnouncementsByRoundDAL(roundId: string) {
-    return await db.query.announcements.findMany({
-        where: eq(announcements.roundId, roundId),
-        orderBy: [desc(announcements.createdAt)],
-    });
+    return await db
+        .select({
+            id: announcements.id,
+            title: announcements.title,
+            content: announcements.content,
+            createdAt: announcements.createdAt,
+            roundName: competitionRounds.name,
+            competitionName: organizations.name,
+        })
+        .from(announcements)
+        .innerJoin(competitionRounds, eq(announcements.roundId, competitionRounds.id))
+        .innerJoin(competitions, eq(competitionRounds.competitionId, competitions.id))
+        .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
+        .where(eq(competitionRounds.id, roundId))
+        .orderBy(desc(announcements.createdAt));
 }
 
 export async function getLatestAnnouncementForUserDAL() {

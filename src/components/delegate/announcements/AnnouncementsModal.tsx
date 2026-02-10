@@ -6,6 +6,7 @@ import { Loader2, Megaphone } from "lucide-react";
 import {
     getAllUserAnnouncementsAction,
     getAnnouncementsByCompetitionAction,
+    getAnnouncementsByRoundAction,
 } from "~/data-access/announcements/actions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -14,19 +15,27 @@ interface AnnouncementsModalProps {
     isOpen: boolean;
     onClose: () => void;
     competitionId?: string;
+    roundId?: string;
 }
 
-export default function AnnouncementsModal({ isOpen, onClose, competitionId }: AnnouncementsModalProps) {
+export default function AnnouncementsModal({ isOpen, onClose, competitionId, roundId }: AnnouncementsModalProps) {
     const { data: announcements = [], isLoading } = useQuery({
-        queryKey: competitionId ? ["competition-announcements", competitionId] : ["all-announcements"],
-        queryFn: () =>
-            competitionId ? getAnnouncementsByCompetitionAction(competitionId) : getAllUserAnnouncementsAction(),
+        queryKey: competitionId
+            ? ["competition-announcements", competitionId]
+            : roundId
+              ? ["round-announcements", roundId]
+              : ["all-announcements"],
+        queryFn: () => {
+            if (competitionId) return getAnnouncementsByCompetitionAction(competitionId);
+            if (roundId) return getAnnouncementsByRoundAction(roundId);
+            return getAllUserAnnouncementsAction();
+        },
         enabled: isOpen,
     });
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] max-h-[80vh] flex flex-col p-0 gap-0 overflow-hidden rounded-[32px] border-[#e8e2de]">
+            <DialogContent className="sm:max-w-150 max-h-[80vh] flex flex-col p-0 gap-0 overflow-hidden rounded-[32px] border-[#e8e2de]">
                 <DialogHeader className="p-8 border-b border-[#f3f0ee] bg-[#fbf6f3]">
                     <DialogTitle className="text-3xl font-black uppercase tracking-tight text-[#0c0803] flex items-center gap-3">
                         <Megaphone className="text-primary" size={28} />

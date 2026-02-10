@@ -10,6 +10,7 @@ import {
     getAnnouncementsByCompetitionDAL,
     getLatestAnnouncementByCompetitionDAL,
     getLatestAnnouncementForUserDAL,
+    getAnnouncementsByRoundDAL,
 } from "./get-announcements";
 import { revalidatePath } from "next/cache";
 
@@ -77,4 +78,8 @@ export async function getLatestAnnouncementByCompetitionAction(competitionId: st
 
 export async function getAnnouncementsByCompetitionAction(competitionId: string) {
     return await getAnnouncementsByCompetitionDAL(competitionId);
+}
+
+export async function getAnnouncementsByRoundAction(roundId: string) {
+    return await getAnnouncementsByRoundDAL(roundId);
 }
