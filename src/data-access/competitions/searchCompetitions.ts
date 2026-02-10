@@ -48,7 +48,8 @@ export async function searchCompetitions(query: string) {
                 ilike(organizations.name, searchPattern),
                 ilike(competitions.tagline, searchPattern),
                 ilike(competitions.shortDescription, searchPattern),
-                ilike(competitions.societyName, searchPattern)
+                ilike(competitions.societyName, searchPattern),
+                sql`array_to_string(${competitions.hashtags}, ' ') ILIKE ${searchPattern}`
             )
         )
         .orderBy(desc(competitions.createdAt));

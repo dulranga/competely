@@ -73,7 +73,7 @@ export function DiscoverContent({
 
     // Filter states - using the default filters as initial values
     const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-    
+
     // Debug log whenever filters change
     console.log('Current filters state:', filters);
 

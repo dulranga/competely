@@ -15,8 +15,8 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
 
     const params = await searchParams;
     const query = typeof params.q === 'string' ? params.q : '';
-    
-    const competitions = query.trim() 
+
+    const competitions = query.trim()
         ? await searchCompetitions(query)
         : await getAllCompetitions();
 
@@ -32,8 +32,8 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
     }
 
     return (
-        <DiscoverContent 
-            isAuthenticated={isAuthenticated} 
+        <DiscoverContent
+            isAuthenticated={isAuthenticated}
             initialCompetitions={competitions || []}
             initialSearchQuery={query}
             bookmarkStatuses={bookmarkStatuses}
