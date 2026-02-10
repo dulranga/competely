@@ -3,7 +3,9 @@
 import {
     Brain,
     Code2,
+    Feather,
     Gamepad2,
+    Globe2,
     LineChart,
     Mic2,
     MonitorSmartphone,
@@ -12,25 +14,22 @@ import {
     ShieldCheck,
     User,
     Wrench,
-    Globe2,
-    Feather,
 } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { TopicCard } from "~/components/discovery/TopicCard";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { FooterBottom } from "~/components/ui/footer-bottom";
-import { cn, getFileUrlById } from "~/lib/utils";
+import { Input } from "~/components/ui/input";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "~/components/ui/sheet";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "~/components/ui/sheet";
-import { filterCompetitions, DEFAULT_FILTERS } from "./filterUtils";
+import { cn } from "~/lib/utils";
+import { DEFAULT_FILTERS, filterCompetitions } from "./filterUtils";
 import type { FilterState } from "./types";
-
-import topicsData from "~/components/sample-data/topics.json";
 import competitionsData from "~/components/sample-data/competitions.json";
+import topicsData from "~/components/sample-data/topics.json";
 
 // Map icon names to components
 const iconMap: Record<string, any> = {
@@ -64,6 +63,7 @@ export function DiscoverContent({
     initialCompetitions = [],
     initialSearchQuery = "",
     bookmarkStatuses = new Map(),
+    registrationStatuses = new Map(),
     bookmarkCount = 0,
 }: DiscoverContentProps) {
     const router = useRouter();
@@ -76,6 +76,9 @@ export function DiscoverContent({
     
     // Debug log whenever filters change
     console.log('Current filters state:', filters);
+
+    // Debug log whenever filters change
+    console.log("Current filters state:", filters);
 
     const handleSearch = () => {
         if (searchQuery.trim()) {
@@ -105,12 +108,12 @@ export function DiscoverContent({
     // Filter competitions using the utility function - use sample data if no real data
     const competitionsToFilter = initialCompetitions.length > 0 ? initialCompetitions : competitionsData;
     const filteredCompetitions = filterCompetitions(competitionsToFilter, filters);
-    
-    console.log('DiscoverContent state:', { 
-        filterKeywords: filters.keywords, 
+
+    console.log("DiscoverContent state:", {
+        filterKeywords: filters.keywords,
         initialCompetitionsCount: initialCompetitions.length,
         usingTestData: initialCompetitions.length === 0,
-        filteredCount: filteredCompetitions.length 
+        filteredCount: filteredCompetitions.length,
     }); // Debug log
 
     return (
@@ -212,7 +215,7 @@ export function DiscoverContent({
                                         }
                                         keywords={filters.keywords}
                                         onKeywordsChange={(keywords) => {
-                                            console.log('Keywords changed in sidebar:', keywords); // Debug log
+                                            console.log("Keywords changed in sidebar:", keywords); // Debug log
                                             setFilters({ ...filters, keywords });
                                         }}
                                         statusFilters={filters.statusFilters}
@@ -247,7 +250,7 @@ export function DiscoverContent({
                                                 }
                                                 keywords={filters.keywords}
                                                 onKeywordsChange={(keywords) => {
-                                                    console.log('Keywords changed in mobile sidebar:', keywords); // Debug log
+                                                    console.log("Keywords changed in mobile sidebar:", keywords); // Debug log
                                                     setFilters({ ...filters, keywords });
                                                 }}
                                                 statusFilters={filters.statusFilters}
@@ -277,6 +280,7 @@ export function DiscoverContent({
                                                     {...mapCompetitionToCardProps(
                                                         comp,
                                                         bookmarkStatuses.get(comp.id) || false,
+                                                        registrationStatuses.get(comp.id) || false,
                                                     )}
                                                 />
                                             ))}

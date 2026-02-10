@@ -23,6 +23,8 @@ export async function getActiveCompetition() {
             societyName: competitions.societyName,
             tagline: competitions.tagline,
             category: competitions.category,
+            hashtags: competitions.hashtags,
+            bannerId: competitions.bannerId,
             posterId: competitions.posterId,
             startDate: competitions.startDate,
             endDate: competitions.endDate,

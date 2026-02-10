@@ -7,7 +7,7 @@ import type { CreateCompetitionSchema } from "~/lib/schemas/competition.schema";
 
 export async function updateCompetition(competitionId: string, data: Partial<CreateCompetitionSchema>) {
     console.log("updateCompetition called with:", { competitionId, data }); // Debug log
-    
+
     // 1. Get the organizationId for this competition
     const competition = await db.query.competitions.findFirst({
         where: eq(competitions.id, competitionId),
@@ -36,22 +36,18 @@ export async function updateCompetition(competitionId: string, data: Partial<Cre
         startDate: data.startDate,
         endDate: data.endDate,
         registrationDeadline: data.registrationDeadline,
+        societyName: data.societyName,
+
+        posterId: data.posterId,
     };
-    
+
     console.log("Updating competition with:", updateData); // Debug log
-    
-    const result = await db
+
+    await db
         .update(competitions)
-        .set({
-            tagline: data.tagline,
-            societyName: data.societyName,
-            category: data.category,
-            posterId: data.posterId,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            registrationDeadline: data.registrationDeadline,
-        })
-        .where(eq(competitions.id, competitionId));
+        .set(updateData)
+        .where(eq(competitions.id, competitionId))
+        .returning({ id: competitions.id, category: competitions.category });
 
     return { success: true };
 }
