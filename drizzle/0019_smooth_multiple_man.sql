@@ -1,0 +1,1 @@
+ALTER TABLE "competitions" ADD COLUMN "short_description" text;

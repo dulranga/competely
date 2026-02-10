@@ -22,6 +22,7 @@ export async function getActiveCompetition() {
             name: organizations.name,
             societyName: competitions.societyName,
             tagline: competitions.tagline,
+            shortDescription: competitions.shortDescription,
             category: competitions.category,
             hashtags: competitions.hashtags,
             bannerId: competitions.bannerId,

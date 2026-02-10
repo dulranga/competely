@@ -29,7 +29,7 @@ const MainInformationSection: FC<MainInformationSectionProps> = ({ competitionId
         resolver: zodResolver(mainInfoSchema),
         defaultValues: {
             // Merge defaults with initialData
-            tagline: initialData.tagline || "",
+
             description: initialData.description || "",
             resources: initialData.resources || [],
             socials: initialData.socials.length > 0 ? initialData.socials : [{ platform: "website", url: "" }],

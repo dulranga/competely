@@ -22,6 +22,7 @@ export async function searchCompetitions(query: string) {
             id: competitions.id,
             title: organizations.name,
             tagline: competitions.tagline,
+            shortDescription: competitions.shortDescription,
             organizerName: organizations.name,
             category: competitions.category,
             hashtags: competitions.hashtags,
@@ -44,7 +45,8 @@ export async function searchCompetitions(query: string) {
         .where(
             or(
                 ilike(organizations.name, searchPattern),
-                ilike(competitions.tagline, searchPattern)
+                ilike(competitions.tagline, searchPattern),
+                ilike(competitions.shortDescription, searchPattern)
             )
         )
         .orderBy(desc(competitions.createdAt));
