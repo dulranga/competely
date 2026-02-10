@@ -8,12 +8,14 @@ import { User } from "lucide-react";
 import Link from "next/link";
 
 export type CompetitionRole = "Owner" | "Admin" | "Judge" | "Committee";
+export type CompetitionStatus = "draft" | "published" | "archived";
 
 interface MyCompetitionCardProps {
     id: string;
     name: string;
     imageUrl: string;
     role: CompetitionRole;
+    status?: CompetitionStatus;
     ownerName?: string; // If not owner
     variant?: "grid" | "list";
     className?: string;
@@ -21,10 +23,16 @@ interface MyCompetitionCardProps {
 }
 
 const roleStyles: Record<CompetitionRole, string> = {
-    Owner: "bg-[#ff4d4f] hover:bg-[#ff4d4f]/90 text-white border-transparent", // Redish
-    Admin: "bg-[#1890ff] hover:bg-[#1890ff]/90 text-white border-transparent", // Blue
-    Judge: "bg-[#faad14] hover:bg-[#faad14]/90 text-white border-transparent", // Amber
-    Committee: "bg-[#52c41a] hover:bg-[#52c41a]/90 text-white border-transparent", // Green
+    Owner: "bg-primary text-primary-foreground border-transparent",
+    Admin: "bg-secondary text-secondary-foreground border-transparent",
+    Judge: "bg-accent text-accent-foreground border-transparent",
+    Committee: "bg-muted text-muted-foreground border-transparent",
+};
+
+const statusStyles: Record<CompetitionStatus, string> = {
+    draft: "bg-foreground text-background dark:bg-muted dark:text-muted-foreground border-transparent",
+    published: "bg-accent text-accent-foreground border-transparent",
+    archived: "bg-destructive text-destructive-foreground border-transparent",
 };
 
 export function MyCompetitionCard({
@@ -32,6 +40,7 @@ export function MyCompetitionCard({
     name,
     imageUrl,
     role,
+    status,
     ownerName,
     variant = "grid",
     className,
@@ -52,12 +61,25 @@ export function MyCompetitionCard({
                             {name}
                         </Link>
                     </h3>
-                    {role !== "Owner" && ownerName && (
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <User className="h-3 w-3" />
-                            <span>Owner: {ownerName}</span>
-                        </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {status && (
+                            <Badge
+                                variant="outline"
+                                className={cn(
+                                    "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                                    statusStyles[status],
+                                )}
+                            >
+                                {status}
+                            </Badge>
+                        )}
+                        {role !== "Owner" && ownerName && (
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <User className="h-3 w-3" />
+                                <span>Owner: {ownerName}</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <Badge
@@ -88,6 +110,18 @@ export function MyCompetitionCard({
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                {status && (
+                    <div className="absolute top-2 right-2 z-10">
+                        <Badge
+                            className={cn(
+                                "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm border-0 bg-background",
+                                statusStyles[status],
+                            )}
+                        >
+                            {status}
+                        </Badge>
+                    </div>
+                )}
             </div>
             <div className="px-4 flex items-center justify-between gap-2">
                 <h3 className="font-semibold text-base text-gray-900 truncate" title={name}>

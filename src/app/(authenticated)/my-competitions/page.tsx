@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { SearchBar } from "~/components/ui/search-bar";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import LatestAnnouncementBanner from "~/components/delegate/announcements/LatestAnnouncementBanner";
 
 export default function CompetitionsPage() {
     const [expandedSection, setExpandedSection] = useState<"registered" | "finished" | null>(null);
@@ -33,7 +34,7 @@ export default function CompetitionsPage() {
         category: "Open Category",
         registeredCount: 74,
         deadline: "Registration closed",
-        organizerName: "Game dev club"
+        organizerName: "Game dev club",
     }));
 
     const finishedCompetitions: MockCompetition[] = Array.from({ length: 12 }).map((_, i) => ({
@@ -44,25 +45,23 @@ export default function CompetitionsPage() {
         category: "School Category",
         registeredCount: 74,
         deadline: "Jan 17, 2026 (deadline)",
-        organizerName: "Hack dev Club"
+        organizerName: "Hack dev Club",
     }));
 
     // Filter competitions based on search query
     const filteredRegisteredCompetitions = useMemo(() => {
         if (!searchQuery.trim()) return registeredCompetitions;
         const query = searchQuery.toLowerCase();
-        return registeredCompetitions.filter(comp => 
-            comp.title.toLowerCase().includes(query) || 
-            comp.organizerName.toLowerCase().includes(query)
+        return registeredCompetitions.filter(
+            (comp) => comp.title.toLowerCase().includes(query) || comp.organizerName.toLowerCase().includes(query),
         );
     }, [searchQuery]);
 
     const filteredFinishedCompetitions = useMemo(() => {
         if (!searchQuery.trim()) return finishedCompetitions;
         const query = searchQuery.toLowerCase();
-        return finishedCompetitions.filter(comp => 
-            comp.title.toLowerCase().includes(query) || 
-            comp.organizerName.toLowerCase().includes(query)
+        return finishedCompetitions.filter(
+            (comp) => comp.title.toLowerCase().includes(query) || comp.organizerName.toLowerCase().includes(query),
         );
     }, [searchQuery]);
 
@@ -87,12 +86,7 @@ export default function CompetitionsPage() {
                 <div className="space-y-6">
                     <div className="flex flex-col gap-4">
                         {data.map((comp) => (
-                            <CompetitionCard
-                                key={comp.id}
-                                {...comp}
-                                variant="list"
-                                isBookmarked={false}
-                            />
+                            <CompetitionCard key={comp.id} {...comp} variant="list" isBookmarked={false} />
                         ))}
                     </div>
 
@@ -103,9 +97,27 @@ export default function CompetitionsPage() {
                             Previous
                         </Button>
                         <div className="flex items-center gap-2">
-                            <Button variant="default" size="icon" className="h-9 w-9 bg-[#1a1b25] hover:bg-[#2c2e3f] text-white font-medium">1</Button>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:bg-gray-100 font-medium">2</Button>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:bg-gray-100 font-medium">3</Button>
+                            <Button
+                                variant="default"
+                                size="icon"
+                                className="h-9 w-9 bg-[#1a1b25] hover:bg-[#2c2e3f] text-white font-medium"
+                            >
+                                1
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 text-muted-foreground hover:bg-gray-100 font-medium"
+                            >
+                                2
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 text-muted-foreground hover:bg-gray-100 font-medium"
+                            >
+                                3
+                            </Button>
                         </div>
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                             Next
@@ -120,12 +132,7 @@ export default function CompetitionsPage() {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.slice(0, 3).map((comp) => (
-                    <CompetitionCard
-                        key={comp.id}
-                        {...comp}
-                        variant="grid"
-                        isBookmarked={false}
-                    />
+                    <CompetitionCard key={comp.id} {...comp} variant="grid" isBookmarked={false} />
                 ))}
             </div>
         );
@@ -133,11 +140,8 @@ export default function CompetitionsPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
-
-
             {/* Main Layout */}
             <div className="flex-1 flex max-w-[1500px] mx-auto w-full px-4 md:px-8 py-8 gap-8">
-
                 {/* Left Sidebar - Persistent on desktop */}
                 <aside className="w-64 shrink-0 hidden lg:block">
                     <div className="sticky top-8">
@@ -147,6 +151,8 @@ export default function CompetitionsPage() {
 
                 {/* Right Content */}
                 <div className="flex-1 space-y-10">
+                    {/* Announcements */}
+                    <LatestAnnouncementBanner />
 
                     {/* Search Bar */}
                     <div className="w-full">
@@ -209,7 +215,6 @@ export default function CompetitionsPage() {
                             </div>
                         )}
                     </section>
-
                 </div>
             </div>
 

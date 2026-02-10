@@ -23,6 +23,24 @@ export const competitionRounds = pgTable(
     (table) => [index("competition_rounds_competition_id_idx").on(table.competitionId)],
 );
 
+export const announcements = pgTable(
+    "competition_round_announcements",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        roundId: uuid("round_id")
+            .notNull()
+            .references(() => competitionRounds.id, { onDelete: "cascade" }),
+        title: text("title").notNull(),
+        content: text("content").notNull(),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+        updatedAt: timestamp("updated_at")
+            .defaultNow()
+            .$onUpdate(() => new Date())
+            .notNull(),
+    },
+    (table) => [index("competition_round_announcements_round_id_idx").on(table.roundId)],
+);
+
 // 2. Competition Events
 export const competitionEvents = pgTable(
     "competition_events",

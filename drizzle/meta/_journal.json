@@ -134,6 +134,13 @@
       "when": 1770732682543,
       "tag": "0018_ Notifications Table Updated",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1770736356185,
+      "tag": "0019_announcements",
+      "breakpoints": true
     }
   ]
 }

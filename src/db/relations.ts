@@ -7,7 +7,12 @@ import {
     competitionResources,
     competitionSocialLinks,
 } from "./schemas/competition-home-schema";
-import { competitionEventResources, competitionEvents, competitionRounds } from "./schemas/competition-timeline-schema";
+import {
+    announcements,
+    competitionEventResources,
+    competitionEvents,
+    competitionRounds,
+} from "./schemas/competition-timeline-schema";
 import { competitions } from "./schemas/competitions-schema";
 import { files } from "./schemas/files-schema";
 import { formFields, formResponseAnswers, formResponses, forms } from "./schemas/forms-schema";
@@ -171,6 +176,14 @@ export const competitionRoundsRelations = relations(competitionRounds, ({ one, m
         references: [competitions.id],
     }),
     events: many(competitionEvents),
+    announcements: many(announcements),
+}));
+
+export const announcementsRelations = relations(announcements, ({ one }) => ({
+    round: one(competitionRounds, {
+        fields: [announcements.roundId],
+        references: [competitionRounds.id],
+    }),
 }));
 
 export const competitionEventsRelations = relations(competitionEvents, ({ one, many }) => ({
