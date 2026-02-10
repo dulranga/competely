@@ -25,7 +25,7 @@ const loginSchema = z.object({
     password: passwordSchema,
 });
 
-const Login: FC<PageProps> = ({ }) => {
+const Login: FC<PageProps> = ({}) => {
     const [showUnverifiedAlert, setShowUnverifiedAlert] = useState(false);
     const [disableSendVerification, setDisableSendVerification] = useState(false);
     const router = useRouter();
@@ -157,7 +157,7 @@ const Login: FC<PageProps> = ({ }) => {
                                     Log in
                                 </Button>
                             </div>
-                            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                            {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                                 <span className="bg-card text-muted-foreground relative z-10 px-2">
                                     Or continue with
                                 </span>
@@ -165,12 +165,13 @@ const Login: FC<PageProps> = ({ }) => {
                             <div className="grid gap-2">
                                 <GoogleLoginButton callbackURL={callBackUrl} />
                                 <FacebookLoginButton callbackURL={callBackUrl} />
-                            </div>
+                            </div> */}
                             <div className="text-center text-sm">
                                 Don&apos;t have an account?{" "}
                                 <Link
-                                    href={`/register${callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
-                                        }`}
+                                    href={`/register${
+                                        callBackUrl ? `?callbackURL=${encodeURIComponent(callBackUrl)}` : ""
+                                    }`}
                                     className="underline underline-offset-4"
                                 >
                                     Sign up
