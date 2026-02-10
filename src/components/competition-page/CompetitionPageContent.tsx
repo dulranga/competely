@@ -21,6 +21,35 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
     const bannerUrl = data.banner?.id ? `/api/upload?file_id=${data.banner.id}` : null;
     const logoUrl = data.logo?.id ? `/api/upload?file_id=${data.logo.id}` : null;
 
+    console.log("CompetitionPageContent DEBUG:", {
+        roundsCount: data.rounds?.length,
+        firstRoundEvents: data.rounds?.[0]?.events?.length,
+        firstEvent: data.rounds?.[0]?.events?.[0],
+    });
+
+    // Transform events for timeline
+    const timelineEvents = data.rounds
+        ?.flatMap((round: any) =>
+            round.events
+                ?.filter((event: any) => event.addToTimeline)
+                .map((event: any) => ({
+                    id: event.id,
+                    roundName: round.name, // We will show round name instead of competition name
+                    eventName: event.name,
+                    startDatetime: event.startDate ? new Date(event.startDate) : null,
+                    endDatetime: event.endDate ? new Date(event.endDate) : null,
+                    status: getEventStatus(event.startDate, event.endDate),
+                    competitionName: round.name, // reusing prop for round name as requested
+                }))
+        )
+        .sort((a: any, b: any) => {
+            if (!a.startDatetime) return 1;
+            if (!b.startDatetime) return -1;
+            return a.startDatetime.getTime() - b.startDatetime.getTime();
+        }) || [];
+
+    console.log("CompetitionPageContent DEBUG: timelineEvents", timelineEvents);
+
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
             <HeroSection
@@ -129,7 +158,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
                 </div>
             </main>
 
-            <TimelineSection />
+            <TimelineSection events={timelineEvents} />
 
             <PrizesSection prizes={data.prizes} />
 
@@ -147,4 +176,15 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
             />
         </div>
     );
+}
+
+function getEventStatus(startDate: string | Date | null, endDate: string | Date | null): "upcoming" | "active" | "completed" {
+    if (!startDate) return "upcoming";
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = endDate ? new Date(endDate) : new Date(start.getTime() + 6 * 60 * 60 * 1000); // Default 6 hours if no end date
+
+    if (now < start) return "upcoming";
+    if (now >= start && now <= end) return "active";
+    return "completed";
 }
