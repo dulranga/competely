@@ -1,13 +1,13 @@
 "use client";
 
-import { Calendar, MapPin, Users, Shapes, Bookmark, UserPlus, UserMinus } from "lucide-react";
+import { Calendar, MapPin, Users, Shapes, Bookmark } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
-import { toggleBookmarkAction, toggleRegistrationAction } from "~/app/(authenticated)/bookmarks/actions";
+import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
 import { StatusBadge } from "~/components/StatusBadge";
 
@@ -61,7 +61,7 @@ export function CompetitionCard({
     onClick,
 }: CompetitionCardProps) {
     const [isBookmarkedState, setIsBookmarked] = useState(initialIsBookmarked);
-    const [isRegisteredState, setIsRegistered] = useState(isRegistered);
+
     const [isPending, startTransition] = useTransition();
 
     const handleBookmarkClick = async (e: React.MouseEvent) => {
@@ -93,32 +93,7 @@ export function CompetitionCard({
         });
     };
 
-    const handleRegistrationClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!competitionId) {
-            toast.error("Competition ID is missing");
-            return;
-        }
 
-        const newState = !isRegisteredState;
-        setIsRegistered(newState);
-
-        startTransition(async () => {
-            try {
-                const result = await toggleRegistrationAction(competitionId);
-                if (result.success) {
-                    setIsRegistered(result.isRegistered ?? newState);
-                    toast.success(result.isRegistered ? "Successfully registered!" : "Registration cancelled");
-                } else {
-                    setIsRegistered(!newState);
-                    toast.error(result.error || "Failed to update registration");
-                }
-            } catch (error) {
-                setIsRegistered(!newState);
-                toast.error("Failed to update registration");
-            }
-        });
-    };
 
     const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
@@ -133,23 +108,7 @@ export function CompetitionCard({
         </button>
     );
 
-    const RegisterButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
-        <button
-            className={cn("rounded-full transition-all duration-300 active:scale-95", className)}
-            onClick={handleRegistrationClick}
-            disabled={isPending}
-            type="button"
-            title={isRegisteredState ? "Unregister" : "Register"}
-        >
-            {isRegisteredState ? (
-                <UserMinus className={cn("transition-all text-red-500 hover:text-red-600", iconSize)} />
-            ) : (
-                <UserPlus
-                    className={cn("transition-all text-green-500 hover:text-green-600 hover:scale-110", iconSize)}
-                />
-            )}
-        </button>
-    );
+
 
     if (variant === "list") {
         return (
@@ -204,7 +163,7 @@ export function CompetitionCard({
                                 isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground",
                             )}
                         />
-                        <RegisterButton className="p-1.5 hover:bg-gray-100" iconSize="h-4 w-4" />
+
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
                 </div>
@@ -251,10 +210,7 @@ export function CompetitionCard({
                                 : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white",
                         )}
                     />
-                    <RegisterButton
-                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/register"
-                        iconSize="h-5 w-5"
-                    />
+
                 </div>
 
                 {/* Center Text Overlay */}
