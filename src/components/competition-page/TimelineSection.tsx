@@ -1,52 +1,117 @@
-"use client"
+import { cn } from "~/lib/utils";
+import { TimelineCard } from "~/components/timeline/TimelineCard";
 
-export function TimelineSection() {
-    const events = [
-        { date: "NOV 03", time: "11.00 AM", title: "Registration" },
-        { date: "NOV 04", time: "11.30 AM", title: "Introduction" },
-        { date: "NOV 04", time: "12.00 PM", title: "Workshop 1" },
-        { date: "NOV 20", time: "04.00 PM", title: "Proposal Submission" },
-        { date: "NOV 30", time: "08.00 AM", title: "Workshop 2" },
-        { date: "DEC 25", time: "10.00 AM", title: "Semi-Finals" },
-        { date: "JAN 03", time: "09.00 AM", title: "Workshop 3" },
-        { date: "JAN 08", time: "11.00 AM", title: "Grand-Finals" },
-    ]
+interface TimelineSectionProps {
+    events: any[];
+}
+
+export function TimelineSection({ events }: TimelineSectionProps) {
+    if (!events || events.length === 0) {
+        return (
+            <section className="py-16 bg-muted/30">
+                <div className="max-w-[1500px] mx-auto px-4 md:px-8 text-center text-muted-foreground">
+                    <h2 className="text-4xl font-black text-foreground mb-2 uppercase">Timeline</h2>
+                    <p className="mb-4">No timeline events scheduled yet.</p>
+                    {/* Debug info - hidden in production ideally, but helpful now */}
+                    <div className="text-xs text-left bg-gray-100 p-4 rounded overflow-auto max-h-40 hidden">
+                        DEBUG: Events is empty or null.
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="py-16 bg-muted/30">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-[1500px] mx-auto px-4 md:px-8">
                 <h2 className="text-4xl font-black text-foreground mb-2 uppercase">Timeline</h2>
                 <p className="text-lg text-muted-foreground mb-12">Know what's happening and when.</p>
 
-                <div className="relative">
-                    {/* Horizontal Line */}
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-foreground -translate-y-1/2 z-0 hidden md:block mt-8"></div>
+                <div className="w-full">
+                    <div className="relative w-full overflow-x-auto pb-12 pt-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="flex px-4 md:px-8 w-fit mx-auto pb-8 relative pt-4 [--pl-offset:1rem] md:[--pl-offset:2rem]">
+                            {/* Horizontal Line (Background) */}
+                            <div className="absolute top-[180px] left-0 w-full h-1 bg-gray-200 z-0" />
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 relative z-10">
-                        {events.map((event, index) => (
-                            <div key={index} className="flex flex-col items-center">
-                                {/* Hexagon/Shape Container */}
-                                <div className="w-full aspect-[3/4] bg-background border-2 border-foreground rounded-xl flex flex-col items-center justify-center p-2 text-center shadow-sm relative group hover:-translate-y-2 transition-transform duration-300">
+                            {/* Active Line Segment (Dynamic Progress) */}
+                            {(() => {
+                                const now = new Date().getTime();
+                                let lastPastIndex = -1;
 
-                                    {/* Bottom Arrow/Shape (CSS Hack for the diamond bottom look in visual) */}
-                                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-background border-b-2 border-r-2 border-foreground rotate-45"></div>
+                                for (let i = 0; i < events.length; i++) {
+                                    const start = events[i].startDatetime ? new Date(events[i].startDatetime).getTime() : 0;
+                                    if (start <= now && start > 0) {
+                                        lastPastIndex = i;
+                                    } else {
+                                        break;
+                                    }
+                                }
 
-                                    <div className="font-bold text-xs uppercase mb-1 text-foreground">{event.title}</div>
-                                    <div className="text-xl font-black uppercase leading-none mb-1 text-foreground">
-                                        {event.date.split(" ")[0]}
-                                        <br />
-                                        <span className="text-3xl">{event.date.split(" ")[1]}</span>
+                                let progressRatio = 0;
+                                if (lastPastIndex >= 0 && lastPastIndex < events.length - 1) {
+                                    const pastEventTime = new Date(events[lastPastIndex].startDatetime).getTime();
+                                    const nextEventTime = new Date(events[lastPastIndex + 1].startDatetime).getTime();
+                                    const totalDuration = nextEventTime - pastEventTime;
+                                    const elapsed = now - pastEventTime;
+
+                                    if (totalDuration > 0) {
+                                        progressRatio = Math.min(1, Math.max(0, elapsed / totalDuration));
+                                    }
+                                }
+
+                                let totalProgressUnits = 0;
+                                if (lastPastIndex === -1) {
+                                    totalProgressUnits = 0;
+                                } else {
+                                    totalProgressUnits = lastPastIndex + progressRatio;
+                                }
+
+                                const calculatedWidth = `calc(var(--pl-offset) + 6rem + (15rem * ${Math.max(0, totalProgressUnits)}))`;
+
+                                return (
+                                    <div
+                                        className="absolute top-[180px] left-0 h-1 bg-green-500 z-0 transition-all duration-1000 ease-out"
+                                        style={{ width: calculatedWidth }}
+                                    />
+                                );
+                            })()}
+
+                            {events.map((event) => {
+                                const isActive = event.status === "active";
+                                return (
+                                    <div key={event.id} className="relative flex flex-col items-center mr-12 last:mr-0 group w-48">
+                                        {/* Content Card */}
+                                        <TimelineCard
+                                            variant="home"
+                                            data={{
+                                                competitionName: event.roundName, // Showing round name as requested
+                                                eventName: event.eventName,
+                                                status: event.status,
+                                                startDatetime: event.startDatetime,
+                                            }}
+                                            className="mb-8"
+                                        />
+
+                                        {/* Dot on Line */}
+                                        <div className={cn(
+                                            "z-10 w-6 h-6 rounded-full border-4 bg-white transition-all duration-300 absolute top-[170px]",
+                                            isActive ? "border-green-500 scale-125" : "border-gray-300 group-hover:border-primary"
+                                        )} />
+
+                                        {/* Status Label below line */}
+                                        <div className={cn(
+                                            "mt-8 text-[10px] font-bold tracking-widest uppercase transition-colors absolute top-[190px]",
+                                            isActive ? "text-green-600" : "text-gray-400"
+                                        )}>
+                                            {isActive ? "Active" : "Upcoming"}
+                                        </div>
                                     </div>
-                                    <div className="font-bold text-xs text-muted-foreground">{event.time}</div>
-                                </div>
-
-                                {/* Dot on the line */}
-                                <div className="w-4 h-4 bg-foreground rounded-full border-4 border-background mt-8 z-20 hidden md:block"></div>
-                            </div>
-                        ))}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    )
+    );
 }
