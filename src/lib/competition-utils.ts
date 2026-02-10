@@ -56,6 +56,9 @@ export function mapCompetitionToCardProps(comp: any, isBookmarked = false, isUse
         category: comp.category || "",
         registeredCount: comp.registeredCount || 0,
         deadline: comp.deadline ? new Date(comp.deadline).toLocaleDateString() : "TBA",
+        startDate: comp.startDate,
+        endDate: comp.endDate,
+        isRegistered: comp.isRegistered,
         isBookmarked,
     };
 }

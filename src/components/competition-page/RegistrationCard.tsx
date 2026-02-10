@@ -29,20 +29,23 @@ export function RegistrationCard({
     competitionId,
     resources = [],
     registrationDeadline,
+    isPreview = false,
 }: {
     competitionId: string;
     resources?: Resource[];
     registrationDeadline?: Date | null;
+    isPreview?: boolean;
 }) {
     const [isPending, setIsPending] = useState(false);
     const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
     const router = useRouter();
-    const { data: session } = authClient.useSession();
+    const { data: session, isPending: isSessionPending } = authClient.useSession();
     const { openModal } = useModal();
 
     const { data: registrationDetails } = useQuery({
         queryKey: ["competition-registration-details", competitionId],
         queryFn: () => getPublicCompetitionRegistrationDetails(competitionId),
+        enabled: !isPreview,
     });
 
     // Auto-check deadline every second (UX: updates UI even without refresh)
@@ -59,6 +62,8 @@ export function RegistrationCard({
     }, [registrationDeadline, isRegistrationClosed]);
 
     const handleRegister = async () => {
+        if (isPreview) return;
+
         if (isRegistrationClosed) {
             toast.error("Registration is closed.");
             return;
@@ -105,7 +110,7 @@ export function RegistrationCard({
                         size="lg"
                         variant={isRegistrationClosed ? "outline" : "default"}
                         onClick={handleRegister}
-                        disabled={isPending || isRegistrationClosed}
+                        disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview)}
                     >
                         {isPending ? (
                             <>
@@ -122,27 +127,46 @@ export function RegistrationCard({
                         )}
                     </Button>
 
-                    {resources.map((resource) => (
-                        <Button key={resource.id} variant="outline" className="w-full font-bold" size="lg" asChild>
-                            <a
-                                href={
-                                    resource.type === "url"
-                                        ? resource.url || "#"
-                                        : `/api/upload?file_id=${resource.file?.id}&download=true`
-                                }
-                                target={resource.type === "url" ? "_blank" : undefined}
-                                rel={resource.type === "url" ? "noopener noreferrer" : undefined}
+                    {resources.map((resource) => {
+                        const href = resource.type === "url"
+                            ? resource.url || "#"
+                            : `/api/upload?file_id=${resource.file?.id}&download=true`;
+
+                        const handleResourceClick = (e: React.MouseEvent) => {
+                            if (isPreview) return; // Allow click in preview
+
+                            if (!session) {
+                                e.preventDefault();
+                                const callbackURL = encodeURIComponent(window.location.href);
+                                router.push(`/login?callbackURL=${callbackURL}`);
+                            }
+                        };
+
+                        return (
+                            <Button
+                                key={resource.id}
+                                variant="outline"
+                                className="w-full font-bold"
+                                size="lg"
+                                asChild
+                                onClick={handleResourceClick}
                             >
-                                {resource.type === "url" ? (
-                                    <LinkIcon className="w-4 h-4 mr-2" />
-                                ) : (
-                                    <FileText className="w-4 h-4 mr-2" />
-                                )}
-                                {resource.label ||
-                                    (resource.type === "document" ? resource.file?.fileName : "Resource")}
-                            </a>
-                        </Button>
-                    ))}
+                                <a
+                                    href={href}
+                                    target={resource.type === "url" ? "_blank" : undefined}
+                                    rel={resource.type === "url" ? "noopener noreferrer" : undefined}
+                                >
+                                    {resource.type === "url" ? (
+                                        <LinkIcon className="w-4 h-4 mr-2" />
+                                    ) : (
+                                        <FileText className="w-4 h-4 mr-2" />
+                                    )}
+                                    {resource.label ||
+                                        (resource.type === "document" ? resource.file?.fileName : "Resource")}
+                                </a>
+                            </Button>
+                        );
+                    })}
                 </div>
             </CardContent>
         </Card>

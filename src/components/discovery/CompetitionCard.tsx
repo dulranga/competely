@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
 import { toggleBookmarkAction, toggleRegistrationAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
+import { StatusBadge } from "~/components/StatusBadge";
 
 export type CompetitionStatus = "Ongoing" | "Upcoming" | "Closed" | "Registered" | "Finished";
 
@@ -23,6 +24,10 @@ interface CompetitionCardProps {
     category?: string;
     organizerName?: string;
     status?: CompetitionStatus;
+    // New props for StatusBadge
+    startDate?: Date | string | null;
+    endDate?: Date | string | null;
+    isRegistered?: boolean;
     variant?: "grid" | "list";
     isBookmarked?: boolean;
     isRegistered?: boolean;
@@ -48,6 +53,9 @@ export function CompetitionCard({
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
+    startDate,
+    endDate,
+    isRegistered = false,
     variant = "grid",
     isBookmarked: initialIsBookmarked = false,
     isRegistered = false,
@@ -60,7 +68,7 @@ export function CompetitionCard({
     const handleBookmarkClick = async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        
+
         if (!competitionId) {
             toast.error("Competition ID is missing");
             return;
@@ -172,9 +180,13 @@ export function CompetitionCard({
             >
                 {/* Status Badge */}
                 <div className="shrink-0">
-                    <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-[10px] font-bold tracking-wide uppercase", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="rounded-full px-3 py-1 text-[10px]"
+                    />
                 </div>
 
                 {/* Main Info */}
@@ -245,9 +257,13 @@ export function CompetitionCard({
 
                 {/* Badge (Top Left) */}
                 <div className="absolute top-5 left-5 z-10">
-                    <Badge variant="secondary" className={cn("backdrop-blur-md border rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="backdrop-blur-md rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300"
+                    />
                 </div>
 
                 {/* Action Buttons (Top Right) */}

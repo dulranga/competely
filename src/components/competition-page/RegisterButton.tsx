@@ -22,22 +22,25 @@ export function RegisterButton({
     variant = "default",
     size = "lg",
     registrationDeadline,
+    isPreview = false,
 }: {
     competitionId: string;
     className?: string;
     variant?: "default" | "outline" | "ghost" | "link";
     size?: "default" | "sm" | "lg" | "icon";
     registrationDeadline?: Date | null;
+    isPreview?: boolean;
 }) {
     const [isPending, setIsPending] = useState(false);
     const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
     const router = useRouter();
-    const { data: session } = authClient.useSession();
+    const { data: session, isPending: isSessionPending } = authClient.useSession();
     const { openModal } = useModal();
 
     const { data: registrationDetails } = useQuery({
         queryKey: ["competition-registration-details", competitionId],
         queryFn: () => getPublicCompetitionRegistrationDetails(competitionId),
+        enabled: !isPreview, // Don't fetch if preview
     });
 
     // Auto-check deadline every second (UX: updates UI even without refresh)
@@ -54,6 +57,8 @@ export function RegisterButton({
     }, [registrationDeadline, isRegistrationClosed]);
 
     const handleRegister = async () => {
+        if (isPreview) return;
+
         if (isRegistrationClosed) {
             toast.error("Registration is closed.");
             return;
@@ -97,7 +102,7 @@ export function RegisterButton({
             size={size}
             variant={isRegistrationClosed ? "outline" : variant}
             onClick={handleRegister}
-            disabled={isPending || isRegistrationClosed}
+            disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview)}
         >
             {isPending ? (
                 <>
