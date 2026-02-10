@@ -1,18 +1,16 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { MyCompetitionsClient } from "./client";
-import { auth } from "~/lib/auth";
 import { getRegisteredCompetitions } from "~/data-access/delegate/my-competitions";
+import { auth } from "~/lib/auth";
+import { MyCompetitionsClient } from "./client";
 
 export default async function CompetitionsPage() {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
-
     if (!session) {
         redirect("/");
     }
-
     const { user } = session;
     const allRegisteredCompetitions = await getRegisteredCompetitions(user.id);
 
@@ -21,12 +19,12 @@ export default async function CompetitionsPage() {
     // Finished: End date is in the past
     const now = new Date();
 
-    const registeredCompetitions = allRegisteredCompetitions.filter(comp => {
+    const registeredCompetitions = allRegisteredCompetitions.filter((comp) => {
         if (!comp.endDate) return true; // If no end date, assume active
         return new Date(comp.endDate) > now;
     });
 
-    const finishedCompetitions = allRegisteredCompetitions.filter(comp => {
+    const finishedCompetitions = allRegisteredCompetitions.filter((comp) => {
         if (!comp.endDate) return false;
         return new Date(comp.endDate) <= now;
     });

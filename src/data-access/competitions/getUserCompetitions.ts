@@ -20,6 +20,7 @@ export async function getUserCompetitions() {
             name: organizations.name,
             role: members.role,
             posterId: files.id,
+            status: competitions.status,
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))

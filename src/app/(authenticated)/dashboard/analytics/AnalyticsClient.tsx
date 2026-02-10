@@ -7,6 +7,7 @@ import { getFormFieldsAction, getPaginatedFormResponsesAction } from "~/app/(aut
 import { getFormSubmissionsCSVByEventId } from "~/data-access/exports/form-submissions";
 import ActionDownloadButton from "~/components/ActionDownloadButton";
 import FormResponsesTable from "~/components/dashboard/FormResponsesTable";
+import SendAnnouncements from "~/components/dashboard/SendAnnouncements";
 import DownloadButton from "~/components/DownloadButton";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -71,7 +72,9 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
 
     if (!selectedRound) return null;
 
-    if (eventsWithForms.length === 0) {
+    const isLoading = isFieldsLoading || isResponsesLoading;
+
+    if (eventsWithForms.length === 0 && !isLoading) {
         return (
             <div className="space-y-8">
                 <div className="grid gap-4">
@@ -86,8 +89,6 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
             </div>
         );
     }
-
-    const isLoading = isFieldsLoading || isResponsesLoading;
 
     return (
         <div className="space-y-12">
@@ -162,6 +163,9 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Announcement Section */}
+            <SendAnnouncements roundId={selectedRound.id} />
 
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

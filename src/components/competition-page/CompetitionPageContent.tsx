@@ -6,6 +6,7 @@ import { PrizesSection } from "~/components/competition-page/PrizesSection";
 import { RegisterButton } from "~/components/competition-page/RegisterButton";
 import { RegistrationCard } from "~/components/competition-page/RegistrationCard";
 import { TimelineSection } from "~/components/competition-page/TimelineSection";
+import CompetitionAnnouncementBanner from "~/components/delegate/announcements/CompetitionAnnouncementBanner";
 
 interface CompetitionPageContentProps {
     data: any; // Using any for now to match the implicit type from getPublicCompetitionDetails, ideally should be typed
@@ -66,6 +67,14 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
             />
 
             <main className="max-w-7xl mx-auto px-4 py-12 md:py-20">
+                {/* Announcement Banner */}
+                <div className="mb-12">
+                    <CompetitionAnnouncementBanner
+                        competitionId={competitionId}
+                        competitionName={data.organization?.name}
+                    />
+                </div>
+
                 {/* Top Section: Info + InfoCard */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12">
                     {/* Main Content Column */}
@@ -74,9 +83,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
                             <h1 className="text-5xl md:text-6xl font-black uppercase mb-4 tracking-tight">
                                 {data.organization?.name}
                             </h1>
-                            <p className="text-xl text-muted-foreground font-medium mb-8">
-                                {data.tagline}
-                            </p>
+                            <p className="text-xl text-muted-foreground font-medium mb-8">{data.tagline}</p>
 
                             <div className="prose prose-lg text-muted-foreground space-y-6 max-w-none">
                                 {data.description ? (

@@ -1,17 +1,12 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, LayoutGrid, List, Search } from "lucide-react";
-import { useState, useMemo } from "react";
-import { CompetitionRole, MyCompetitionCard } from "~/components/create/MyCompetitionCard";
-import { useModal } from "~/components/dashboard/modals/modal-provider";
-import { Button } from "~/components/ui/button";
-import { FooterBottom } from "~/components/ui/footer-bottom";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { getRandomAvatar } from "~/lib/getRandomAvatar";
-import { cn, getFileUrlById, slugify } from "~/lib/utils";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { joinCompetitionAction } from "~/app/(authenticated)/create/actions";
+import { CompetitionRole, CompetitionStatus, MyCompetitionCard } from "~/components/create/MyCompetitionCard";
+import { useModal } from "~/components/dashboard/modals/modal-provider";
+import { Button } from "~/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -20,12 +15,17 @@ import {
     DialogHeader,
     DialogTitle,
 } from "~/components/ui/dialog";
-
+import { FooterBottom } from "~/components/ui/footer-bottom";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { getRandomAvatar } from "~/lib/getRandomAvatar";
+import { cn, getFileUrlById } from "~/lib/utils";
 interface Competition {
     id: string;
     name: string;
     role: string;
     posterId: string | null;
+    status: CompetitionStatus;
 }
 
 interface CreatePageContentProps {
@@ -138,6 +138,7 @@ export function CreatePageContent({ initialCompetitions }: CreatePageContentProp
                                     role={comp.role as CompetitionRole}
                                     imageUrl={comp.posterId ? getFileUrlById(comp.posterId) : getRandomAvatar(comp.id)}
                                     variant={viewMode}
+                                    status={comp.status}
                                 />
                             ))}
                         </div>

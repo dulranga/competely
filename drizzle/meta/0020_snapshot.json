@@ -1,6 +1,6 @@
 {
-  "id": "5d56f060-0fde-41d1-a042-0a49026dd18d",
-  "prevId": "ee494990-8348-4b53-91d6-b69308f4518e",
+  "id": "391d6a27-ce95-4e9b-be84-a29c85f6979d",
+  "prevId": "5d56f060-0fde-41d1-a042-0a49026dd18d",
     "version": "7",
     "dialect": "postgresql",
     "tables": {
@@ -593,8 +593,7 @@
                     "name": "banned",
                     "type": "boolean",
                     "primaryKey": false,
-                    "notNull": false,
-                    "default": false
+                    "notNull": false
                 },
                 "ban_reason": {
                     "name": "ban_reason",
@@ -2112,6 +2111,88 @@
                     "tableTo": "competitions",
                     "columnsFrom": [
                         "competition_id"
+                    ],
+                    "columnsTo": [
+                        "id"
+                    ],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.competition_round_announcements": {
+            "name": "competition_round_announcements",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "round_id": {
+                    "name": "round_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "title": {
+                    "name": "title",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "content": {
+                    "name": "content",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "updated_at": {
+                    "name": "updated_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "competition_round_announcements_round_id_idx": {
+                    "name": "competition_round_announcements_round_id_idx",
+                    "columns": [
+                        {
+                            "expression": "round_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "competition_round_announcements_round_id_competition_rounds_id_fk": {
+                    "name": "competition_round_announcements_round_id_competition_rounds_id_fk",
+                    "tableFrom": "competition_round_announcements",
+                    "tableTo": "competition_rounds",
+                    "columnsFrom": [
+                        "round_id"
                     ],
                     "columnsTo": [
                         "id"

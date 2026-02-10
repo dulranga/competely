@@ -7,16 +7,14 @@ import { Button } from "~/components/ui/button";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { mapCompetitionToCardProps } from "~/lib/competition-utils";
+import LatestAnnouncementBanner from "~/components/delegate/announcements/LatestAnnouncementBanner";
 
 interface MyCompetitionsClientProps {
     registeredCompetitions: any[];
     finishedCompetitions: any[];
 }
 
-export function MyCompetitionsClient({
-    registeredCompetitions,
-    finishedCompetitions
-}: MyCompetitionsClientProps) {
+export function MyCompetitionsClient({ registeredCompetitions, finishedCompetitions }: MyCompetitionsClientProps) {
     const [expandedSection, setExpandedSection] = useState<"registered" | "finished" | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -24,18 +22,20 @@ export function MyCompetitionsClient({
     const filteredRegisteredCompetitions = useMemo(() => {
         if (!searchQuery.trim()) return registeredCompetitions;
         const query = searchQuery.toLowerCase();
-        return registeredCompetitions.filter(comp =>
-            (comp.title?.toLowerCase() || "").includes(query) ||
-            (comp.organizerName?.toLowerCase() || "").includes(query)
+        return registeredCompetitions.filter(
+            (comp) =>
+                (comp.title?.toLowerCase() || "").includes(query) ||
+                (comp.organizerName?.toLowerCase() || "").includes(query),
         );
     }, [searchQuery, registeredCompetitions]);
 
     const filteredFinishedCompetitions = useMemo(() => {
         if (!searchQuery.trim()) return finishedCompetitions;
         const query = searchQuery.toLowerCase();
-        return finishedCompetitions.filter(comp =>
-            (comp.title?.toLowerCase() || "").includes(query) ||
-            (comp.organizerName?.toLowerCase() || "").includes(query)
+        return finishedCompetitions.filter(
+            (comp) =>
+                (comp.title?.toLowerCase() || "").includes(query) ||
+                (comp.organizerName?.toLowerCase() || "").includes(query),
         );
     }, [searchQuery, finishedCompetitions]);
 
@@ -72,7 +72,13 @@ export function MyCompetitionsClient({
                                 Previous
                             </Button>
                             <div className="flex items-center gap-2">
-                                <Button variant="default" size="icon" className="h-9 w-9 bg-[#1a1b25] hover:bg-[#2c2e3f] text-white font-medium">1</Button>
+                                <Button
+                                    variant="default"
+                                    size="icon"
+                                    className="h-9 w-9 bg-[#1a1b25] hover:bg-[#2c2e3f] text-white font-medium"
+                                >
+                                    1
+                                </Button>
                             </div>
                             <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                                 Next
@@ -102,7 +108,6 @@ export function MyCompetitionsClient({
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
             {/* Main Layout */}
             <div className="flex-1 flex max-w-[1500px] mx-auto w-full px-4 md:px-8 py-8 gap-8">
-
                 {/* Left Sidebar - Persistent on desktop */}
                 <aside className="w-64 shrink-0 hidden lg:block">
                     <div className="sticky top-8">
@@ -112,6 +117,8 @@ export function MyCompetitionsClient({
 
                 {/* Right Content */}
                 <div className="flex-1 space-y-10">
+                    {/* Announcements */}
+                    <LatestAnnouncementBanner />
 
                     {/* Search Bar */}
                     <div className="w-full">
@@ -178,7 +185,6 @@ export function MyCompetitionsClient({
                             </div>
                         )}
                     </section>
-
                 </div>
             </div>
 
