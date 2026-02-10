@@ -16,7 +16,7 @@ import {
     Wrench,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { TopicCard } from "~/components/discovery/TopicCard";
@@ -53,6 +53,7 @@ interface DiscoverContentProps {
     isAuthenticated: boolean;
     initialCompetitions?: any[];
     initialSearchQuery?: string;
+    initialKeywords?: string[];
     bookmarkStatuses?: Map<string, boolean>;
     registrationStatuses?: Map<string, boolean>;
     bookmarkCount?: number;
@@ -62,30 +63,72 @@ export function DiscoverContent({
     isAuthenticated,
     initialCompetitions = [],
     initialSearchQuery = "",
+    initialKeywords = [],
     bookmarkStatuses = new Map(),
     registrationStatuses = new Map(),
     bookmarkCount = 0,
 }: DiscoverContentProps) {
     const router = useRouter();
-    const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
+    const [isSearching, setIsSearching] = useState(!!initialSearchQuery || (initialKeywords && initialKeywords.length > 0));
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
     const [selectedTopic, setSelectedTopic] = useState<string>("");
 
+    // Pagination state for infinite scroll
+    const [visibleCount, setVisibleCount] = useState(12);
+
     // Filter states - using the default filters as initial values
-    const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-    
+    const [filters, setFilters] = useState<FilterState>({
+        ...DEFAULT_FILTERS,
+        keywords: initialKeywords
+    });
+
     // Debug log whenever filters change
     console.log('Current filters state:', filters);
 
-    // Debug log whenever filters change
-    console.log("Current filters state:", filters);
-
     const handleSearch = () => {
+        // Reset visible count on new search
+        setVisibleCount(12);
+
+        const params = new URLSearchParams();
+
         if (searchQuery.trim()) {
+            params.set("q", searchQuery.trim());
+        }
+
+        if (filters.keywords.length > 0) {
+            params.set("keywords", filters.keywords.join((",")));
+        }
+
+        const queryString = params.toString();
+
+        if (queryString) {
             setIsSearching(true);
-            router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
+            router.push(`/discover?${queryString}`);
         } else {
             setIsSearching(false);
+            router.push("/discover");
+        }
+    };
+
+    // Helper to update URL with new filters
+    const updateFilters = (newFilters: FilterState) => {
+        setFilters(newFilters);
+        // Reset visible count on filter change
+        setVisibleCount(12);
+
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) {
+            params.set("q", searchQuery.trim());
+        }
+
+        if (newFilters.keywords.length > 0) {
+            params.set("keywords", newFilters.keywords.join(","));
+        }
+
+        const queryString = params.toString();
+        if (queryString) {
+            router.push(`/discover?${queryString}`);
+        } else {
             router.push("/discover");
         }
     };
@@ -96,7 +139,8 @@ export function DiscoverContent({
         setSelectedTopic(topicTitle);
         setIsSearching(true);
         // Update filter keywords
-        setFilters({ ...filters, keywords });
+        updateFilters({ ...filters, keywords });
+        // visibleCount is reset inside updateFilters
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -108,6 +152,46 @@ export function DiscoverContent({
     // Filter competitions using the utility function - use sample data if no real data
     const competitionsToFilter = initialCompetitions.length > 0 ? initialCompetitions : competitionsData;
     const filteredCompetitions = filterCompetitions(competitionsToFilter, filters);
+
+    // Slice competitions for infinite scroll
+    const displayedCompetitions = filteredCompetitions.slice(0, visibleCount);
+
+    // Check if there are more competitions to load
+    const hasMore = visibleCount < filteredCompetitions.length;
+
+    // Load more competitions
+    const loadMore = () => {
+        setVisibleCount((prev) => prev + 12);
+    };
+
+    // Ref for the sentinel element (intersection observer target)
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    // Setup IntersectionObserver for infinite scroll
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                // If sentinel is visible and there are more items to load
+                if (entries[0]?.isIntersecting && hasMore) {
+                    loadMore();
+                }
+            },
+            {
+                root: null, // viewport
+                rootMargin: "100px", // trigger 100px before reaching bottom
+                threshold: 0.1,
+            }
+        );
+
+        observer.observe(sentinel);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasMore, visibleCount]); // Re-run when hasMore or visibleCount changes
 
     console.log("DiscoverContent state:", {
         filterKeywords: filters.keywords,
@@ -173,32 +257,7 @@ export function DiscoverContent({
                                 </div>
                             </section>
 
-                            {/* Recent Competitions Section - Only visible to authenticated users */}
-                            {isAuthenticated && (
-                                <section className="space-y-8 bg-gray-200/50 -mx-4 md:-mx-8 px-4 md:px-8 py-12">
-                                    <h2 className="text-3xl font-semibold text-center text-[#1a1a1a]">
-                                        Recently Visited
-                                    </h2>
-                                    {/* Removed justify-center to fix scrolling issue when content overflow */}
-                                    <div className="flex overflow-x-auto gap-6 pb-6 snap-x snap-mandatory scrollbar-none">
-                                        {/* Using mock data from JSON */}
-                                        {competitionsData.map((comp) => (
-                                            <div key={comp.id} className="snap-center shrink-0 pl-1 first:pl-1">
-                                                <CompetitionCard
-                                                    status={comp.status as any}
-                                                    title={comp.title}
-                                                    imageUrl={comp.imageUrl}
-                                                    organizerName={comp.organizerName}
-                                                    category={comp.category}
-                                                    registeredCount={comp.registeredCount}
-                                                    deadline={comp.deadline}
-                                                    onClick={() => router.push(`/c/${comp.id}`)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            )}
+
                         </div>
                     )}
 
@@ -212,21 +271,21 @@ export function DiscoverContent({
                                     <FilterSidebar
                                         registeredRange={filters.registeredRange}
                                         onRegisteredRangeChange={(range) =>
-                                            setFilters({ ...filters, registeredRange: range })
+                                            updateFilters({ ...filters, registeredRange: range })
                                         }
                                         keywords={filters.keywords}
                                         onKeywordsChange={(keywords) => {
-                                            console.log("Keywords changed in sidebar:", keywords); // Debug log
-                                            setFilters({ ...filters, keywords });
+                                            console.log("Keywords changed in sidebar:", keywords);
+                                            updateFilters({ ...filters, keywords });
                                         }}
                                         statusFilters={filters.statusFilters}
                                         onStatusFiltersChange={(statusFilters) =>
-                                            setFilters({ ...filters, statusFilters })
+                                            updateFilters({ ...filters, statusFilters })
                                         }
                                         categories={filters.categories}
-                                        onCategoriesChange={(categories) => setFilters({ ...filters, categories })}
+                                        onCategoriesChange={(categories) => updateFilters({ ...filters, categories })}
                                         modes={filters.modes}
-                                        onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                        onModesChange={(modes) => updateFilters({ ...filters, modes })}
                                     />
                                 </div>
                             </aside>
@@ -247,23 +306,23 @@ export function DiscoverContent({
                                                 className="w-full border-0 shadow-none p-0"
                                                 registeredRange={filters.registeredRange}
                                                 onRegisteredRangeChange={(range) =>
-                                                    setFilters({ ...filters, registeredRange: range })
+                                                    updateFilters({ ...filters, registeredRange: range })
                                                 }
                                                 keywords={filters.keywords}
                                                 onKeywordsChange={(keywords) => {
-                                                    console.log("Keywords changed in mobile sidebar:", keywords); // Debug log
-                                                    setFilters({ ...filters, keywords });
+                                                    console.log("Keywords changed in mobile sidebar:", keywords);
+                                                    updateFilters({ ...filters, keywords });
                                                 }}
                                                 statusFilters={filters.statusFilters}
                                                 onStatusFiltersChange={(statusFilters) =>
-                                                    setFilters({ ...filters, statusFilters })
+                                                    updateFilters({ ...filters, statusFilters })
                                                 }
                                                 categories={filters.categories}
                                                 onCategoriesChange={(categories) =>
-                                                    setFilters({ ...filters, categories })
+                                                    updateFilters({ ...filters, categories })
                                                 }
                                                 modes={filters.modes}
-                                                onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                                onModesChange={(modes) => updateFilters({ ...filters, modes })}
                                             />
                                         </div>
                                     </SheetContent>
@@ -272,10 +331,10 @@ export function DiscoverContent({
 
                             {/* Results Grid */}
                             <div className="flex-1">
-                                {filteredCompetitions.length > 0 ? (
+                                {displayedCompetitions.length > 0 ? (
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                                            {filteredCompetitions.map((comp) => (
+                                            {displayedCompetitions.map((comp) => (
                                                 <CompetitionCard
                                                     key={comp.id}
                                                     {...mapCompetitionToCardProps(
@@ -288,30 +347,15 @@ export function DiscoverContent({
                                             ))}
                                         </div>
 
-                                        {/* Pagination (Mock) */}
-                                        <div className="flex justify-center items-center gap-4 mt-12 text-sm text-muted-foreground">
-                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">
-                                                ← Previous
-                                            </span>
-                                            <div className="flex gap-2">
-                                                <span className="w-8 h-8 flex items-center justify-center bg-black text-white rounded-md">
-                                                    1
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    2
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    3
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center">...</span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    68
-                                                </span>
+                                        {/* Infinite Scroll Sentinel */}
+                                        <div ref={sentinelRef} className="h-4" />
+
+                                        {/* Loading Indicator */}
+                                        {hasMore && (
+                                            <div className="flex justify-center items-center py-8">
+                                                <div className="text-sm text-muted-foreground">Loading more...</div>
                                             </div>
-                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">
-                                                Next →
-                                            </span>
-                                        </div>
+                                        )}
                                     </>
                                 ) : (
                                     <div className="text-center py-12">

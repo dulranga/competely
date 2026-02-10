@@ -23,6 +23,7 @@ export async function searchCompetitions(query: string) {
             title: organizations.name,
             tagline: competitions.tagline,
             shortDescription: competitions.shortDescription,
+            societyName: competitions.societyName,
             organizerName: organizations.name,
             category: competitions.category,
             hashtags: competitions.hashtags,
@@ -46,7 +47,9 @@ export async function searchCompetitions(query: string) {
             or(
                 ilike(organizations.name, searchPattern),
                 ilike(competitions.tagline, searchPattern),
-                ilike(competitions.shortDescription, searchPattern)
+                ilike(competitions.shortDescription, searchPattern),
+                ilike(competitions.societyName, searchPattern),
+                sql`array_to_string(${competitions.hashtags}, ' ') ILIKE ${searchPattern}`
             )
         )
         .orderBy(desc(competitions.createdAt));
