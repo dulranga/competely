@@ -13,8 +13,12 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
     });
     const isAuthenticated = !!session;
 
+
     const params = await searchParams;
     const query = typeof params.q === 'string' ? params.q : '';
+    const keywords = typeof params.keywords === 'string'
+        ? params.keywords.split(',').filter(Boolean)
+        : [];
 
     const competitions = query.trim()
         ? await searchCompetitions(query)
@@ -36,6 +40,7 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
             isAuthenticated={isAuthenticated}
             initialCompetitions={competitions || []}
             initialSearchQuery={query}
+            initialKeywords={keywords}
             bookmarkStatuses={bookmarkStatuses}
             registrationStatuses={registrationStatuses}
             bookmarkCount={bookmarkCount}

@@ -53,6 +53,7 @@ interface DiscoverContentProps {
     isAuthenticated: boolean;
     initialCompetitions?: any[];
     initialSearchQuery?: string;
+    initialKeywords?: string[];
     bookmarkStatuses?: Map<string, boolean>;
     registrationStatuses?: Map<string, boolean>;
     bookmarkCount?: number;
@@ -62,17 +63,21 @@ export function DiscoverContent({
     isAuthenticated,
     initialCompetitions = [],
     initialSearchQuery = "",
+    initialKeywords = [],
     bookmarkStatuses = new Map(),
     registrationStatuses = new Map(),
     bookmarkCount = 0,
 }: DiscoverContentProps) {
     const router = useRouter();
-    const [isSearching, setIsSearching] = useState(!!initialSearchQuery);
+    const [isSearching, setIsSearching] = useState(!!initialSearchQuery || (initialKeywords && initialKeywords.length > 0));
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
     const [selectedTopic, setSelectedTopic] = useState<string>("");
 
     // Filter states - using the default filters as initial values
-    const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+    const [filters, setFilters] = useState<FilterState>({
+        ...DEFAULT_FILTERS,
+        keywords: initialKeywords
+    });
 
     // Debug log whenever filters change
     console.log('Current filters state:', filters);
@@ -81,11 +86,44 @@ export function DiscoverContent({
     console.log("Current filters state:", filters);
 
     const handleSearch = () => {
+        const params = new URLSearchParams();
+
         if (searchQuery.trim()) {
+            params.set("q", searchQuery.trim());
+        }
+
+        if (filters.keywords.length > 0) {
+            params.set("keywords", filters.keywords.join((",")));
+        }
+
+        const queryString = params.toString();
+
+        if (queryString) {
             setIsSearching(true);
-            router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
+            router.push(`/discover?${queryString}`);
         } else {
             setIsSearching(false);
+            router.push("/discover");
+        }
+    };
+
+    // Helper to update URL with new filters
+    const updateFilters = (newFilters: FilterState) => {
+        setFilters(newFilters);
+
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) {
+            params.set("q", searchQuery.trim());
+        }
+
+        if (newFilters.keywords.length > 0) {
+            params.set("keywords", newFilters.keywords.join(","));
+        }
+
+        const queryString = params.toString();
+        if (queryString) {
+            router.push(`/discover?${queryString}`);
+        } else {
             router.push("/discover");
         }
     };
@@ -96,7 +134,7 @@ export function DiscoverContent({
         setSelectedTopic(topicTitle);
         setIsSearching(true);
         // Update filter keywords
-        setFilters({ ...filters, keywords });
+        updateFilters({ ...filters, keywords });
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -212,21 +250,21 @@ export function DiscoverContent({
                                     <FilterSidebar
                                         registeredRange={filters.registeredRange}
                                         onRegisteredRangeChange={(range) =>
-                                            setFilters({ ...filters, registeredRange: range })
+                                            updateFilters({ ...filters, registeredRange: range })
                                         }
                                         keywords={filters.keywords}
                                         onKeywordsChange={(keywords) => {
-                                            console.log("Keywords changed in sidebar:", keywords); // Debug log
-                                            setFilters({ ...filters, keywords });
+                                            console.log("Keywords changed in sidebar:", keywords);
+                                            updateFilters({ ...filters, keywords });
                                         }}
                                         statusFilters={filters.statusFilters}
                                         onStatusFiltersChange={(statusFilters) =>
-                                            setFilters({ ...filters, statusFilters })
+                                            updateFilters({ ...filters, statusFilters })
                                         }
                                         categories={filters.categories}
-                                        onCategoriesChange={(categories) => setFilters({ ...filters, categories })}
+                                        onCategoriesChange={(categories) => updateFilters({ ...filters, categories })}
                                         modes={filters.modes}
-                                        onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                        onModesChange={(modes) => updateFilters({ ...filters, modes })}
                                     />
                                 </div>
                             </aside>
@@ -247,23 +285,23 @@ export function DiscoverContent({
                                                 className="w-full border-0 shadow-none p-0"
                                                 registeredRange={filters.registeredRange}
                                                 onRegisteredRangeChange={(range) =>
-                                                    setFilters({ ...filters, registeredRange: range })
+                                                    updateFilters({ ...filters, registeredRange: range })
                                                 }
                                                 keywords={filters.keywords}
                                                 onKeywordsChange={(keywords) => {
-                                                    console.log("Keywords changed in mobile sidebar:", keywords); // Debug log
-                                                    setFilters({ ...filters, keywords });
+                                                    console.log("Keywords changed in mobile sidebar:", keywords);
+                                                    updateFilters({ ...filters, keywords });
                                                 }}
                                                 statusFilters={filters.statusFilters}
                                                 onStatusFiltersChange={(statusFilters) =>
-                                                    setFilters({ ...filters, statusFilters })
+                                                    updateFilters({ ...filters, statusFilters })
                                                 }
                                                 categories={filters.categories}
                                                 onCategoriesChange={(categories) =>
-                                                    setFilters({ ...filters, categories })
+                                                    updateFilters({ ...filters, categories })
                                                 }
                                                 modes={filters.modes}
-                                                onModesChange={(modes) => setFilters({ ...filters, modes })}
+                                                onModesChange={(modes) => updateFilters({ ...filters, modes })}
                                             />
                                         </div>
                                     </SheetContent>
