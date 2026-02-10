@@ -61,7 +61,7 @@ The system will support three distinct types of notifications. To differentiate 
 
 The `notifications` table structure will be updated to include the following fields.
 
-**Target File**: `src/db/schemas/notifications.ts`
+**Target File**: `src/db/schemas/notifications.ts` (Already Implemented)
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -99,68 +99,18 @@ We need to implement server actions to handle reading and writing notifications.
 
 ## 5. Sample Message Templates
 
-Below are the standard templates for the different notification types.
+Helper functions for these templates have been implemented in `src/data-access/delegate/notification-templates.ts`. You should use these functions to trigger notifications instead of manually calling `createNotification`.
 
-### A. Delegate Side Templates
-
-**1. Competition Registration**
-*   **Title**: Registration Confirmed
-*   **Message**: "You have successfully registered for **[Competition Name]**. Get ready to compete!"
-*   **Link**: `/competitions/[id]`
-*   **Link Label**: Go to Competition
-*   **Type**: `delegate`
-
-**2. Elimination / Advancement**
-*   **Title**: Round [N] Results
-*   **Message (Success)**: "Congratulations! You have been selected for the next round of **[Competition Name]**."
-*   **Message (Eliminated)**: "Thank you for participating in **[Competition Name]**. Unfortunately, you did not qualify for the next round."
-*   **Type**: `delegate`
-
-**3. Timeline Reminder**
-*   **Title**: Upcoming Event Reminder
-*   **Message**: "The **[Event Name]** for **[Competition Name]** starts in 1 hour. Be prepared!"
-*   **Link**: `/competitions/[id]/timeline`
-*   **Type**: `delegate`
-
-**4. Announcement**
-*   **Title**: Announcement from [Competition Name]
-*   **Message**: "[Custom Announcement Text provided by OC...]"
-*   **Type**: `delegate`
-
-### B. OC Side Templates
-
-**1. Competition Creation**
-*   **Title**: Competition Created
-*   **Message**: "You have successfully created the draft for **[Competition Name]**. Complete the setup to publish it."
-*   **Link**: `/organize/[id]/settings`
-*   **Link Label**: Edit Settings
-*   **Type**: `oc`
-
-**2. Competition Published**
-*   **Title**: Published Successfully
-*   **Message**: "**[Competition Name]** is now live and visible to the public!"
-*   **Link**: `/competitions/[id]`
-*   **Type**: `oc`
-
-**3. Invitations (Judge/OC)**
-*   **Title**: Invitation Accepted
-*   **Message**: "**[User Name]** has accepted your invitation to join **[Competition Name]** as a Judge."
-*   **Type**: `oc`
-
-**4. Analytics Milestone**
-*   **Title**: Milestone Reached!
-*   **Message**: "Congratulations! **[Competition Name]** has reached **100 participants**."
-*   **Link**: `/organize/[id]/analytics`
-*   **Type**: `oc`
-
-### C. System Templates
-
-**1. Warnings**
-*   **Title**: Account Warning
-*   **Message**: "We detected unusual activity on your account. Please verify your email."
-*   **Type**: `system`
-
-**2. Milestones**
-*   **Title**: New Badge Earned
-*   **Message**: "You've just hit a milestone: **Registered for 10 Competitions**! Keep it up."
-*   **Type**: `system`
+### Implemented Templates
+*   `notifyCompetitionRegistration`
+*   `notifyRoundResult`
+*   `notifyTimelineReminder`
+*   `notifyAnnouncement`
+*   `notifyCompetitionCreated`
+*   `notifyCompetitionPublished`
+*   `notifyInvitationAccepted`
+*   `notifyAnalyticsMilestone`
+*   `notifySystemWarning`
+*   `notifySystemMilestone`
+*   `notifyInvitedToJudge`
+*   `notifyInvitedToJoinOC`
