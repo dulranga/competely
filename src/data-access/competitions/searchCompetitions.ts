@@ -1,8 +1,8 @@
 import "server-only";
 
-import { desc, or, ilike, eq } from "drizzle-orm";
+import { desc, or, ilike, eq, sql } from "drizzle-orm";
 import db from "~/db/client";
-import { competitions, organizations, files } from "~/db/schema";
+import { competitions, organizations, files, members } from "~/db/schema";
 
 /**
  * Searches for competitions based on title or organizer name
@@ -31,6 +31,12 @@ export async function searchCompetitions(query: string) {
             endDate: competitions.endDate,
             bannerId: competitions.bannerId,
             imageUrl: competitions.posterId,
+            registeredCount: sql<number>`(
+                SELECT count(${members.id})
+                FROM ${members}
+                WHERE ${members.organizationId} = ${competitions.organizationId}
+                AND ${members.role} = 'delegate'
+            )`.mapWith(Number),
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))

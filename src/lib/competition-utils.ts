@@ -4,7 +4,7 @@ import { getFileUrlById } from "./utils";
  * Calculate competition status based on dates and user registration
  */
 export function calculateCompetitionStatus(
-    comp: any, 
+    comp: any,
     isUserRegistered = false
 ): "Upcoming" | "Ongoing" | "Closed" | "Registered" | "Finished" {
     const now = new Date();
@@ -24,11 +24,11 @@ export function calculateCompetitionStatus(
     if (startDate && now < startDate) {
         return "Upcoming"; // Competition hasn't started yet
     }
-    
+
     if (startDate && endDate && now >= startDate && now <= endDate) {
         return "Ongoing"; // Competition is currently running
     }
-    
+
     if (endDate && now > endDate) {
         return "Closed"; // Competition has ended
     }
@@ -41,8 +41,8 @@ export function calculateCompetitionStatus(
  * Maps competition data to CompetitionCard props
  */
 export function mapCompetitionToCardProps(comp: any, isBookmarked = false, isUserRegistered = false) {
-    const imageUrl = comp.imageUrl && typeof comp.imageUrl === 'string' 
-        ? getFileUrlById(comp.imageUrl) 
+    const imageUrl = comp.imageUrl && typeof comp.imageUrl === 'string'
+        ? getFileUrlById(comp.imageUrl)
         : undefined;
 
     const status = calculateCompetitionStatus(comp, isUserRegistered);

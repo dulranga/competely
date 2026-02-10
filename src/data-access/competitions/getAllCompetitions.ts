@@ -1,8 +1,8 @@
 import "server-only";
 
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql, and } from "drizzle-orm";
 import db from "~/db/client";
-import { competitions, organizations, files } from "~/db/schema";
+import { competitions, organizations, files, members } from "~/db/schema";
 
 /**
  * Fetches all published competitions with their organization and banner details
@@ -24,6 +24,12 @@ export async function getAllCompetitions() {
             endDate: competitions.endDate,
             bannerId: competitions.bannerId,
             imageUrl: competitions.posterId,
+            registeredCount: sql<number>`(
+                SELECT count(${members.id})
+                FROM ${members}
+                WHERE ${members.organizationId} = ${competitions.organizationId}
+                AND ${members.role} = 'delegate'
+            )`.mapWith(Number),
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))

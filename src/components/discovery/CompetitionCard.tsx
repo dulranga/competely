@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, MapPin, Users, Shapes, Bookmark } from "lucide-react";
+import { Calendar, Users, Shapes, Bookmark } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -19,7 +19,6 @@ interface CompetitionCardProps {
     description?: string;
     imageUrl?: string;
     deadline?: string;
-    location?: string;
     registeredCount?: number;
     category?: string;
     organizerName?: string;
@@ -48,8 +47,7 @@ export function CompetitionCard({
     description = "Add a description here. Add a description here. Add a description here. Add a description here. Add a description here.",
     imageUrl = "https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2574&auto=format&fit=crop",
     deadline = "Jan 17, 2026 (deadline)",
-    location = "Lyceum College, Nugegoda.",
-    registeredCount = 74,
+    registeredCount = 0,
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
@@ -228,10 +226,6 @@ export function CompetitionCard({
                     <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                         <Calendar className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
                         <span className="font-medium">{deadline}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                        <MapPin className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
-                        <span className="truncate font-medium">{location}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                         <Users className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
