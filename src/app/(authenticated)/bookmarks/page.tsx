@@ -5,10 +5,6 @@ import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
 export default async function BookmarksPage() {
     const bookmarkedCompetitions = await getBookmarkedCompetitions();
-    
-    // Get registration statuses for bookmarked competitions
-    const competitionIds = bookmarkedCompetitions.map((c: any) => c.id);
-    const registrationStatuses = await getRegistrationStatuses(competitionIds);
 
     // Get registration statuses for bookmarked competitions
     const competitionIds = bookmarkedCompetitions.map((c: any) => c.id);

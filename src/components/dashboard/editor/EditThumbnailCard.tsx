@@ -15,11 +15,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import {
-    competitionCategoryOptions,
-    CompetitionCategoryOptionsType,
-    createCompetitionSchema,
-} from "~/lib/schemas/competition.schema";
+import { competitionCategoryOptions, createCompetitionSchema } from "~/lib/schemas/competition.schema";
 import { ConfirmSaveDialog } from "./ConfirmSaveDialog";
 
 const ExtendedSchema = createCompetitionSchema.extend({
@@ -32,7 +28,7 @@ interface EditThumbnailCardProps {
         name: string | null;
         societyName: string | null;
         tagline: string | null;
-        category: CompetitionCategoryOptionsType | null;
+        category: string | null;
         hashtags: string[] | null;
         bannerId: string | null;
         posterId: string | null;
@@ -54,7 +50,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             name: initialData?.name || "",
             societyName: initialData?.societyName || "",
             tagline: initialData?.tagline || "",
-            category: (initialData?.category as CompetitionCategoryOptionsType) || "Open",
+            category: initialData?.category || "Open",
             hashtags: initialData?.hashtags || [],
             bannerId: initialData?.bannerId || null,
             posterId: initialData?.posterId || null,

@@ -10,7 +10,7 @@ export const createCompetitionSchema = object({
 
     bannerId: uuid("Invalid banner ID").optional().nullable(),
     hashtags: array(string()).optional(),
-    category: enumType(competitionCategoryOptions, { error: "Please select a category" }),
+    category: string({ error: "Please select a category" }),
     posterId: uuid("Invalid banner ID").optional().nullable(),
     startDate: date({ error: "Start date is required" }),
     endDate: date({ error: "End date is required" }),
