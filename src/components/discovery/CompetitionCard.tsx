@@ -213,18 +213,15 @@ export function CompetitionCard({
 
                 </div>
 
-                {/* Center Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-0 mt-4">
-                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-[0.9] mb-3 font-sans drop-shadow-2xl transform transition-transform duration-300 group-hover:scale-105">
-                        {title}
-                    </h2>
-                </div>
+
             </div>
 
             {/* Content Body */}
             <CardContent className="p-6 pt-5 space-y-5">
-                {/* Description */}
-                <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
+                <div>
+                    <h3 className="text-xl font-bold leading-none tracking-tight text-foreground line-clamp-2 mb-2 uppercase">{title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
+                </div>
 
                 {/* Metadata List */}
                 <div className="space-y-3.5">
