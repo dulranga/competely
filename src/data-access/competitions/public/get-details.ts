@@ -74,6 +74,7 @@ export async function getPublicCompetitionDetails(competitionId: string) {
 
     // Check bookmark status for authenticated users
     let isBookmarked = false;
+    let isRegistered = false;
     try {
         const session = await auth.api.getSession({
             headers: await headers(),
@@ -86,14 +87,16 @@ export async function getPublicCompetitionDetails(competitionId: string) {
                 ),
             });
             isBookmarked = bookmark?.isBookmarked ?? false;
+            isRegistered = bookmark?.isRegistered ?? false;
         }
     } catch {
-        // User not authenticated - isBookmarked stays false
+        // User not authenticated - isBookmarked/isRegistered stays false
     }
 
     return {
         ...competition,
         isBookmarked,
+        isRegistered,
     };
 }
 

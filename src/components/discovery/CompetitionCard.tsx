@@ -1,13 +1,13 @@
 "use client";
 
-import { Calendar, MapPin, Users, Shapes, Bookmark, UserPlus, UserMinus } from "lucide-react";
+import { Calendar, Users, Shapes, Bookmark } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
-import { toggleBookmarkAction, toggleRegistrationAction } from "~/app/(authenticated)/bookmarks/actions";
+import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
 import { StatusBadge } from "~/components/StatusBadge";
 
@@ -19,7 +19,6 @@ interface CompetitionCardProps {
     description?: string;
     imageUrl?: string;
     deadline?: string;
-    location?: string;
     registeredCount?: number;
     category?: string;
     organizerName?: string;
@@ -48,8 +47,7 @@ export function CompetitionCard({
     description = "Add a description here. Add a description here. Add a description here. Add a description here. Add a description here.",
     imageUrl = "https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2574&auto=format&fit=crop",
     deadline = "Jan 17, 2026 (deadline)",
-    location = "Lyceum College, Nugegoda.",
-    registeredCount = 74,
+    registeredCount = 0,
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
@@ -61,7 +59,7 @@ export function CompetitionCard({
     onClick,
 }: CompetitionCardProps) {
     const [isBookmarkedState, setIsBookmarked] = useState(initialIsBookmarked);
-    const [isRegisteredState, setIsRegistered] = useState(isRegistered);
+
     const [isPending, startTransition] = useTransition();
 
     const handleBookmarkClick = async (e: React.MouseEvent) => {
@@ -93,32 +91,7 @@ export function CompetitionCard({
         });
     };
 
-    const handleRegistrationClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!competitionId) {
-            toast.error("Competition ID is missing");
-            return;
-        }
 
-        const newState = !isRegisteredState;
-        setIsRegistered(newState);
-
-        startTransition(async () => {
-            try {
-                const result = await toggleRegistrationAction(competitionId);
-                if (result.success) {
-                    setIsRegistered(result.isRegistered ?? newState);
-                    toast.success(result.isRegistered ? "Successfully registered!" : "Registration cancelled");
-                } else {
-                    setIsRegistered(!newState);
-                    toast.error(result.error || "Failed to update registration");
-                }
-            } catch (error) {
-                setIsRegistered(!newState);
-                toast.error("Failed to update registration");
-            }
-        });
-    };
 
     const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
@@ -133,23 +106,7 @@ export function CompetitionCard({
         </button>
     );
 
-    const RegisterButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
-        <button
-            className={cn("rounded-full transition-all duration-300 active:scale-95", className)}
-            onClick={handleRegistrationClick}
-            disabled={isPending}
-            type="button"
-            title={isRegisteredState ? "Unregister" : "Register"}
-        >
-            {isRegisteredState ? (
-                <UserMinus className={cn("transition-all text-red-500 hover:text-red-600", iconSize)} />
-            ) : (
-                <UserPlus
-                    className={cn("transition-all text-green-500 hover:text-green-600 hover:scale-110", iconSize)}
-                />
-            )}
-        </button>
-    );
+
 
     if (variant === "list") {
         return (
@@ -204,7 +161,7 @@ export function CompetitionCard({
                                 isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground",
                             )}
                         />
-                        <RegisterButton className="p-1.5 hover:bg-gray-100" iconSize="h-4 w-4" />
+
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
                 </div>
@@ -251,34 +208,24 @@ export function CompetitionCard({
                                 : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white",
                         )}
                     />
-                    <RegisterButton
-                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/register"
-                        iconSize="h-5 w-5"
-                    />
+
                 </div>
 
-                {/* Center Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-0 mt-4">
-                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-[0.9] mb-3 font-sans drop-shadow-2xl transform transition-transform duration-300 group-hover:scale-105">
-                        {title}
-                    </h2>
-                </div>
+
             </div>
 
             {/* Content Body */}
             <CardContent className="p-6 pt-5 space-y-5">
-                {/* Description */}
-                <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
+                <div>
+                    <h3 className="text-xl font-bold leading-none tracking-tight text-foreground line-clamp-2 mb-2 uppercase">{title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
+                </div>
 
                 {/* Metadata List */}
                 <div className="space-y-3.5">
                     <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                         <Calendar className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
                         <span className="font-medium">{deadline}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                        <MapPin className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
-                        <span className="truncate font-medium">{location}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                         <Users className="h-4 w-4 shrink-0 text-primary/80 group-hover:text-primary transition-colors" />
