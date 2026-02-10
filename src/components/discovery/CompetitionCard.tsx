@@ -23,6 +23,7 @@ interface CompetitionCardProps {
     category?: string;
     organizerName?: string;
     status?: CompetitionStatus;
+    location?: string;
     // New props for StatusBadge
     startDate?: Date | string | null;
     endDate?: Date | string | null;
@@ -91,8 +92,6 @@ export function CompetitionCard({
         });
     };
 
-
-
     const BookmarkButton = ({ className, iconSize = "h-4 w-4" }: { className?: string; iconSize?: string }) => (
         <button
             className={cn("rounded-full transition-all duration-300 active:scale-95", className)}
@@ -105,8 +104,6 @@ export function CompetitionCard({
             />
         </button>
     );
-
-
 
     if (variant === "list") {
         return (
@@ -161,7 +158,6 @@ export function CompetitionCard({
                                 isBookmarkedState ? "text-primary" : "text-muted-foreground hover:text-foreground",
                             )}
                         />
-
                     </div>
                     {/* View Details Button mainly for mobile logic if needed, but the whole card could be clickable */}
                 </div>
@@ -208,17 +204,18 @@ export function CompetitionCard({
                                 : "text-white/90 group-hover/bookmark:scale-110 group-hover/bookmark:text-white",
                         )}
                     />
-
                 </div>
-
-
             </div>
 
             {/* Content Body */}
             <CardContent className="p-6 pt-5 space-y-5">
                 <div>
-                    <h3 className="text-xl font-bold leading-none tracking-tight text-foreground line-clamp-2 mb-2 uppercase">{title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">{description}</p>
+                    <h3 className="text-xl font-bold leading-none tracking-tight text-foreground line-clamp-2 mb-2 uppercase">
+                        {title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">
+                        {description}
+                    </p>
                 </div>
 
                 {/* Metadata List */}
