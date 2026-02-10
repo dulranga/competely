@@ -1,117 +1,166 @@
 # Notification System Upgrade Guide
 
-This document analyzes the current notification system and outlines the steps to upgrade it to a dropdown dialog box.
+This document outlines the requirements and design for the upgraded notification system, covering notification types, UI behavior, database schema, server actions, and message templates.
 
-## Current System Overview
+## 1. Notification Types & Visual Distinction
 
-### 1. User Interface (UI)
--   **Location**: `src/app/(authenticated)/notifications/page.tsx`
--   **Type**: Full-page view.
--   **Data Source**: **Dummy Data** (`initialNotifications` array).
--   **Features**:
-    -   Lists notifications with title, description, time, type (success/info/warning/error).
-    -   Filter for "All" vs "Unread".
-    -   "Mark as Read" and "Delete" buttons (local state only).
-    -   Visual indicators (colors/icons) based on notification type.
+The system will support three distinct types of notifications. To differentiate them visually, we will use **3 distinct shades/colors** (e.g., borders or background accents).
 
-### 2. Database Schema
--   **File**: `src/db/schemas/notifications.ts`
--   **Table**: `notifications`
--   **Columns**:
-    -   `id`: UUID (Primary Key)
-    -   `message`: Text
-    -   `userId`: Text (Foreign Key to users)
-    -   `createdAt`: Timestamp
+### 1. Delegate Side
+*   **Purpose**: Notifications related to a user's participation in competitions.
+*   **Examples**:
+    *   Competition registration confirmation.
+    *   Elimination / Selection for the next round.
+    *   Competition announcements.
+    *   Timeline event reminders (e.g., "Submission deadline in 1 hour").
+*   **Visual Style**: Type `delegate` (e.g., Blue/Neutral shade).
 
-### 3. Data Access Layer
--   **File**: `src/data-access/delegate/notifications.ts`
--   **Functions**:
-    -   `createNotification(userId, message)`: Inserts a new row.
-    -   `getNotifications(userId)`: Fetches all notifications for a user, ordered by newest first.
-    -   `sendRegistrationNotification(userId, competitionId)`: Helper to send a specific message.
+### 2. OC (Organizing Committee) Side
+*   **Purpose**: Notifications for competition organizers.
+*   **Examples**:
+    *   "Competition X created successfully".
+    *   "Competition X published successfully".
+    *   OC member / Judge invitations.
+    *   Analytics milestones (e.g., "100 participants reached").
+*   **Visual Style**: Type `oc` (e.g., Gold/Orange shade).
 
----
-
-## Limitations
-
-1.  **Data Disconnect**: The UI is currently completely disconnected from the Database. Code creating notifications (e.g., `sendRegistrationNotification`) writes to the DB, but the UI only shows hardcoded dummy items.
-2.  **Schema Gaps**: The current database schema is missing critical fields used in the UI:
-    -   **`read`**: To track if a user has seen the notification.
-    -   **`title`**: To show a brief header.
-    -   **`type`**: To enable the visual distinction (success/warning/etc.).
-    -   **`link`** (Optional): To allow clicking a notification to navigate to a relevant page (e.g., a competition).
-3.  **UX Friction**: Notifications are currently on a separate page, requiring navigation away from current work. A dropdown is standard for quick checks.
-4.  **No Interactions**: "Mark as read" and "Delete" do not persist to the database.
+### 3. System
+*   **Purpose**: Platform-level alerts and achievements.
+*   **Examples**:
+    *   System warnings (e.g., "Password expiring").
+    *   User Milestones (e.g., "Registered for 10 competitions").
+*   **Visual Style**: Type `system` (e.g., Red/Alert shade).
 
 ---
 
-## Upgrade Implementation Plan
+## 2. User Interface (UI) Behavior
 
-To upgrade to a functional Dropdown Notification System, follow these steps:
+### Read/Unread & Truncation Logic
 
-### Phase 1: Database & Backend Updates
+#### Unread vs. Read
+*   **Unread**: Bold text or highlighted background.
+*   **Read**: Normal text, dimmed background.
 
-1.  **Update Schema** (`src/db/schemas/notifications.ts`):
-    Add the missing columns to the `notifications` table.
-    ```typescript
-    export const notifications = pgTable("notifications", {
-        // ... existing fields
-        title: text("title"),
-        type: text("type").default("info"), // 'info', 'success', 'warning', 'error'
-        isRead: boolean("is_read").default(false).notNull(),
-        link: text("link"), // URL to navigate to
-        // ...
-    });
-    ```
-    *Note: Run migration after modifying schema.*
+#### Handling Long Messages
+*   **Default View**: Only a part of the message (summary/truncated version) is visible initially.
 
-2.  **Update Data Access** (`src/data-access/delegate/notifications.ts`):
-    -   Modify `createNotification` to accept `title`, `type`, `link`.
-    -   Add `markAsRead(notificationId)` function.
-    -   Add `markAllAsRead(userId)` function.
-    -   Add `deleteNotification(notificationId)` function.
-    -   Update `getNotifications` to support pagination or limit (dropdowns usually show latest 5-10).
+#### Interaction Flow
+1.  **Notification Click (Dropdown/Preview)**:
+    *   Clicking a long message in the preview/dropdown redirects the user to the **Notification Page** (`/notifications`).
+    *   The specific notification should be highlighted or focused.
 
-### Phase 2: Create Notification Component
+2.  **Notification Page (`src/app/(authenticated)/notifications/page.tsx`)**:
+    *   **Unread Messages**: Can be read by clicking on them.
+    *   **Expand/Collapse**:
+        *   **Clicking** the unread/read message container increases the height of the component to reveal the **whole message**.
+        *   **"Show Less"**: An arrow button appears when expanded to collapse the message back to its truncated state.
 
-Create a new component `src/components/notifications/notification-dropdown.tsx`.
+---
 
-1.  **Structure**:
-    -   Use `DropdownMenu` from `src/components/ui/dropdown-menu.tsx` (similar to `src/components/user/dropdownmenu.tsx`).
-    -   **Trigger**: A Bell icon (possibly with a red badge for unread count).
-    -   **Content**:
-        -   Header: "Notifications" title + "Mark all as read" button.
-        -   Scrollable List: Map through fetched notifications.
-        -   Empty State: "No new notifications".
+## 3. Database Schema Update
 
-2.  **Logic**:
-    -   **Fetching**: Use a `useEffect` on mount to fetch notifications (or use a library like TanStack Query if available, otherwise a simple fetch to an API route or Server Action).
-    -   **Real-time (Optional)**: For now, fetch on open or mount.
-    -   **Interactions**: Clicking a notification should:
-        -   Mark it as read (optimistic update).
-        -   Navigate to `link` if present.
+The `notifications` table structure will be updated to include the following fields.
 
-### Phase 3: Integration
+**Target File**: `src/db/schemas/notifications.ts`
 
-1.  **Place in Header**:
-    -   Open `src/components/ui/header-authenticated.tsx`.
-    -   Import `NotificationDropdown`.
-    -   Place it next to the `UserDropdown`.
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `uuid` | Primary Key. |
+| `is_read` | `boolean` | Read status (default: `false`). |
+| `title` | `text` | Short header/title of the notification. |
+| `type` | `text` | Enum: `delegate`, `oc`, `system`. |
+| `message` | `text` | The full body content of the notification. |
+| `link` | `text` | (Nullable) URL to redirect to (e.g., specific competition dashboard). |
+| `link_label` | `text` | (Nullable) Text to display for the link button. |
+| `user_id` | `text` | Foreign Key to Users table. |
+| `created_at` | `timestamp` | Timestamp of creation. |
 
-2.  **Clean Up**:
-    -   Remove or repurpose the old `/notifications` page (it can serve as a "View All" history page).
+---
 
-### Connection Diagram
+## 4. Server Actions
 
-```mermaid
-graph TD
-    A[User Action / System Event] -->|Calls| B(createNotification)
-    B -->|Writes| C[(Database: notifications)]
-    
-    D[Header Component] -->|Includes| E[NotificationDropdown]
-    E -->|Fetches| F[Server Action / API]
-    F -->|Reads| C
-    
-    E -->|User Clicks Read| G[markAsRead Action]
-    G -->|Updates| C
-```
+We need to implement server actions to handle reading and writing notifications.
+
+### Write Action (Create Notification)
+*   **Function**: `createNotification`
+*   **Inputs**: `userId`, `title`, `type`, `message`, `link` (optional), `linkLabel` (optional).
+*   **Logic**: Inserts a new record into the `notifications` table.
+
+### Read Actions
+1.  **Fetch Notifications**:
+    *   **Function**: `getNotifications`
+    *   **Logic**: Retrieve notifications for a specific user, ordered by `created_at` DESC.
+2.  **Mark as Read**:
+    *   **Function**: `markNotificationAsRead`
+    *   **Inputs**: `notificationId`.
+    *   **Logic**: Updates `is_read` to `true` for the given ID.
+
+---
+
+## 5. Sample Message Templates
+
+Below are the standard templates for the different notification types.
+
+### A. Delegate Side Templates
+
+**1. Competition Registration**
+*   **Title**: Registration Confirmed
+*   **Message**: "You have successfully registered for **[Competition Name]**. Get ready to compete!"
+*   **Link**: `/competitions/[id]`
+*   **Link Label**: Go to Competition
+*   **Type**: `delegate`
+
+**2. Elimination / Advancement**
+*   **Title**: Round [N] Results
+*   **Message (Success)**: "Congratulations! You have been selected for the next round of **[Competition Name]**."
+*   **Message (Eliminated)**: "Thank you for participating in **[Competition Name]**. Unfortunately, you did not qualify for the next round."
+*   **Type**: `delegate`
+
+**3. Timeline Reminder**
+*   **Title**: Upcoming Event Reminder
+*   **Message**: "The **[Event Name]** for **[Competition Name]** starts in 1 hour. Be prepared!"
+*   **Link**: `/competitions/[id]/timeline`
+*   **Type**: `delegate`
+
+**4. Announcement**
+*   **Title**: Announcement from [Competition Name]
+*   **Message**: "[Custom Announcement Text provided by OC...]"
+*   **Type**: `delegate`
+
+### B. OC Side Templates
+
+**1. Competition Creation**
+*   **Title**: Competition Created
+*   **Message**: "You have successfully created the draft for **[Competition Name]**. Complete the setup to publish it."
+*   **Link**: `/organize/[id]/settings`
+*   **Link Label**: Edit Settings
+*   **Type**: `oc`
+
+**2. Competition Published**
+*   **Title**: Published Successfully
+*   **Message**: "**[Competition Name]** is now live and visible to the public!"
+*   **Link**: `/competitions/[id]`
+*   **Type**: `oc`
+
+**3. Invitations (Judge/OC)**
+*   **Title**: Invitation Accepted
+*   **Message**: "**[User Name]** has accepted your invitation to join **[Competition Name]** as a Judge."
+*   **Type**: `oc`
+
+**4. Analytics Milestone**
+*   **Title**: Milestone Reached!
+*   **Message**: "Congratulations! **[Competition Name]** has reached **100 participants**."
+*   **Link**: `/organize/[id]/analytics`
+*   **Type**: `oc`
+
+### C. System Templates
+
+**1. Warnings**
+*   **Title**: Account Warning
+*   **Message**: "We detected unusual activity on your account. Please verify your email."
+*   **Type**: `system`
+
+**2. Milestones**
+*   **Title**: New Badge Earned
+*   **Message**: "You've just hit a milestone: **Registered for 10 Competitions**! Keep it up."
+*   **Type**: `system`

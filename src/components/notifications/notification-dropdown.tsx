@@ -13,7 +13,7 @@ import {
     DropdownMenuSeparator,
 } from "~/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
-import { getNotificationsAction } from "~/data-access/delegate/actions";
+import { getNotificationsAction } from "~/data-access/delegate/actions/notifications";
 import { cn } from "~/lib/utils";
 
 export default function NotificationDropdown() {

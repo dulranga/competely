@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { getPublicCompetitionRegistrationDetails } from "~/data-access/competitions/public/get-details";
-import { registerToCompetitionAction } from "~/data-access/delegate/actions";
+import { registerToCompetitionAction } from "~/data-access/delegate/actions/competitions";
 import { authClient } from "~/lib/auth-client";
 import { useModal } from "../dashboard/modals/modal-provider";
 
