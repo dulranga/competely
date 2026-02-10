@@ -23,11 +23,11 @@ export async function getAllCompetitions() {
             startDate: competitions.startDate,
             endDate: competitions.endDate,
             bannerId: competitions.bannerId,
-            imageUrl: competitions.bannerId,
+            imageUrl: competitions.posterId,
         })
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
-        .leftJoin(files, eq(competitions.bannerId, files.id))
+        .leftJoin(files, eq(competitions.posterId, files.id))
         .orderBy(desc(competitions.createdAt));
 
     return results;
