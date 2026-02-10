@@ -177,6 +177,7 @@ export function DiscoverContent({
                                                     category={comp.category}
                                                     registeredCount={comp.registeredCount}
                                                     deadline={comp.deadline}
+                                                    onClick={() => router.push(`/c/${comp.id}`)}
                                                 />
                                             </div>
                                         ))}
@@ -260,6 +261,7 @@ export function DiscoverContent({
                                                         comp,
                                                         bookmarkStatuses.get(comp.id) || false,
                                                     )}
+                                                    onClick={() => router.push(`/c/${comp.id}`)}
                                                 />
                                             ))}
                                         </div>
@@ -296,8 +298,8 @@ export function DiscoverContent({
                                             {selectedTopic
                                                 ? `for "${selectedTopic}"`
                                                 : searchQuery
-                                                  ? `matching "${searchQuery}"`
-                                                  : ""}
+                                                    ? `matching "${searchQuery}"`
+                                                    : ""}
                                         </p>
                                         <Button
                                             variant="link"
