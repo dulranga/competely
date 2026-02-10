@@ -59,28 +59,6 @@ export default async function HomePage() {
                     <Timeline events={timelineEvents} />
                 </section>
 
-                {/* 2. Recommended Section */}
-                <section className="space-y-6 max-w-[1500px] mx-auto w-full px-4 md:px-8">
-                    <h2 className="text-3xl font-bold text-center text-[#1a1b25]">Recommended</h2>
-
-                    {/* Horizontal Scroll Container */}
-                    <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:-mx-0 md:px-0">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} className="snap-center shrink-0 w-[300px] md:w-[350px]">
-                                <CompetitionCard
-                                    title="HackExtreme"
-                                    status="Ongoing"
-                                    imageUrl="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop"
-                                    deadline="Jan 17, 2026 (deadline)"
-                                    location="Lyceum College, Nugegoda."
-                                    registeredCount={74}
-                                    category="School Category"
-                                    organizerName="Hack dev Club"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                </section>
 
                 {/* 3. Trending Now Section */}
                 <section className="space-y-6 max-w-[1500px] mx-auto w-full px-4 md:px-8">
