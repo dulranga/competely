@@ -4,9 +4,9 @@
         "title": "Find Competitions",
         "description": "Discover your global stage.",
         "features": [
-            "Curated Opportunities: (TBA)",
-            "Global Reach: (TBA)",
-            "Smart Filtering: (TBA)"
+            "Curated Opportunities",
+            "Global Reach",
+            "Smart Filtering"
         ],
         "variant": "primary",
         "delay": 0
@@ -16,9 +16,9 @@
         "title": "Organize Competitions",
         "description": "Launch with impact.",
         "features": [
-            "Intutive Setup: (TBA)",
-            "Customizable Controls: (TBA)",
-            "Seamless Promotion: (TBA)"
+            "Intutive Setup",
+            "Customizable Controls",
+            "Seamless Promotion"
         ],
         "variant": "secondary",
         "delay": 150
@@ -28,9 +28,9 @@
         "title": "Manage Competitions",
         "description": "Complete control simplified.",
         "features": [
-            "Centralized Dashboard: (TBA)",
-            "Automated Workflows: (TBA)",
-            "Efficient Judging: (TBA)"
+            "Centralized Dashboard",
+            "Automated Workflows",
+            "Efficient Judging"
         ],
         "variant": "primary",
         "delay": 300
