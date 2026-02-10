@@ -16,7 +16,7 @@ import {
     Wrench,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
 import { TopicCard } from "~/components/discovery/TopicCard";
@@ -73,6 +73,9 @@ export function DiscoverContent({
     const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
     const [selectedTopic, setSelectedTopic] = useState<string>("");
 
+    // Pagination state for infinite scroll
+    const [visibleCount, setVisibleCount] = useState(12);
+
     // Filter states - using the default filters as initial values
     const [filters, setFilters] = useState<FilterState>({
         ...DEFAULT_FILTERS,
@@ -82,10 +85,10 @@ export function DiscoverContent({
     // Debug log whenever filters change
     console.log('Current filters state:', filters);
 
-    // Debug log whenever filters change
-    console.log("Current filters state:", filters);
-
     const handleSearch = () => {
+        // Reset visible count on new search
+        setVisibleCount(12);
+
         const params = new URLSearchParams();
 
         if (searchQuery.trim()) {
@@ -110,6 +113,8 @@ export function DiscoverContent({
     // Helper to update URL with new filters
     const updateFilters = (newFilters: FilterState) => {
         setFilters(newFilters);
+        // Reset visible count on filter change
+        setVisibleCount(12);
 
         const params = new URLSearchParams();
         if (searchQuery.trim()) {
@@ -135,6 +140,7 @@ export function DiscoverContent({
         setIsSearching(true);
         // Update filter keywords
         updateFilters({ ...filters, keywords });
+        // visibleCount is reset inside updateFilters
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -146,6 +152,46 @@ export function DiscoverContent({
     // Filter competitions using the utility function - use sample data if no real data
     const competitionsToFilter = initialCompetitions.length > 0 ? initialCompetitions : competitionsData;
     const filteredCompetitions = filterCompetitions(competitionsToFilter, filters);
+
+    // Slice competitions for infinite scroll
+    const displayedCompetitions = filteredCompetitions.slice(0, visibleCount);
+
+    // Check if there are more competitions to load
+    const hasMore = visibleCount < filteredCompetitions.length;
+
+    // Load more competitions
+    const loadMore = () => {
+        setVisibleCount((prev) => prev + 12);
+    };
+
+    // Ref for the sentinel element (intersection observer target)
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    // Setup IntersectionObserver for infinite scroll
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                // If sentinel is visible and there are more items to load
+                if (entries[0]?.isIntersecting && hasMore) {
+                    loadMore();
+                }
+            },
+            {
+                root: null, // viewport
+                rootMargin: "100px", // trigger 100px before reaching bottom
+                threshold: 0.1,
+            }
+        );
+
+        observer.observe(sentinel);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasMore, visibleCount]); // Re-run when hasMore or visibleCount changes
 
     console.log("DiscoverContent state:", {
         filterKeywords: filters.keywords,
@@ -310,10 +356,10 @@ export function DiscoverContent({
 
                             {/* Results Grid */}
                             <div className="flex-1">
-                                {filteredCompetitions.length > 0 ? (
+                                {displayedCompetitions.length > 0 ? (
                                     <>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                                            {filteredCompetitions.map((comp) => (
+                                            {displayedCompetitions.map((comp) => (
                                                 <CompetitionCard
                                                     key={comp.id}
                                                     {...mapCompetitionToCardProps(
@@ -326,30 +372,15 @@ export function DiscoverContent({
                                             ))}
                                         </div>
 
-                                        {/* Pagination (Mock) */}
-                                        <div className="flex justify-center items-center gap-4 mt-12 text-sm text-muted-foreground">
-                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">
-                                                ← Previous
-                                            </span>
-                                            <div className="flex gap-2">
-                                                <span className="w-8 h-8 flex items-center justify-center bg-black text-white rounded-md">
-                                                    1
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    2
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    3
-                                                </span>
-                                                <span className="w-8 h-8 flex items-center justify-center">...</span>
-                                                <span className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-md cursor-pointer">
-                                                    68
-                                                </span>
+                                        {/* Infinite Scroll Sentinel */}
+                                        <div ref={sentinelRef} className="h-4" />
+
+                                        {/* Loading Indicator */}
+                                        {hasMore && (
+                                            <div className="flex justify-center items-center py-8">
+                                                <div className="text-sm text-muted-foreground">Loading more...</div>
                                             </div>
-                                            <span className="flex items-center gap-1 cursor-pointer hover:text-foreground">
-                                                Next →
-                                            </span>
-                                        </div>
+                                        )}
                                     </>
                                 ) : (
                                     <div className="text-center py-12">
