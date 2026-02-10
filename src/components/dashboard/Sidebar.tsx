@@ -4,12 +4,15 @@ import { Award, BarChart3, Clock, Eye, FileText, LayoutDashboard, Upload, Users 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { publishCompetitionAction } from "~/data-access/competitions/actions/publish-competition-action";
 import { cn } from "~/lib/utils";
-import RoundSidebar from "./secondary-sidebars/RoundSidebar";
+import { useModal } from "./modals/modal-provider";
 import FormBuilderSidebar from "./secondary-sidebars/FormBuilder";
+import RoundSidebar from "./secondary-sidebars/RoundSidebar";
 
 interface SidebarItem {
     title: string;
@@ -25,6 +28,7 @@ interface DashboardSidebarProps {
 
 export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenSecondary }) => {
     const pathname = usePathname();
+    const { openModal } = useModal();
 
     // Find the current active item based on the longest matching path
     const activeItem = [...items]
@@ -33,6 +37,24 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
 
     const Secondary = activeItem?.secondary;
     const hasSecondary = !!(overriddenSecondary || Secondary);
+
+    const handlePublish = () => {
+        openModal("confirm", {
+            title: "Publish Competition",
+            description:
+                "Are you sure you want to publish this competition? It will be visible to all students and delegates.",
+            confirmLabel: "Publish",
+            onConfirm: async () => {
+                try {
+                    await publishCompetitionAction();
+                    toast.success("Competition published successfully!");
+                } catch (error) {
+                    console.error("Failed to publish competition:", error);
+                    toast.error("Failed to publish competition. Please try again.");
+                }
+            },
+        });
+    };
 
     return (
         <div className="flex h-screen bg-background overflow-hidden select-none">
@@ -90,6 +112,7 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({ items, overriddenS
                         variant="competely"
                         size="icon-lg"
                         className="w-full h-12 rounded-xl flex flex-col gap-0.5 p-0 text-[8px] font-black uppercase tracking-tighter"
+                        onClick={handlePublish}
                     >
                         <Upload size={14} />
                         Publish
