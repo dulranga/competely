@@ -15,7 +15,7 @@ export async function updateCompetitionMainInfo(competitionId: string, data: Mai
         await tx
             .update(competitions)
             .set({
-                tagline: data.tagline,
+
                 description: data.description,
                 bannerId: data.bannerId || null,
                 logoId: data.logoId || null,

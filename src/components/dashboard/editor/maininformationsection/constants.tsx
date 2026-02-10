@@ -18,7 +18,7 @@ export const mainInfoSchema = z.object({
     logoId: z.string().optional().nullable(),
 
     // content
-    tagline: z.string().optional(),
+
     description: z.string().min(1, "Description is required"),
 
     // logistics
