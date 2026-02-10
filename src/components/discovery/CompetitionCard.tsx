@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import { useState, useTransition } from "react";
 import { toggleBookmarkAction } from "~/app/(authenticated)/bookmarks/actions";
 import { toast } from "sonner";
+import { StatusBadge } from "~/components/StatusBadge";
 
 export type CompetitionStatus = "Ongoing" | "Upcoming" | "Ended" | "Open" | "Closed" | "Registered" | "Finished";
 
@@ -23,20 +24,14 @@ interface CompetitionCardProps {
     category?: string;
     organizerName?: string;
     status?: CompetitionStatus;
+    // New props for StatusBadge
+    startDate?: Date | string | null;
+    endDate?: Date | string | null;
+    isRegistered?: boolean;
     variant?: "grid" | "list";
     isBookmarked?: boolean;
     onClick?: () => void;
 }
-
-const statusStyles: Record<CompetitionStatus, string> = {
-    Ongoing: "bg-amber-500/90 text-white hover:bg-amber-600 shadow-[0_0_12px_rgba(245,158,11,0.4)] border-amber-400/20",
-    Upcoming: "bg-blue-500/90 text-white hover:bg-blue-600 shadow-[0_0_12px_rgba(59,130,246,0.4)] border-blue-400/20",
-    Open: "bg-emerald-500/90 text-white hover:bg-emerald-600 shadow-[0_0_12px_rgba(16,185,129,0.4)] border-emerald-400/20",
-    Ended: "bg-gray-500/90 text-white hover:bg-gray-600 border-gray-400/20",
-    Closed: "bg-red-500/90 text-white hover:bg-red-600 shadow-[0_0_12px_rgba(239,68,68,0.4)] border-red-400/20",
-    Registered: "bg-green-500/90 text-white hover:bg-green-600 shadow-[0_0_12px_rgba(34,197,94,0.4)] border-green-400/20",
-    Finished: "bg-gray-600/90 text-white hover:bg-gray-700 border-gray-500/20",
-};
 
 export function CompetitionCard({
     competitionId,
@@ -49,6 +44,9 @@ export function CompetitionCard({
     category = "School Category",
     organizerName = "Hack dev Club",
     status = "Ongoing",
+    startDate,
+    endDate,
+    isRegistered = false,
     variant = "grid",
     isBookmarked: initialIsBookmarked = false,
     onClick,
@@ -59,7 +57,7 @@ export function CompetitionCard({
     const handleBookmarkClick = async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        
+
         if (!competitionId) {
             toast.error("Competition ID is missing");
             return;
@@ -115,9 +113,13 @@ export function CompetitionCard({
             >
                 {/* Status Badge */}
                 <div className="shrink-0">
-                    <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-[10px] font-bold tracking-wide uppercase", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="rounded-full px-3 py-1 text-[10px]"
+                    />
                 </div>
 
                 {/* Main Info */}
@@ -151,7 +153,7 @@ export function CompetitionCard({
                         >
                             {organizerName}
                         </Button>
-                        <BookmarkButton 
+                        <BookmarkButton
                             className="p-1.5 hover:bg-gray-100 absolute top-3 right-3 sm:static"
                             iconSize={cn(
                                 "h-4 w-4",
@@ -184,13 +186,17 @@ export function CompetitionCard({
 
                 {/* Badge (Top Left) */}
                 <div className="absolute top-5 left-5 z-10">
-                    <Badge variant="secondary" className={cn("backdrop-blur-md border rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300", statusStyles[status] || statusStyles.Ongoing)}>
-                        {status}
-                    </Badge>
+                    <StatusBadge
+                        startDate={startDate}
+                        endDate={endDate}
+                        isRegistered={isRegistered}
+                        overrideStatus={status}
+                        className="backdrop-blur-md rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-all duration-300"
+                    />
                 </div>
 
                 {/* Bookmark Icon (Top Right) */}
-                <BookmarkButton 
+                <BookmarkButton
                     className="absolute top-5 right-5 z-10 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm group/bookmark"
                     iconSize={cn(
                         "h-5 w-5",
