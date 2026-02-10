@@ -257,32 +257,7 @@ export function DiscoverContent({
                                 </div>
                             </section>
 
-                            {/* Recent Competitions Section - Only visible to authenticated users */}
-                            {isAuthenticated && (
-                                <section className="space-y-8 bg-gray-200/50 -mx-4 md:-mx-8 px-4 md:px-8 py-12">
-                                    <h2 className="text-3xl font-semibold text-center text-[#1a1a1a]">
-                                        Recently Visited
-                                    </h2>
-                                    {/* Removed justify-center to fix scrolling issue when content overflow */}
-                                    <div className="flex overflow-x-auto gap-6 pb-6 snap-x snap-mandatory scrollbar-none">
-                                        {/* Using mock data from JSON */}
-                                        {competitionsData.map((comp) => (
-                                            <div key={comp.id} className="snap-center shrink-0 pl-1 first:pl-1">
-                                                <CompetitionCard
-                                                    status={comp.status as any}
-                                                    title={comp.title}
-                                                    imageUrl={comp.imageUrl}
-                                                    organizerName={comp.organizerName}
-                                                    category={comp.category}
-                                                    registeredCount={comp.registeredCount}
-                                                    deadline={comp.deadline}
-                                                    onClick={() => router.push(`/c/${comp.id}`)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            )}
+
                         </div>
                     )}
 
