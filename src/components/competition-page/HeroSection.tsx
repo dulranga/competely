@@ -17,7 +17,7 @@ interface HeroSectionProps {
     } | null;
 }
 
-export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDate, competitionId, isBookmarked, organization }: HeroSectionProps) {
+export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDate, competitionId, isBookmarked, organization, isPreview = false }: HeroSectionProps & { isPreview?: boolean }) {
     // Default fallback image if no banner is provided
     const bgImage = bannerUrl ?? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
 
@@ -43,6 +43,7 @@ export function HeroSection({ bannerUrl, logoUrl, societyName, startDate, endDat
                     <BookmarkButton
                         competitionId={competitionId}
                         initialIsBookmarked={isBookmarked}
+                        isPreview={isPreview}
                     />
                 )}
                 <StatusBadge startDate={startDate} endDate={endDate} />
