@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authClient } from "~/lib/auth-client";
 import { HeaderAuthenticated } from "./header-authenticated";
 import { HeaderPublic } from "./header-public";
-import { getBookmarksCountAction } from "~/data-access/delegate/actions";
+import { getBookmarksCountAction } from "~/data-access/delegate/actions/bookmarks";
 
 export function Header() {
     const pathname = usePathname();

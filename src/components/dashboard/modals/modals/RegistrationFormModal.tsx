@@ -5,7 +5,7 @@ import { FormRenderer } from "~/components/form/FormRenderer";
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import type { ModalComponentProps } from "../modal-registry";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { registerToCompetitionAction } from "~/data-access/delegate/actions";
+import { registerToCompetitionAction } from "~/data-access/delegate/actions/competitions";
 import { submitFormAction } from "~/app/(authenticated)/dashboard/test-form/[id]/actions";
 import { toast } from "sonner";
 
