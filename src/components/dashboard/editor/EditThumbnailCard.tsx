@@ -28,6 +28,7 @@ interface EditThumbnailCardProps {
         name: string | null;
         societyName: string | null;
         tagline: string | null;
+        shortDescription: string | null;
         category: string | null;
         hashtags: string[] | null;
         bannerId: string | null;
@@ -50,6 +51,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             name: initialData?.name || "",
             societyName: initialData?.societyName || "",
             tagline: initialData?.tagline || "",
+            shortDescription: initialData?.shortDescription || "",
             category: initialData?.category || "Open",
             hashtags: initialData?.hashtags || [],
             bannerId: initialData?.bannerId || null,
@@ -68,6 +70,7 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
             form.reset({
                 name: initialData.name || "",
                 tagline: initialData.tagline || "",
+                shortDescription: initialData.shortDescription || "",
                 category: initialData.category || "Open",
                 hashtags: initialData.hashtags || [],
                 bannerId: initialData.bannerId || null,
@@ -91,11 +94,9 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
     const onSave = async () => {
         setIsSubmitting(true);
         const values = form.getValues();
-        console.log("Submitting values:", values);
 
         // Trigger form validation
         const isValid = await form.trigger();
-        console.log("Form validation result:", isValid); // Debug log
 
         if (!isValid) {
             setIsSubmitting(false);
@@ -106,13 +107,8 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
         setIsSubmitting(false);
 
         if (result.error) {
-            console.error("Save error:", result.error);
-            if ("fieldErrors" in result) {
-                console.error("Field errors:", result.fieldErrors);
-            }
             toast.error(result.error);
         } else {
-            console.log("Save success:", result); // Debug log
             toast.success("Changes saved successfully!");
             setIsConfirmOpen(false);
         }
@@ -169,7 +165,18 @@ const EditThumbnailCard: FC<EditThumbnailCardProps> = ({ initialData }) => {
                                 name="tagline"
                                 helperText="A catchy one-liner shown on discovery cards (max 150 characters)."
                             >
-                                <Textarea placeholder="e.g. Building the future of AI together" className="min-h-32" />
+                                <Textarea placeholder="e.g. Building the future of AI together" className="min-h-[80px]" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Short Description"
+                                name="shortDescription"
+                                helperText="A brief summary of your competition (max 500 characters)."
+                            >
+                                <Textarea
+                                    placeholder="e.g. Join us for a 48-hour hackathon focused on building innovative solutions..."
+                                    className="min-h-[120px]"
+                                />
                             </Form.Item>
 
                             <Form.Item

@@ -7,6 +7,7 @@ export const createCompetitionSchema = object({
     name: string().min(3, "Competition name must be at least 3 characters"),
     societyName: string().optional(),
     tagline: string().max(200, "Tagline must be less than 200 characters").optional(),
+    shortDescription: string().max(500, "Short description must be less than 500 characters").optional(),
 
     bannerId: uuid("Invalid banner ID").optional().nullable(),
     hashtags: array(string()).optional(),

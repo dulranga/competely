@@ -8,7 +8,6 @@ import { updateCompetition } from "~/data-access/competitions/updateCompetition"
 import { createCompetitionSchema } from "~/lib/schemas/competition.schema";
 
 export async function updateCompetitionAction(values: unknown) {
-    console.log("UpdateCompetitionAction received values:", values); // Debug log
     const validatedFields = createCompetitionSchema.safeParse(values);
 
     if (!validatedFields.success) {
@@ -24,8 +23,6 @@ export async function updateCompetitionAction(values: unknown) {
             fieldErrors: fieldErrors,
         };
     }
-
-    console.log("Validated data:", validatedFields.data); // Debug log
 
     try {
         const activeCompetition = await getActiveCompetition();

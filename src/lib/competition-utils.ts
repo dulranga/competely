@@ -50,6 +50,7 @@ export function mapCompetitionToCardProps(comp: any, isBookmarked = false, isUse
     return {
         competitionId: comp.id,
         title: comp.title || "Untitled",
+        description: comp.shortDescription || comp.tagline || comp.description || "No description available",
         status,
         ...(imageUrl && { imageUrl }),
         organizerName: comp.organizerName || "",
