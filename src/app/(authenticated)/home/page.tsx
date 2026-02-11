@@ -6,6 +6,8 @@ import { Timeline } from "~/components/timeline/Timeline";
 import { Button } from "~/components/ui/button";
 import { auth } from "~/lib/auth";
 import { getDelegateTimeline } from "~/data-access/delegate/timeline";
+import { getTrendingCompetitions } from "~/data-access/competitions/getTrendingCompetitions";
+import { getFileUrlById } from "~/lib/utils";
 
 export default async function HomePage() {
     const session = await auth.api.getSession({
@@ -18,6 +20,7 @@ export default async function HomePage() {
 
     const { user } = session;
     const timelineEvents = await getDelegateTimeline(user);
+    const trendingCompetitions = await getTrendingCompetitions();
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
@@ -47,20 +50,37 @@ export default async function HomePage() {
 
                     {/* Horizontal Scroll Container */}
                     <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:-mx-0 md:px-0">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} className="snap-center shrink-0 w-[300px] md:w-[350px]">
-                                <CompetitionCard
-                                    title="HackExtreme"
-                                    status="Ongoing"
-                                    imageUrl="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop"
-                                    deadline="Jan 17, 2026 (deadline)"
-                                    location="Lyceum College, Nugegoda."
-                                    registeredCount={74}
-                                    category="School Category"
-                                    organizerName="Hack dev Club"
-                                />
+                        {trendingCompetitions.length > 0 ? (
+                            trendingCompetitions.map((competition) => (
+                                <div key={competition.id} className="snap-center shrink-0 w-[300px] md:w-[350px]">
+                                    <CompetitionCard
+                                        competitionId={competition.id}
+                                        title={competition.tagline || competition.title || "Untitled Competition"}
+                                        status={undefined} // Let StatusBadge calculate from dates
+                                        imageUrl={competition.imageUrl ? getFileUrlById(competition.imageUrl) : undefined}
+                                        deadline={
+                                            competition.deadline
+                                                ? new Date(competition.deadline).toLocaleDateString("en-US", {
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    year: "numeric",
+                                                })
+                                                : "No deadline"
+                                        }
+                                        startDate={competition.startDate}
+                                        endDate={competition.endDate}
+                                        location="Online" // Schema doesn't have location yet
+                                        registeredCount={competition.registeredCount}
+                                        category={competition.category || "General"}
+                                        organizerName={competition.organizerName}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center text-gray-500 w-full py-10">
+                                No trending competitions found.
                             </div>
-                        ))}
+                        )}
                     </div>
                 </section>
 
