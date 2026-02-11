@@ -101,7 +101,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                             <Form.Item
                                 label="Tagline"
                                 name="tagline"
-                                helperText="A catchy one-liner shown on discovery cards (max 150 characters)."
+                                helperText="A catchy one-liner shown on competition's public page (max 150 characters)."
                             >
                                 <Textarea placeholder="e.g. Building the future of AI together" className="min-h-[80px]" />
                             </Form.Item>
@@ -109,7 +109,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                             <Form.Item
                                 label="Short Description"
                                 name="shortDescription"
-                                helperText="A brief summary of your competition (max 500 characters)."
+                                helperText="A brief summary of your competition shown on discovery card (max 500 characters)."
                             >
                                 <Textarea
                                     placeholder="e.g. Join us for a 48-hour hackathon focused on building innovative solutions..."
