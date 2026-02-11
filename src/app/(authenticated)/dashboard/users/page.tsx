@@ -17,8 +17,8 @@ const UsersPage: FC = () => {
     const filteredDelegates = useMemo(() => {
         if (!searchQuery.trim()) return delegates;
         const query = searchQuery.toLowerCase();
-        return delegates.filter(user => 
-            user.name.toLowerCase().includes(query) || 
+        return delegates.filter(user =>
+            user.name.toLowerCase().includes(query) ||
             user.email.toLowerCase().includes(query)
         );
     }, [searchQuery]);
@@ -45,6 +45,7 @@ const UsersPage: FC = () => {
                 </div>
             </div>
 
+            {/* 
             <div className="rounded-3xl bg-white border border-[#e8e2de]/60 shadow-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -107,6 +108,17 @@ const UsersPage: FC = () => {
                         )}
                     </tbody>
                 </table>
+            </div> 
+            */}
+
+            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+                <div className="w-16 h-16 bg-[#fbf6f3] rounded-2xl flex items-center justify-center mb-6 border border-[#e8e2de]/60">
+                    <User className="text-[#e5ab7d]" size={32} />
+                </div>
+                <h3 className="text-xl font-black text-[#0c0803] mb-2 tracking-tight">Coming Soon</h3>
+                <p className="text-[#0c0803]/50 text-sm max-w-md leading-relaxed font-medium">
+                    This section is unavailable at the moment, it will be launching soon. Stay tuned...
+                </p>
             </div>
         </div>
     );
