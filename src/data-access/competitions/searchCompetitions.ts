@@ -1,6 +1,6 @@
 import "server-only";
 
-import { desc, or, ilike, eq, sql } from "drizzle-orm";
+import { desc, or, ilike, eq, sql, and } from "drizzle-orm";
 import db from "~/db/client";
 import { competitions, organizations, files, members } from "~/db/schema";
 
@@ -44,12 +44,15 @@ export async function searchCompetitions(query: string) {
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
         .leftJoin(files, eq(competitions.posterId, files.id))
         .where(
-            or(
-                ilike(organizations.name, searchPattern),
-                ilike(competitions.tagline, searchPattern),
-                ilike(competitions.shortDescription, searchPattern),
-                ilike(competitions.societyName, searchPattern),
-                sql`array_to_string(${competitions.hashtags}, ' ') ILIKE ${searchPattern}`
+            and(
+                eq(competitions.status, "published"),
+                or(
+                    ilike(organizations.name, searchPattern),
+                    ilike(competitions.tagline, searchPattern),
+                    ilike(competitions.shortDescription, searchPattern),
+                    ilike(competitions.societyName, searchPattern),
+                    sql`array_to_string(${competitions.hashtags}, ' ') ILIKE ${searchPattern}`
+                )
             )
         )
         .orderBy(desc(competitions.createdAt));

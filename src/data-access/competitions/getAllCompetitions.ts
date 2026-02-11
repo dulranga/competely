@@ -35,6 +35,7 @@ export async function getAllCompetitions() {
         .from(competitions)
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
         .leftJoin(files, eq(competitions.posterId, files.id))
+        .where(eq(competitions.status, "published"))
         .orderBy(desc(competitions.createdAt));
 
     return results;
