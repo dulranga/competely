@@ -51,7 +51,7 @@ export function CompetitionCard({
     registeredCount = 0,
     category = "School Category",
     organizerName = "Hack dev Club",
-    status = "Ongoing",
+    status,
     startDate,
     endDate,
     variant = "grid",

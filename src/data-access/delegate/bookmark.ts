@@ -65,13 +65,13 @@ export async function getBookmarkedCompetitions() {
             startDate: competitions.startDate,
             endDate: competitions.endDate,
             bannerId: competitions.bannerId,
-            imageUrl: competitions.bannerId,
+            imageUrl: competitions.posterId,
             isBookmarked: bookmarks.isBookmarked,
         })
         .from(bookmarks)
         .innerJoin(competitions, eq(bookmarks.competitionId, competitions.id))
         .innerJoin(organizations, eq(competitions.organizationId, organizations.id))
-        .leftJoin(files, eq(competitions.bannerId, files.id))
+        .leftJoin(files, eq(competitions.posterId, files.id))
         .where(
             and(
                 eq(bookmarks.userId, session.user.id),

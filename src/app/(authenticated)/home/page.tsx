@@ -8,6 +8,8 @@ import { auth } from "~/lib/auth";
 import { getDelegateTimeline } from "~/data-access/delegate/timeline";
 import { getTrendingCompetitions } from "~/data-access/competitions/getTrendingCompetitions";
 import { getFileUrlById } from "~/lib/utils";
+import { getBookmarkStatuses, getRegistrationStatuses } from "~/data-access/delegate/bookmark";
+import { mapCompetitionToCardProps } from "~/lib/competition-utils";
 
 export default async function HomePage() {
     const session = await auth.api.getSession({
@@ -21,6 +23,16 @@ export default async function HomePage() {
     const { user } = session;
     const timelineEvents = await getDelegateTimeline(user);
     const trendingCompetitions = await getTrendingCompetitions();
+
+    // Get bookmark and registration statuses
+    let bookmarkStatuses = new Map<string, boolean>();
+    let registrationStatuses = new Map<string, boolean>();
+
+    if (trendingCompetitions.length > 0) {
+        const competitionIds = trendingCompetitions.map((c) => c.id);
+        bookmarkStatuses = await getBookmarkStatuses(competitionIds);
+        registrationStatuses = await getRegistrationStatuses(competitionIds);
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-[#fbf6f3]">
@@ -54,25 +66,11 @@ export default async function HomePage() {
                             trendingCompetitions.map((competition) => (
                                 <div key={competition.id} className="snap-center shrink-0 w-[300px] md:w-[350px]">
                                     <CompetitionCard
-                                        competitionId={competition.id}
-                                        title={competition.title || "Untitled Competition"}
-                                        status={undefined} // Let StatusBadge calculate from dates
-                                        imageUrl={competition.imageUrl ? getFileUrlById(competition.imageUrl) : undefined}
-                                        deadline={
-                                            competition.deadline
-                                                ? new Date(competition.deadline).toLocaleDateString("en-US", {
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                })
-                                                : "No deadline"
-                                        }
-                                        startDate={competition.startDate}
-                                        endDate={competition.endDate}
-                                        location="Online" // Schema doesn't have location yet
-                                        registeredCount={competition.registeredCount}
-                                        category={competition.category || "General"}
-                                        organizerName={competition.organizerName}
+                                        {...mapCompetitionToCardProps(
+                                            competition,
+                                            bookmarkStatuses.get(competition.id) || false,
+                                            registrationStatuses.get(competition.id) || false
+                                        )}
                                     />
                                 </div>
                             ))
