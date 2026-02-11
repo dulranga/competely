@@ -111,7 +111,7 @@
             "idx": 15,
             "version": "7",
             "when": 1770369094900,
-            "tag": "0015_Notification table added",
+            "tag": "0015_notifications_and_category_fix",
             "breakpoints": true
         },
         {
@@ -139,7 +139,7 @@
             "idx": 19,
             "version": "7",
             "when": 1770734931279,
-            "tag": "0019_smooth_multiple_man",
+            "tag": "0019_competitions_short_description",
             "breakpoints": true
         },
         {
