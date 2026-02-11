@@ -11,7 +11,7 @@ import { DateTimePicker } from "~/components/form-inputs/DateTimePicker";
 import { FileUpload } from "~/components/form-inputs/FileUpload";
 import TagsInput from "~/components/form-inputs/TagsInput";
 import Form from "~/components/form/Form";
-
+import FormDebug from "~/components/form/FormDebug";
 import { Button } from "~/components/ui/button";
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
@@ -229,7 +229,7 @@ const CreateCompetitionModal: FC<ModalComponentProps<CreateCompetitionModalData>
                             />
                         </div>
                     </div>
-
+                    {/* <FormDebug /> */}
                 </Form>
             </ScrollArea>
 
