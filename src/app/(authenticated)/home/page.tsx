@@ -55,7 +55,7 @@ export default async function HomePage() {
                                 <div key={competition.id} className="snap-center shrink-0 w-[300px] md:w-[350px]">
                                     <CompetitionCard
                                         competitionId={competition.id}
-                                        title={competition.tagline || competition.title || "Untitled Competition"}
+                                        title={competition.title || "Untitled Competition"}
                                         status={undefined} // Let StatusBadge calculate from dates
                                         imageUrl={competition.imageUrl ? getFileUrlById(competition.imageUrl) : undefined}
                                         deadline={
