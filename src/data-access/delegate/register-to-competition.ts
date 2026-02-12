@@ -5,6 +5,8 @@ import db from "~/db/client";
 import { bookmarks, competitions, members } from "~/db/schema";
 import { getUserSession } from "../getCurrentUser";
 
+import { notifyCompetitionRegistration } from "./notification-templates";
+
 /**
  * Registers the current user to a competition.
  * Adds the user to the competition's organization with the 'delegate' role
@@ -19,6 +21,9 @@ export async function registerToCompetitionDAL(competitionId: string) {
     // 1. Get competition details to find its organization
     const competition = await db.query.competitions.findFirst({
         where: eq(competitions.id, competitionId),
+        with: {
+            organization: true,
+        }
     });
 
     if (!competition) {
@@ -73,6 +78,12 @@ export async function registerToCompetitionDAL(competitionId: string) {
             isRegistered: true,
         });
     }
+
+    // 4. Send notification
+    const competitionName = competition.societyName || competition.organization?.name || "Competition";
+    // We don't await this to keep the response fast, or we can await if we want to ensure delivery before returning success
+    // Ideally use background job, but for now await is fine as it's a DB write
+    await notifyCompetitionRegistration(userId, competitionId, competitionName);
 
     return { success: true };
 }
