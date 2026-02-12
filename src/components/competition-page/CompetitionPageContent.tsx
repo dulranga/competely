@@ -22,11 +22,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
     const bannerUrl = data.banner?.id ? `/api/upload?file_id=${data.banner.id}` : null;
     const logoUrl = data.logo?.id ? `/api/upload?file_id=${data.logo.id}` : null;
 
-    console.log("CompetitionPageContent DEBUG:", {
-        roundsCount: data.rounds?.length,
-        firstRoundEvents: data.rounds?.[0]?.events?.length,
-        firstEvent: data.rounds?.[0]?.events?.[0],
-    });
+
 
     // Transform events for timeline
     const timelineEvents = data.rounds
@@ -131,7 +127,11 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
 
                     {/* Sidebar Column (Top) */}
                     <div className="lg:col-span-4 space-y-8">
-                        <InfoCard socialLinks={data.socialLinks} registrationDeadline={data.registrationDeadline} />
+                        <InfoCard
+                            socialLinks={data.socialLinks}
+                            registrationDeadline={data.registrationDeadline}
+                            registeredCount={data.registeredCount}
+                        />
                     </div>
                 </div>
 

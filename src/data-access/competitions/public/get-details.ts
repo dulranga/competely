@@ -1,9 +1,9 @@
 "use server";
 import "server-only";
 
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import db from "~/db/client";
-import { bookmarks } from "~/db/schema";
+import { bookmarks, members } from "~/db/schema";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { competitionEvents, competitionRounds, formFields, forms } from "~/db/schema";
@@ -93,10 +93,21 @@ export async function getPublicCompetitionDetails(competitionId: string) {
         // User not authenticated - isBookmarked/isRegistered stays false
     }
 
+    // Get registered count
+    const registeredCountResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(members)
+        .where(and(
+            eq(members.organizationId, competition.organizationId),
+            eq(members.role, 'delegate')
+        ));
+    const registeredCount = Number(registeredCountResult[0]?.count || 0);
+
     return {
         ...competition,
         isBookmarked,
         isRegistered,
+        registeredCount,
     };
 }
 

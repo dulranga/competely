@@ -1,8 +1,8 @@
 import "server-only";
 
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, sql } from "drizzle-orm";
 import db from "~/db/client";
-import { bookmarks, competitions, organizations, files } from "~/db/schema";
+import { bookmarks, competitions, organizations, files, members } from "~/db/schema";
 import { getUserSession } from "../getCurrentUser";
 
 /**
@@ -67,6 +67,12 @@ export async function getBookmarkedCompetitions() {
             bannerId: competitions.bannerId,
             imageUrl: competitions.posterId,
             isBookmarked: bookmarks.isBookmarked,
+            registeredCount: sql<number>`(
+                SELECT count(${members.id})
+                FROM ${members}
+                WHERE ${members.organizationId} = ${competitions.organizationId}
+                AND ${members.role} = 'delegate'
+            )`.mapWith(Number),
         })
         .from(bookmarks)
         .innerJoin(competitions, eq(bookmarks.competitionId, competitions.id))

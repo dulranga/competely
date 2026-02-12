@@ -1,7 +1,6 @@
-import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { getBookmarkedCompetitions, getRegistrationStatuses } from "~/data-access/delegate/bookmark";
-import { mapCompetitionToCardProps } from "~/lib/competition-utils";
+import { BookmarksList } from "~/components/discovery/BookmarksList";
 
 export default async function BookmarksPage() {
     const bookmarkedCompetitions = await getBookmarkedCompetitions();
@@ -17,23 +16,10 @@ export default async function BookmarksPage() {
                     <h1 className="text-3xl md:text-4xl font-bold text-[#1a1a1a]">My Bookmarks</h1>
                 </div>
 
-                {bookmarkedCompetitions.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
-                        {bookmarkedCompetitions.map((comp) => (
-                            <CompetitionCard
-                                key={comp.id}
-                                {...mapCompetitionToCardProps(comp, true, registrationStatuses.get(comp.id) || false)}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-20">
-                        <p className="text-xl text-muted-foreground mb-4">No bookmarks yet</p>
-                        <p className="text-sm text-muted-foreground">
-                            Start exploring competitions and bookmark the ones you're interested in!
-                        </p>
-                    </div>
-                )}
+                <BookmarksList
+                    competitions={bookmarkedCompetitions}
+                    registrationStatuses={registrationStatuses}
+                />
             </div>
 
             <FooterBottom />

@@ -12,6 +12,7 @@ interface SocialLink {
 interface InfoCardProps {
     socialLinks?: SocialLink[];
     registrationDeadline?: Date | null;
+    registeredCount?: number;
 }
 
 function formatRegistrationDeadline(date: Date | null | undefined): string {
@@ -29,7 +30,7 @@ function formatRegistrationDeadline(date: Date | null | undefined): string {
     return `${dateStr} - ${timeStr}`;
 }
 
-export function InfoCard({ socialLinks = [], registrationDeadline }: InfoCardProps) {
+export function InfoCard({ socialLinks = [], registrationDeadline, registeredCount = 0 }: InfoCardProps) {
     return (
         <Card className="rounded-3xl border-border shadow-sm p-8">
             <h3 className="text-xl font-bold flex items-center gap-3 mb-6">
@@ -65,7 +66,7 @@ export function InfoCard({ socialLinks = [], registrationDeadline }: InfoCardPro
                 <div className="flex items-start gap-4 pb-6 border-b border-gray-100">
                     <Users className="w-5 h-5 text-gray-700 mt-1" />
                     <div>
-                        <span className="text-gray-900 font-semibold block">Participants - 100+</span>
+                        <span className="text-gray-900 font-semibold block">Participants - {registeredCount}</span>
                     </div>
                 </div>
 
@@ -76,21 +77,6 @@ export function InfoCard({ socialLinks = [], registrationDeadline }: InfoCardPro
                             {socialLinks.map((link, index) => {
                                 const platformInfo = SOCIAL_PLATFORMS.find(p => p.value === link.platform);
                                 const Icon = platformInfo ? platformInfo.icon : Globe;
-
-                                // Generate a color based on platform or use a default?
-                                // The original code had specific colors for specific platforms.
-                                // We can try to map them or just use a generic style.
-                                // Original: Facebook (orange-100/500?? wait, original code: facebook=orange? No, let's check code)
-                                // Original code: Facebook (orange-100/orange-500) - Wait, facebook is usually blue.
-                                // Ah, the original code had:
-                                // Facebook: bg-orange-100 text-orange-500
-                                // Twitter: bg-blue-100 text-blue-500
-                                // Instagram: bg-pink-100 text-pink-500
-                                // Youtube: bg-red-100 text-red-500
-                                // Those colors are a bit mix-matched (Facebook orange?).
-                                // I will stick to a neutral style or try to match if I can, but since it's dynamic, 
-                                // keeping a consistent style might be better. 
-                                // Let's use a standard style for all for now to be safe, or map likely ones.
 
                                 return (
                                     <a
