@@ -19,6 +19,7 @@ export async function getRegisteredCompetitions(userId: string) {
             title: organizations.name, // Following getAllCompetitions pattern
             tagline: competitions.tagline,
             shortDescription: competitions.shortDescription,
+            societyName: competitions.societyName,
             organizerName: organizations.name,
             category: competitions.category,
             hashtags: competitions.hashtags,

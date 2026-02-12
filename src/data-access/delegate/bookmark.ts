@@ -58,6 +58,7 @@ export async function getBookmarkedCompetitions() {
             id: competitions.id,
             title: organizations.name,
             tagline: competitions.tagline,
+            societyName: competitions.societyName,
             organizerName: organizations.name,
             category: competitions.category,
             status: competitions.status,

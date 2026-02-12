@@ -53,7 +53,7 @@ export function mapCompetitionToCardProps(comp: any, isBookmarked = false, isUse
         description: comp.shortDescription || comp.tagline || comp.description || "No description available",
         status,
         ...(imageUrl && { imageUrl }),
-        organizerName: comp.organizerName || "",
+        organizerName: comp.societyName || comp.organizerName || "",
         category: comp.category || "",
         registeredCount: comp.registeredCount || 0,
         deadline: comp.deadline ? new Date(comp.deadline).toLocaleDateString() : "TBA",

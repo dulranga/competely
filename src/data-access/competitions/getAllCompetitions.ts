@@ -16,6 +16,7 @@ export async function getAllCompetitions() {
             title: organizations.name,
             tagline: competitions.tagline,
             shortDescription: competitions.shortDescription,
+            societyName: competitions.societyName,
             organizerName: organizations.name,
             category: competitions.category,
             hashtags: competitions.hashtags,
