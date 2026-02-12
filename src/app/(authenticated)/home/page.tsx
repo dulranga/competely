@@ -1,15 +1,13 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FooterBottom } from "~/components/ui/footer-bottom";
 import { Timeline } from "~/components/timeline/Timeline";
 import { Button } from "~/components/ui/button";
 import { auth } from "~/lib/auth";
 import { getDelegateTimeline } from "~/data-access/delegate/timeline";
 import { getTrendingCompetitions } from "~/data-access/competitions/getTrendingCompetitions";
-import { getFileUrlById } from "~/lib/utils";
 import { getBookmarkStatuses, getRegistrationStatuses } from "~/data-access/delegate/bookmark";
-import { mapCompetitionToCardProps } from "~/lib/competition-utils";
+import { TrendingList } from "~/components/discovery/TrendingList";
 
 export default async function HomePage() {
     const session = await auth.api.getSession({
@@ -60,26 +58,11 @@ export default async function HomePage() {
                 <section className="space-y-6 max-w-[1500px] mx-auto w-full px-4 md:px-8">
                     <h2 className="text-3xl font-bold text-center text-[#1a1b25]">Trending Now</h2>
 
-                    {/* Horizontal Scroll Container */}
-                    <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:-mx-0 md:px-0">
-                        {trendingCompetitions.length > 0 ? (
-                            trendingCompetitions.map((competition) => (
-                                <div key={competition.id} className="snap-center shrink-0 w-[300px] md:w-[350px]">
-                                    <CompetitionCard
-                                        {...mapCompetitionToCardProps(
-                                            competition,
-                                            bookmarkStatuses.get(competition.id) || false,
-                                            registrationStatuses.get(competition.id) || false
-                                        )}
-                                    />
-                                </div>
-                            ))
-                        ) : (
-                            <div className="col-span-full text-center text-gray-500 w-full py-10">
-                                No trending competitions found.
-                            </div>
-                        )}
-                    </div>
+                    <TrendingList
+                        competitions={trendingCompetitions}
+                        bookmarkStatuses={bookmarkStatuses}
+                        registrationStatuses={registrationStatuses}
+                    />
                 </section>
 
             </div>
