@@ -121,6 +121,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
                                 registrationDeadline={data.registrationDeadline}
                                 className="font-bold text-xl px-8 py-6"
                                 isPreview={isPreview}
+                                isRegistered={data.isRegistered}
                             />
                         </div>
                     </div>
@@ -153,6 +154,7 @@ export function CompetitionPageContent({ data, competitionId, isPreview = false 
                             competitionId={competitionId}
                             registrationDeadline={data.registrationDeadline}
                             isPreview={isPreview}
+                            isRegistered={data.isRegistered}
                             resources={data.resources.map((r: any) => ({
                                 id: r.id,
                                 label: r.label,

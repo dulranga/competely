@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Loader2, XCircle } from "lucide-react";
+import { ArrowRight, Loader2, XCircle, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export function RegisterButton({
     size = "lg",
     registrationDeadline,
     isPreview = false,
+    isRegistered = false,
 }: {
     competitionId: string;
     className?: string;
@@ -30,6 +31,7 @@ export function RegisterButton({
     size?: "default" | "sm" | "lg" | "icon";
     registrationDeadline?: Date | null;
     isPreview?: boolean;
+    isRegistered?: boolean;
 }) {
     const [isPending, setIsPending] = useState(false);
     const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
@@ -102,7 +104,7 @@ export function RegisterButton({
             size={size}
             variant={isRegistrationClosed ? "outline" : variant}
             onClick={handleRegister}
-            disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview)}
+            disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview) || isRegistered}
         >
             {isPending ? (
                 <>
@@ -113,6 +115,11 @@ export function RegisterButton({
                 <>
                     <XCircle className="mr-2 h-5 w-5" />
                     Registration Closed
+                </>
+            ) : isRegistered ? (
+                <>
+                    <Check className="mr-2 h-5 w-5" />
+                    Registered
                 </>
             ) : (
                 <>

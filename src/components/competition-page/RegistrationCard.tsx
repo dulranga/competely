@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Link as LinkIcon, Loader2, XCircle } from "lucide-react";
+import { FileText, Link as LinkIcon, Loader2, XCircle, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -30,11 +30,13 @@ export function RegistrationCard({
     resources = [],
     registrationDeadline,
     isPreview = false,
+    isRegistered = false,
 }: {
     competitionId: string;
     resources?: Resource[];
     registrationDeadline?: Date | null;
     isPreview?: boolean;
+    isRegistered?: boolean;
 }) {
     const [isPending, setIsPending] = useState(false);
     const [isRegistrationClosed, setIsRegistrationClosed] = useState(() => checkDeadlinePassed(registrationDeadline));
@@ -110,7 +112,7 @@ export function RegistrationCard({
                         size="lg"
                         variant={isRegistrationClosed ? "outline" : "default"}
                         onClick={handleRegister}
-                        disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview)}
+                        disabled={isPending || isRegistrationClosed || (isSessionPending && !isPreview) || isRegistered}
                     >
                         {isPending ? (
                             <>
@@ -121,6 +123,11 @@ export function RegistrationCard({
                             <>
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Registration Closed
+                            </>
+                        ) : isRegistered ? (
+                            <>
+                                <Check className="w-4 h-4 mr-2" />
+                                Registered
                             </>
                         ) : (
                             "Register →"
