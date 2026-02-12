@@ -17,6 +17,7 @@ export async function getTrendingCompetitions(limit = 5) {
             title: organizations.name, // Using organization name as title for now as per getAllCompetitions pattern
             tagline: competitions.tagline,
             shortDescription: competitions.shortDescription,
+            societyName: competitions.societyName,
             organizerName: organizations.name,
             category: competitions.category,
             hashtags: competitions.hashtags,
