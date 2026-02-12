@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useState, useMemo } from "react";
 import { CompetitionCard } from "~/components/discovery/CompetitionCard";
 import { FilterSidebar } from "~/components/discovery/FilterSidebar";
@@ -15,6 +17,7 @@ interface MyCompetitionsClientProps {
 }
 
 export function MyCompetitionsClient({ registeredCompetitions, finishedCompetitions }: MyCompetitionsClientProps) {
+    const router = useRouter();
     const [expandedSection, setExpandedSection] = useState<"registered" | "finished" | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,6 +63,7 @@ export function MyCompetitionsClient({ registeredCompetitions, finishedCompetiti
                                 key={comp.id}
                                 {...mapCompetitionToCardProps(comp, comp.isBookmarked, comp.isRegistered)}
                                 variant="list"
+                                onClick={() => router.push(`/c/${comp.id}`)}
                             />
                         ))}
                     </div>
@@ -98,6 +102,7 @@ export function MyCompetitionsClient({ registeredCompetitions, finishedCompetiti
                         key={comp.id}
                         {...mapCompetitionToCardProps(comp, comp.isBookmarked, comp.isRegistered)}
                         variant="grid"
+                        onClick={() => router.push(`/c/${comp.id}`)}
                     />
                 ))}
             </div>
