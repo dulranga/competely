@@ -21,6 +21,9 @@ export async function getActiveCompetition() {
 
     const competition = await db.query.competitions.findFirst({
         where: eq(competitions.organizationId, activeOrgId),
+        with: {
+            organization: true,
+        },
     });
 
     return competition || null;

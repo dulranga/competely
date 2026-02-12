@@ -6,6 +6,9 @@ import { revalidatePath } from "next/cache";
 import { createCompetition } from "~/data-access/competitions/createCompetition";
 import { createCompetitionSchema } from "~/lib/schemas/competition.schema";
 
+import { getUserSession } from "~/data-access/getCurrentUser";
+import { notifyCompetitionCreated } from "~/data-access/delegate/notification-templates";
+
 export async function createCompetitionAction(values: unknown) {
     const validatedFields = createCompetitionSchema.safeParse(values);
 
@@ -16,7 +19,13 @@ export async function createCompetitionAction(values: unknown) {
     }
 
     try {
-        const organization = await createCompetition(validatedFields.data);
+        const session = await getUserSession();
+        const { organization, competition } = await createCompetition(validatedFields.data);
+
+        // Send notification
+        const competitionName = competition.societyName || organization.name || "Competition";
+        await notifyCompetitionCreated(session.user.id, competition.id, competitionName);
+
         revalidatePath("/create");
         return { success: "Competition created!", id: organization.id };
     } catch (error) {

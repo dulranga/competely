@@ -30,7 +30,7 @@ export async function createCompetition(data: CreateCompetitionSchema) {
         throw new Error("Failed to create organization");
     }
 
-    await db.insert(competitions).values({
+    const [competition] = await db.insert(competitions).values({
         organizationId: response.id,
         tagline: data.tagline,
         shortDescription: data.shortDescription,
@@ -43,7 +43,7 @@ export async function createCompetition(data: CreateCompetitionSchema) {
         endDate: data.endDate,
         registrationDeadline: data.registrationDeadline,
         status: "draft",
-    });
+    }).returning();
 
-    return response;
+    return { organization: response, competition };
 }
