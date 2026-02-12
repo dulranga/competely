@@ -93,7 +93,7 @@ const TimelinePage = () => {
         return rawEvents;
     }, [rawEvents, selectedRound, competition]);
 
-    const isLoading = isRoundsLoading || isCompetitionLoading || (Boolean(selectedRound?.id) && isEventsLoading);
+    const isLoading = isRoundsLoading || isCompetitionLoading || isEventsLoading;
 
     if (roundsError || competitionError || eventsError) {
         return (
@@ -103,7 +103,7 @@ const TimelinePage = () => {
         );
     }
 
-    if (isLoading || !competition) {
+    if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center py-24">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />

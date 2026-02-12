@@ -1,0 +1,438 @@
+table accounts {
+  id text [pk, not null]
+  account_id text [not null]
+  provider_id text [not null]
+  user_id text [not null]
+  access_token text
+  refresh_token text
+  id_token text
+  access_token_expires_at timestamp
+  refresh_token_expires_at timestamp
+  scope text
+  password text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+
+  indexes {
+    user_id [name: 'accounts_userId_idx']
+  }
+}
+
+table invitations {
+  id text [pk, not null]
+  organization_id text [not null]
+  email text [not null]
+  role text
+  status text [not null, default: 'pending']
+  expires_at timestamp [not null]
+  created_at timestamp [not null, default: `now()`]
+  inviter_id text [not null]
+
+  indexes {
+    organization_id [name: 'invitations_organizationId_idx']
+    email [name: 'invitations_email_idx']
+  }
+}
+
+table members {
+  id text [pk, not null]
+  organization_id text [not null]
+  user_id text [not null]
+  role text [not null, default: 'member']
+  created_at timestamp [not null]
+
+  indexes {
+    organization_id [name: 'members_organizationId_idx']
+    user_id [name: 'members_userId_idx']
+  }
+}
+
+table organizations {
+  id text [pk, not null]
+  name text [not null]
+  slug text [not null, unique]
+  logo text
+  created_at timestamp [not null]
+  metadata text
+
+  indexes {
+    slug [name: 'organizations_slug_uidx', unique]
+  }
+}
+
+table sessions {
+  id text [pk, not null]
+  expires_at timestamp [not null]
+  token text [not null, unique]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+  ip_address text
+  user_agent text
+  user_id text [not null]
+  impersonated_by text
+  active_organization_id text
+
+  indexes {
+    user_id [name: 'sessions_userId_idx']
+  }
+}
+
+table users {
+  id text [pk, not null]
+  name text [not null]
+  email text [not null, unique]
+  email_verified boolean [not null, default: false]
+  image text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  role text
+  banned boolean [default: false]
+  ban_reason text
+  ban_expires timestamp
+}
+
+table verifications {
+  id text [pk, not null]
+  identifier text [not null]
+  value text [not null]
+  expires_at timestamp [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    identifier [name: 'verifications_identifier_idx']
+  }
+}
+
+table competitions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  organization_id text [not null]
+  tagline text
+  short_description text
+  society_name text
+  description text
+  category text
+  hashtags text[]
+  banner_id uuid
+  poster_id uuid
+  logo_id uuid
+  start_date timestamp
+  end_date timestamp
+  registration_deadline timestamp
+  status competition_status [not null, default: 'draft']
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    organization_id [name: 'competitions_organization_id_idx']
+  }
+}
+
+table files {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  fileName varchar(255) [not null]
+  fileKey varchar(255) [not null, unique]
+  mimeType varchar(100) [not null]
+  file_category file_category [not null]
+  size integer [not null]
+  user_id text [not null]
+  uploadedAt "timestamp with time zone" [default: `now()`]
+
+  indexes {
+    user_id [name: 'files_user_id_idx']
+    fileKey [name: 'files_file_key_idx']
+  }
+}
+
+table form_fields {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  form_id uuid [not null]
+  name text [not null]
+  type form_field_type [not null, default: 'text']
+  required boolean [not null, default: false]
+  order integer [not null]
+  config jsonb
+}
+
+table form_response_answers {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  response_id uuid [not null]
+  field_id uuid [not null]
+  value jsonb [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    response_id [name: 'form_response_answers_response_id_idx']
+    field_id [name: 'form_response_answers_field_id_idx']
+  }
+}
+
+table form_responses {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  form_id uuid [not null]
+  user_id text [not null]
+  submitted_at timestamp [not null, default: `now()`]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    form_id [name: 'form_responses_form_id_idx']
+    user_id [name: 'form_responses_user_id_idx']
+  }
+}
+
+table forms {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  name text [not null]
+  description text
+  published boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  competition_id uuid [not null]
+}
+
+table bookmarks {
+  user_id text [not null]
+  competition_id uuid [not null]
+  is_bookmarked boolean [not null, default: false]
+  is_registered boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (user_id, competition_id) [pk]
+  }
+}
+
+table user_interests {
+  user_id text [not null]
+  interest text [not null]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (user_id, interest) [pk]
+  }
+}
+
+table notifications {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  user_id text [not null]
+  title text [not null]
+  message text [not null]
+  type text [not null]
+  is_read boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+  link text
+  link_label text
+
+  indexes {
+    user_id [name: 'notifications_user_id_idx']
+  }
+}
+
+table rate_limits {
+  key varchar(255) [pk, not null]
+  count integer [not null, default: 0]
+  expiresAt "timestamp with time zone" [not null]
+}
+
+table competition_contacts {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  name text [not null]
+  role text [not null]
+  email text [not null]
+  phone text
+  image_id uuid
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_contacts_competition_id_idx']
+  }
+}
+
+table competition_prizes {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  title text [not null]
+  description text
+  cash_prize real [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_prizes_competition_id_idx']
+  }
+}
+
+table competition_publish_options {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  show_participant_count boolean [not null, default: true]
+  show_timeline boolean [not null, default: true]
+  show_countdown boolean [not null, default: true]
+  show_prizes boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_publish_options_competition_id_idx']
+  }
+}
+
+table competition_resources {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  label text [not null]
+  url text
+  file_id uuid
+  type text [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_resources_competition_id_idx']
+    
+  }
+}
+
+table competition_social_links {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  platform social_platform [not null]
+  url text [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_social_links_competition_id_idx']
+  }
+}
+
+table competition_round_announcements {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  round_id uuid [not null]
+  title text [not null]
+  content text [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    round_id [name: 'competition_round_announcements_round_id_idx']
+  }
+}
+
+table competition_event_resources {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  event_id uuid [not null]
+  label text [not null]
+  url text
+  file_id uuid
+  type text [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    event_id [name: 'competition_event_resources_event_id_idx']
+    
+  }
+}
+
+table competition_events {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  round_id uuid [not null]
+  name text [not null]
+  type text [not null]
+  description text
+  location text
+  start_date timestamp
+  end_date timestamp
+  notification_enabled boolean [not null, default: true]
+  add_to_timeline boolean [not null, default: true]
+  is_system boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+  form_id uuid
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    round_id [name: 'competition_events_round_id_idx']
+  }
+}
+
+table competition_rounds {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  competition_id uuid [not null]
+  name text [not null]
+  is_system boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+
+  indexes {
+    competition_id [name: 'competition_rounds_competition_id_idx']
+  }
+}
+
+ref: accounts.user_id > users.id
+
+ref: competition_round_announcements.round_id > competition_rounds.id
+
+ref: bookmarks.user_id > users.id
+
+ref: bookmarks.competition_id > competitions.id
+
+ref: competition_contacts.competition_id > competitions.id
+
+ref: competition_contacts.image_id - files.id
+
+ref: competition_event_resources.event_id > competition_events.id
+
+ref: competition_event_resources.file_id - files.id
+
+ref: competition_events.round_id > competition_rounds.id
+
+ref: competition_events.form_id - forms.id
+
+ref: competition_prizes.competition_id > competitions.id
+
+ref: competition_publish_options.competition_id - competitions.id
+
+ref: competition_resources.competition_id > competitions.id
+
+ref: competition_resources.file_id - files.id
+
+ref: competition_rounds.competition_id > competitions.id
+
+ref: competition_social_links.competition_id > competitions.id
+
+ref: competitions.organization_id > organizations.id
+
+ref: competitions.logo_id - files.id
+
+ref: files.user_id > users.id
+
+ref: form_fields.form_id > forms.id
+
+ref: form_response_answers.response_id > form_responses.id
+
+ref: form_response_answers.field_id > form_fields.id
+
+ref: form_responses.form_id > forms.id
+
+ref: form_responses.user_id - users.id
+
+ref: forms.competition_id > competitions.id
+
+ref: invitations.organization_id > organizations.id
+
+ref: invitations.inviter_id > users.id
+
+ref: members.organization_id > organizations.id
+
+ref: members.user_id > users.id
+
+ref: notifications.user_id > users.id
+
+ref: sessions.user_id > users.id
+
+ref: user_interests.user_id > users.id

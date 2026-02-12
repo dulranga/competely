@@ -74,22 +74,6 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
 
     const isLoading = isFieldsLoading || isResponsesLoading;
 
-    if (eventsWithForms.length === 0 && !isLoading) {
-        return (
-            <div className="space-y-8">
-                <div className="grid gap-4">
-                    <h1 className="text-5xl font-black tracking-tight text-[#0c0803] uppercase">
-                        {selectedRound.name} Analytics
-                    </h1>
-                    <p className="text-[#0c0803]/60 text-xl max-w-2xl leading-relaxed">
-                        No forms are linked to events in this round. Link a form in the timeline to view submissions
-                        here.
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -109,7 +93,7 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                         </label>
                         <Select value={selectedEventId || ""} onValueChange={setSelectedEventId}>
                             <SelectTrigger className="h-12 rounded-2xl border-[#e8e2de] bg-white">
-                                <SelectValue placeholder="Select an event" />
+                                <SelectValue placeholder="Select an event" className="text-left" />
                             </SelectTrigger>
                             <SelectContent className="rounded-2xl border-[#e8e2de]">
                                 {eventsWithForms.map((e) => (
@@ -123,6 +107,8 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                 )}
             </div>
 
+            {/* Announcement Section */}
+            <SendAnnouncements roundId={selectedRound.id} />
             {/* Stats Overview for the current form */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Card className=" border-[#e8e2de] hover:shadow-md transition-shadow">
@@ -164,9 +150,6 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                 </Card>
             </div>
 
-            {/* Announcement Section */}
-            <SendAnnouncements roundId={selectedRound.id} />
-
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <h2 className="text-3xl font-black uppercase tracking-tight text-[#0c0803]">Submissions</h2>
@@ -198,6 +181,15 @@ export function AnalyticsClient({ events, selectedRound }: AnalyticsClientProps)
                             <p className="text-sm font-bold uppercase tracking-widest text-[#0c0803]/40">
                                 Loading submissions...
                             </p>
+                        </div>
+                    ) : eventsWithForms.length === 0 ? (
+                        <div className="space-y-8">
+                            <div className="grid gap-4">
+                                <p className="text-[#0c0803]/60 text-xl max-w-2xl leading-relaxed">
+                                    No forms are linked to events in this round. Link a form in the timeline to view
+                                    submissions here.
+                                </p>
+                            </div>
                         </div>
                     ) : (
                         <FormResponsesTable

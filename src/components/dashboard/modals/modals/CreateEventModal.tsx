@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, ExternalLink, Loader2, Plus, RefreshCcw, Trash2 } from "lucide-react";
+import { Calendar, Check, ChevronDown, ExternalLink, Loader2, Plus, RefreshCcw, Trash2 } from "lucide-react";
 import { type FC, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,6 +13,14 @@ import Form from "~/components/form/Form";
 import FormDebug from "~/components/form/FormDebug";
 import { Button } from "~/components/ui/button";
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -35,7 +43,6 @@ export interface CreateEventModalData {
 
 const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ closeModal, data }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isFormSelectOpen, setFormSelectOpen] = useState(false);
     const isEditing = !!data?.eventId;
 
     const isSystemEvent = data.isSystemEvent;
@@ -116,7 +123,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                 toast.success("Event created successfully!");
             }
 
-            await queryClient.invalidateQueries({ queryKey: ["timeline", "competition"] });
+            await queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
             data?.onSuccess?.();
             closeModal();
@@ -210,6 +217,7 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                 disabled={false}
                                 render={({ field, fieldState, formState }) => {
                                     const enabledField = { ...field, disabled: false };
+                                    const selectedForm = forms.find((f) => f.id === enabledField.value);
 
                                     return (
                                         <Form.CustomController
@@ -219,65 +227,85 @@ const CreateEventModal: FC<ModalComponentProps<CreateEventModalData>> = ({ close
                                             fieldState={fieldState}
                                             formState={formState}
                                         >
-                                            <Select
-                                                onValueChange={enabledField.onChange}
-                                                value={enabledField.value ?? undefined}
-                                                disabled={false}
-                                                open={isFormSelectOpen}
-                                                onOpenChange={setFormSelectOpen}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a form" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {forms.map((f) => (
-                                                        <SelectItem key={f.id} value={f.id}>
-                                                            {f.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                    <SelectSeparator />
-                                                    <div className="px-2 py-2 space-y-2">
-                                                        <div className="flex items-center gap-1">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        variant="outline"
+                                                        role="combobox"
+                                                        className={cn(
+                                                            "w-full justify-between font-normal",
+                                                            !enabledField.value && "text-muted-foreground",
+                                                        )}
+                                                    >
+                                                        {selectedForm ? selectedForm.name : "Select a form"}
+                                                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent className="min-w-100 p-2 w-full" align="start">
+                                                    <div className="max-h-[200px] overflow-y-auto">
+                                                        {forms.length > 0 ? (
+                                                            forms.map((f) => (
+                                                                <DropdownMenuItem
+                                                                    key={f.id}
+                                                                    onSelect={() => enabledField.onChange(f.id)}
+                                                                >
+                                                                    {f.name}
+                                                                    {enabledField.value === f.id && (
+                                                                        <Check className="ml-auto h-4 w-4" />
+                                                                    )}
+                                                                </DropdownMenuItem>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-6 text-sm text-center text-muted-foreground">
+                                                                No forms found
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <DropdownMenuSeparator />
+
+                                                    <div className="px-1 py-2 pb-0">
+                                                        <div className="flex items-center justify-between mb-2 px-1">
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                                                                 Quick actions
                                                             </p>
                                                             <Button
-                                                                onClick={() => refetch()}
-                                                                size={"xs"}
-                                                                variant={"outline"}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    refetch();
+                                                                }}
+                                                                size="xs"
+                                                                variant="outline"
+                                                                className="h-6 gap-1"
                                                             >
-                                                                <RefreshCcw /> Refresh
+                                                                <RefreshCcw className="size-3" /> Refresh
                                                             </Button>
                                                         </div>
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            className="w-full justify-between rounded-lg border border-dashed border-primary/40 bg-transparent text-primary hover:bg-primary/10"
-                                                            onClick={() => {
+
+                                                        <DropdownMenuItem
+                                                            className="w-full justify-between rounded-lg border border-dashed border-primary/40 bg-transparent text-primary hover:bg-primary/10 focus:bg-primary/10 focus:text-primary cursor-pointer mb-1"
+                                                            onSelect={() => {
                                                                 enabledField.onChange(null);
-                                                                setFormSelectOpen(false);
                                                                 openFormBuilder();
                                                             }}
                                                         >
                                                             Create a new form
                                                             <ExternalLink className="size-4" />
-                                                        </Button>
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            className="w-full justify-between rounded-lg bg-input-background text-foreground hover:bg-input-background/80"
-                                                            onClick={() => {
+                                                        </DropdownMenuItem>
+
+                                                        <DropdownMenuItem
+                                                            className="w-full justify-between rounded-lg bg-input-background text-foreground hover:bg-input-background/80 focus:bg-input-background/80 cursor-pointer"
+                                                            onSelect={() => {
                                                                 enabledField.onChange(null);
-                                                                setFormSelectOpen(false);
                                                                 openFormsDashboard();
                                                             }}
                                                         >
                                                             Manage forms
                                                             <ExternalLink className="size-4" />
-                                                        </Button>
+                                                        </DropdownMenuItem>
                                                     </div>
-                                                </SelectContent>
-                                            </Select>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </Form.CustomController>
                                     );
                                 }}
